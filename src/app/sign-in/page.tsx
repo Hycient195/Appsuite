@@ -6,9 +6,11 @@ import { parseCookies, setCookie } from "nookies";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google"
 import { GoogleIcon, LogoIcon } from "@/sharedComponents/CustomIcons";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 
 const SignIn = () => {
+  const router = useRouter();
   const [ signInResponse, setSignInResponse ] = useState<Omit<TokenResponse, "error" | "error_description" | "error_uri">>();
   const[ profile, setProfile ] = useState();
 
@@ -30,7 +32,7 @@ const SignIn = () => {
       .then((res) => {
           setProfile(res.data);
           setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 48) });
-          window.location.assign("/app/balance-sheet/files");
+          window.location.assign("/app/balance-sheet/create");
       })
       .catch((err) => console.log(err));
     }
@@ -47,9 +49,6 @@ const SignIn = () => {
     // prompt: "consent" // Ask the user to re-authorize to get a refresh token
   })
 
-  console.log(profile)
-  console.log(signInResponse)
-
   return (
     <main className="h-screen bg-zinc-50 px-4">
       <div className="max-w-screen-xl h-full relative mx-auto flex flex-col justify-center items-center ">
@@ -62,13 +61,15 @@ const SignIn = () => {
           </div>
           <div className="line"></div>
           <h2 className="text-2xl text-slate-800 text-center">Sign in to AppSuite</h2>
-          <p className="text-zinc-500 text-center mt-4">Seamlessly monitor your properties, lease schedule payments and notifications all in one place.</p>
+          <p className="text-zinc-500 text-center mt-4">Lightweight and precisely crafted software applications for custom workflows</p>
 
           <div className="mt-4 flex flex-col gap-5">
             
-            <div className="flex justify-center">
+            <div className="flex justify-center items-center flex-col gap-3">
               {/* <LoadingButton loading={isLoading} className="!px-10 rounded-md shadow !py-2.5 text-sl bg-primary text-white">Sign In</LoadingButton> */}
               <button onClick={() => handleSignIn()} className="btn bg-black text-white flex items-center gap-1"><GoogleIcon /> Sign in with google</button>
+              {/* <button onClick={() => router.push("/app/balance-sheet/create")} className="btn bg-white border border-zinc-300 text-zinc-500">Preview without sign in</button>
+              <p className="text-zinc-400 text-center text-sm">Without signing in, all data would be lost when the page is refreshed</p> */}
             </div>
             <div className="line"></div>
             <p className="top-[3%] text-center right-0 text-zinc-600">Preview <Link href="/terms-of-service" className="underline text-blue">Terms of Service</Link> and <Link href="/privacy-policy" className="underline text-blue">Privacy Policy</Link></p>

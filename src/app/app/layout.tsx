@@ -2,7 +2,6 @@
 
 import { NavList } from "./_components/NavList";
 import DashboardNav from "./_components/DashboardNav";
-// import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { commonRoutes, navRoutes } from "./_constants/navRoutes";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { useEffect } from "react";
@@ -86,8 +85,8 @@ function AppLayout({ children }: IProps) {
             
 
             <button onClick={navigateToProfile} className="grid grid-cols-[1fr_2.8fr] text-left mt-auto mb-5 lg:mb-6 gap-2 relative">
-              <figure className="bg-gray-200 w-full h-auto aspect-square rounded-lg overflow-hidden outline outline-1 outline-zinc-300 outline-offset-1">
-                { loggInUser?.picture && <Image src={loggInUser?.picture} className="object-cover object-center" alt={`${loggInUser?.given_name} ${loggInUser?.family_name}`} /> }
+              <figure className="bg-gray-200 w-full h-auto aspect-square rounded-lg overflow-hidden relative outline outline-1 outline-zinc-300 outline-offset-1">
+                { loggInUser?.picture && <Image src={loggInUser?.picture} fill className="object-cover object-center" alt={`${loggInUser?.given_name} ${loggInUser?.family_name}`} /> }
               </figure>
               <div className="flex flex-col gap-1 justify-evenly h-full">
                 <h4 className="font-medium text-zinc-700">{loggInUser?.given_name} {loggInUser?.family_name}</h4>
