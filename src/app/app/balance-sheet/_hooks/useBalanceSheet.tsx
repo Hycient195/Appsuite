@@ -81,10 +81,14 @@ export const useBalanceSheet = (fileName?: string) => {
     const page = { ...updatedPages[pageIndex], rows: [...updatedPages[pageIndex].rows] };
   
     for (let i = 0; i < rowsToAdd; i++) {
-      const previousBalance = (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex - 1].balance : 0;
-      page.rows.splice(rowIndex + i, 0, { ...defaultRow, balance: previousBalance, date: page.rows[rowIndex-1].date.slice(0,8)});
+      if (page?.rows?.length > 1) {
+        const previousBalance = (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex - 1].balance : 0;
+        page.rows.splice(rowIndex + i, 0, { ...defaultRow, balance: previousBalance, date: (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex-1].date.slice(0,8) : ""});
+      } else {
+        page.rows.push({ ...defaultRow });
+      }
     }
-
+    
     calculatePageTotals(page);
     updatedPages[pageIndex] = page;
     updatePages(updatedPages);
