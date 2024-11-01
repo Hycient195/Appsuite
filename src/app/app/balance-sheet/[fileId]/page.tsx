@@ -13,10 +13,6 @@ import TableSkeleton from '@/sharedComponents/skeletons/TableSkeleton';
 import api from '@/redux/api';
 import LoadingButton from '@/sharedComponents/LoadingButton';
 
-// interface IParams {
-//   fileId: string;
-// }
-
 const BalanceSheet: React.FC = () => {
   const params = useParams<any>();
 
@@ -79,7 +75,7 @@ const BalanceSheet: React.FC = () => {
     if (isSuccess) {
       loadCSVData(parseCSV(data));
     }
-  }, [ isSuccess, data, loadCSVData ]);
+  }, [ isSuccess ]);
 
 
 
@@ -103,7 +99,7 @@ const BalanceSheet: React.FC = () => {
         clearTimeout(newTimer);
       }
     };
-  }, [ pages, handleSaveFile, ]);
+  }, [ pages ]);
 
   return (
     <DndProvider backend={HTML5Backend}>

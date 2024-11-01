@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useLayoutEffect, createRef } from "react";
+import { useState, useCallback, useEffect, useRef, useLayoutEffect } from "react";
 
 type Header = {
   text: string;
@@ -11,19 +11,21 @@ type TableProps = {
   tableContent: React.ReactNode;
 };
 
+const createHeaders = (headers: string[]): Header[] => {
+  return headers.map((item) => ({
+    text: item,
+    ref: useRef<HTMLTableCellElement>(null),
+  }));
+};
+
 const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableContent }) => {
   const [tableHeight, setTableHeight] = useState<string>("auto");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const tableElement = useRef<HTMLTableElement>(null);
+  
+  const columns = createHeaders(headers);
 
-  const columns: Header[] = useRef(
-    Array.from({ length: headers.length }, (_, index) => ({
-      text: headers[index],
-      ref: createRef<HTMLTableCellElement>(),
-    }))
-  ).current;
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (tableElement.current) {
       setTableHeight(`${tableElement.current.offsetHeight}px`);
     }
@@ -32,8 +34,6 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
   const mouseDown = (index: number) => {
     setActiveIndex(index);
   };
-
-  // console.log("running")
 
   const fractions = useRef<number[]>([12.5,50,12.5,12.5,12.5]);
 

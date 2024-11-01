@@ -27,8 +27,6 @@ export const useBalanceSheet = () => {
 
   const prevPagesRef = useRef(pages);
 
-
-
   const updateRowsToAdd = (pageNumber: number, action: ("increament"|"decreament"|null), defaltValue?: number): void => {
     const pageCopy = [ ...pages ]
     if (defaltValue) {
