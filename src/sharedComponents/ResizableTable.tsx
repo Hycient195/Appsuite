@@ -33,8 +33,6 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
     setActiveIndex(index);
   };
 
-  // console.log("running")
-
   const fractions = useRef<number[]>([12.5,50,12.5,12.5,12.5]);
 
   const mouseMove = useCallback(

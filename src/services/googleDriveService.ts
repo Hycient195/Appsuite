@@ -5,7 +5,7 @@ import { google } from 'googleapis';
 import { cookies } from 'next/headers';
 
 
-const APP_SUITE_FOLDER_NAME = "AppSuite";
+const APP_SUITE_FOLDER_NAME = "APPSUITE_APPS";
 
 const auth = new google.auth.OAuth2({
   apiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY,
@@ -85,6 +85,22 @@ export async function updateFile (fileId: string, content: string) {
     },
   });
 };
+
+export async function updateFileName(fileId: string, fileName: string) {
+  const driveService = await getDriveService();
+  try {
+    const response = await driveService.files.update({
+      fileId,
+      requestBody: {
+        name: fileName,
+      },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error updating file name:", error);
+    return { success: false, error: "Failed to update file name" };
+  }
+}
 
 export async function deleteFile (fileId: string) {
   const driveService = await getDriveService();

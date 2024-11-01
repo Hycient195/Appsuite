@@ -53,39 +53,7 @@ const DashboardNav = memo(() => {
   return (
     // {/* A React Portal and also placeholder element Used to Render content outside DOM Heirachy */}
     <nav id="navbar-portal" className="w-full z-[4] sticky top-0 grid grid-cols-[max-content_1fr_max-content_max-content] bg-white justify-betwee gap-1.5 lg:gap-3 px-3 md:px-4 xl:px-6 shadow items-center">
-      {
-        !navContent.isHidden
-        && (
-          <>
-            <div className="w-ful no-scrollbar max-w-[calc(100vw-160px)] md:max-w-[calc(100vw-170px)] lg:max-w-[calc(100vw-(clamp(250px,20vw,270px)+170px))] overflow-x-auto">
-              {
-                navRoutes.find(x => x.href === rootPath)?.subRoutes &&
-                (
-                  <div className="flex flex-row w-max items-center gap-4 lg:gap-5">
-                    {
-                      navRoutes.find(x => x.href === rootPath)?.subRoutes?.map((subRoute: ISubRoute) => (
-                        <button onClick={() => handleNavigateToSubSection(subRoute.href)} key={subRoute.href} className={`px- py-4 md:py-5 relative flex flex-row items-center gap-1  ${(pathname?.split(/\//g)[3] === subRoute?.href?.split(/\//g)[0]) ? "border-l-black" : "border-l-white"}`}>
-                          <div className={`${(pathname?.split(/\//g)[3] === subRoute?.href?.split(/\//g)[0]) && "bg-black"} h-5 w-1.5 rounded-full`}></div>
-                          {subRoute?.icon && subRoute?.icon}
-                          {subRoute.text}
-                        </button>
-                      ))
-                    }
-                  </div>
-                )
-              }
-            </div>
-          </>
-        )
-      }
-      {/* A React Portal and also placeholder element Used to Render content outside DOM Heirachy */}
-      {/* <div  className="placeholder-element bg- w-ful bg-yellow-500"></div> */}
-
-      {/* <div className="placeholder-element invisible py-4 md:py-5">m</div> */}
-
-      {/* Mobile menu toggle */}
-
-      <Link href="/sign-up" className="py-4 -translate-x-2 lg:hidden flex flex-row items-center gap-x-1">
+      <Link href="/sign-up" className="py-4 -translate-x- lg:hidden flex flex-row items-center gap-x-1">
         <svg 
           width="30" 
           height="30" 
@@ -107,11 +75,48 @@ const DashboardNav = memo(() => {
           <circle cx="50" cy="90" r="6" fill="black" />
           <circle cx="10" cy="50" r="6" fill="black" />
         </svg>
-        <h2 className="text-xl font-sans font-semibold tracking-wide">APP SUITE</h2>
+        <h2 className="text-xl max-md:hidden font-sans font-semibold tracking-wide">APP SUITE</h2>
       </Link>
+
+      {
+        !navContent.isHidden
+        && (
+          <>
+            <div className="w-ful no-scrollbar max-w-[calc(100vw-160px)] md:max-w-[calc(100vw-170px)] lg:max-w-[calc(100vw-(clamp(250px,20vw,270px)+170px))] overflow-x-auto">
+              {
+                navRoutes.find(x => x.href === rootPath)?.subRoutes &&
+                (
+                  <div className="flex flex-row w-max items-center gap-3 md:gap-4 lg:gap-5">
+                    {
+                      navRoutes.find(x => x.href === rootPath)?.subRoutes?.map((subRoute: ISubRoute) => (
+                        <button onClick={() => handleNavigateToSubSection(subRoute.href)} key={subRoute.href} className={`px- py-4 md:py-5 relative flex flex-row items-center gap-1  ${(pathname?.split(/\//g)[3] === subRoute?.href?.split(/\//g)[0]) ? "border-l-black" : "border-l-white"}`}>
+                          <div className={`${(pathname?.split(/\//g)[3] === subRoute?.href?.split(/\//g)[0]) && "bg-black"} h-3.5 w-1 rounded-full`}></div>
+                          {subRoute?.icon && subRoute?.icon}
+                          {subRoute.text}
+                        </button>
+                      ))
+                    }
+                  </div>
+                )
+              }
+            </div>
+          </>
+        )
+      }
+      {/* A React Portal and also placeholder element Used to Render content outside DOM Heirachy */}
+      {/* <div  className="placeholder-element bg- w-ful bg-yellow-500"></div> */}
+
+      {/* <div className="placeholder-element invisible py-4 md:py-5">m</div> */}
+
+      {/* Mobile menu toggle */}
+
+      
       
 
       <ul className="flex flex-row gap-2 order- items-center w-max ml-auto my-2">
+        <li id="saveIconPosition" className="">
+          {/* Save Icon is inserted using react portal teleportation */}
+        </li>
         <li className="bg-zinc-100 shadow-sm p-1 rounded-full flex flex-row items-center">
           <Badge className="m-l-2" badgeContent={0} color="error">
             <button onClick={showNotifications} className="h-[40px] w-[40px] rounded-full  flex items-center justify-center border bg-white border-slate-400/60 shado overflow-hidden">
@@ -126,14 +131,14 @@ const DashboardNav = memo(() => {
             itemID="location"
             defaultValue={0}
             value={0}
-            className="[&>*]:!py-0 [&>*]:!px-0 [&>*]:!border-none  pr-2 font-semibold text-md text-zinc-600 min-w-[50px]"
+            className="[&>*]:!py-0 max-md:!hidden [&>*]:!px-0 [&>*]:!border-none  pr-2 font-semibold text-md text-zinc-600 min-w-[50px]"
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Age"
           >
             {/* <MenuItem className="!p-0 !hidden" value={0}>{loggedInUser?.fullName}</MenuItem> */}
-            <MenuItem onClick={() => router.push("/settings/user-profile")} className="font-semibold text-zinc-600" value={10}>Settings</MenuItem>
-            <MenuItem onClick={handleSignOut} className="font-semibold text-zinc-600" value={10}>Sign Out</MenuItem>
+            <MenuItem onClick={() => router.push("/settings/user-profile")} className="font-semibold text-zinc-600">Settings</MenuItem>
+            <MenuItem onClick={handleSignOut} className="font-semibold text-zinc-600">Sign Out</MenuItem>
           </Select>
         </li>
       </ul>

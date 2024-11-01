@@ -13,12 +13,12 @@ export default function CreateBalanceSheet() {
 
   const [ fileName, setFileName ] = useState<string>("");
 
-  const { generateCSVData } = useBalanceSheet()
+  const { generateCSVData } = useBalanceSheet();
 
   const [ createFile, { isLoading, isSuccess, data }] = api.commonApis.useCreateFileMutation()
 
   const handleCreateFile = async () => {
-    const pageDefault = [{ ...defaultPage, fileName }].map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+    const pageDefault = [{ ...defaultPage, title: fileName }].map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
     createFile({ appName: "BALANCE_SHEET", fileName: `${fileName}.csv`, content: pageDefault, mimeType: "text/csv"});
   };
 

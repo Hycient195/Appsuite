@@ -68,8 +68,8 @@ const SignIn = () => {
             <div className="flex justify-center items-center flex-col gap-3">
               {/* <LoadingButton loading={isLoading} className="!px-10 rounded-md shadow !py-2.5 text-sl bg-primary text-white">Sign In</LoadingButton> */}
               <button onClick={() => handleSignIn()} className="btn bg-black text-white flex items-center gap-1"><GoogleIcon /> Sign in with google</button>
-              {/* <button onClick={() => router.push("/app/balance-sheet/create")} className="btn bg-white border border-zinc-300 text-zinc-500">Preview without sign in</button>
-              <p className="text-zinc-400 text-center text-sm">Without signing in, all data would be lost when the page is refreshed</p> */}
+              <button onClick={() => router.push("/app/balance-sheet/null-id")} className="btn !shadow-none !drop-shadow-none bg-white border border-zinc-300 text-zinc-500">Preview without sign in</button>
+              <p className="text-zinc-400 text-center text-sm">Without signing in, all data would be lost when the page is refreshed</p>
             </div>
             <div className="line"></div>
             <p className="top-[3%] text-center right-0 text-zinc-600">Preview <Link href="/terms-of-service" className="underline text-blue">Terms of Service</Link> and <Link href="/privacy-policy" className="underline text-blue">Privacy Policy</Link></p>

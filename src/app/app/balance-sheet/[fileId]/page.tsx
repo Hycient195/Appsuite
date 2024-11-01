@@ -12,6 +12,9 @@ import { useParams } from 'next/navigation';
 import TableSkeleton from '@/sharedComponents/skeletons/TableSkeleton';
 import api from '@/redux/api';
 import LoadingButton from '@/sharedComponents/LoadingButton';
+import DraggableRow from '@/sharedComponents/DraggableRow';
+import Teleport from '@/utils/Teleport';
+import StatusIcon from '@/sharedComponents/CustomIcons';
 
 const BalanceSheet: React.FC = () => {
   const params = useParams<any>();
@@ -20,6 +23,7 @@ const BalanceSheet: React.FC = () => {
   const tbodyRef = useRef<HTMLTableSectionElement|null>(null);
   const [ tableWidth, setTableWidth ] = useState(2);
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
+  const isFirstRender = useRef(true); // Ref to track the first render
 
 
   useLayoutEffect(() => {
@@ -33,6 +37,37 @@ const BalanceSheet: React.FC = () => {
       setTableWidth(tableContainerRef.current.clientWidth)
     }
   })
+
+
+
+  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Audit report on property.pdf`})
+  const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` })
+  
+  const movePage = (fromIndex: number, toIndex: number) => {
+    const updatedPages = [...pages];
+    const [movedPage] = updatedPages.splice(fromIndex, 1);
+    updatedPages.splice(toIndex, 0, movedPage);
+    setPages(updatedPages);
+    updatePages(updatedPages);
+  };
+
+  const moveRow = (draggedRowIndex: number, targetRowIndex: number, pageIndex: number) => {
+    const pagesCopy = [ ...pages ];
+    const currentPageRows = pages[pageIndex];
+    
+    if (!currentPageRows || draggedRowIndex === targetRowIndex) {
+      return;
+    }
+  
+    const updatedRows = [...currentPageRows.rows];
+    const [movedRow] = updatedRows.splice(draggedRowIndex, 1);
+    updatedRows.splice(targetRowIndex, 0, movedRow);
+    pagesCopy[pageIndex].rows = updatedRows;
+    setPages(pagesCopy);
+  };
+
+  const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
+  const { isSuccess, data, isLoading }  = api.commonApis.useGetFileQuery(params?.fileId);
 
   const {
     pages,
@@ -57,20 +92,6 @@ const BalanceSheet: React.FC = () => {
     updatePages
   } = useBalanceSheet();
 
-  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Audit report on property.pdf`})
-  const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` })
-  
-  const movePage = (fromIndex: number, toIndex: number) => {
-    const updatedPages = [...pages];
-    const [movedPage] = updatedPages.splice(fromIndex, 1);
-    updatedPages.splice(toIndex, 0, movedPage);
-    setPages(updatedPages);
-    updatePages(updatedPages);
-  };
-
-  const [ saveFile, { isLoading: isSaving } ] = api.commonApis.useSaveFileMutation();
-  const { isSuccess, data, isLoading }  = api.commonApis.useGetFileQuery(params?.fileId);
-
   useEffect(() => {
     if (isSuccess) {
       loadCSVData(parseCSV(data));
@@ -85,12 +106,20 @@ const BalanceSheet: React.FC = () => {
   }
 
   useEffect(() => {
+    // Skip the effect on the first render
+    if (isFirstRender.current) {
+      isFirstRender.current = false; // Set to false after first render
+      return;
+    }
+
     if (saveTimer) {
       clearTimeout(saveTimer);
     }
     const newTimer = setTimeout(() => {
-      handleSaveFile();
-    }, 7000);
+      if (!isFirstRender.current && !isLoading) {
+        handleSaveFile();
+      }
+    }, 5000);
 
     setSaveTimer(newTimer);
 
@@ -99,10 +128,15 @@ const BalanceSheet: React.FC = () => {
         clearTimeout(newTimer);
       }
     };
-  }, [ pages ]);
+  }, [pages]);
 
   return (
     <DndProvider backend={HTML5Backend}>
+      <Teleport rootId='saveIconPosition'>
+        <button onClick={handleSaveFile} className="h-max flex items-center justify-center my-auto">
+          <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
+        </button>
+      </Teleport>
       <main className=" w-full border-zinc-200 ">
         <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
           {pages.map((page, pageIndex) => (
@@ -110,13 +144,24 @@ const BalanceSheet: React.FC = () => {
               {/* @ts-ignore */}
               <div key={pageIndex} ref={(el: HTMLDivElement) => ((singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el)} className="mb-8 w-full  max-w-[1080px] md:rounded mx-auto bg-white px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300">
                 <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
-                  <div className="relative h-max">
-                    <p className="invisib text-3xl outline-none font-bold w-full text-center">{page.title}</p>
-                    <textarea value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} autoFocus className="text-3xl resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 outline-none font-bold w-full text-center" /> <br />
-                  </div>
+                  {
+                    isLoading
+                    ? (
+                      <>
+                        <p className="invisib text-3xl text-zinc-400 animate-pulse outline-none font-bold w-full text-center">PAGE TITLE</p>
+                        <br />
+                      </>
+                    ) : (
+                      <div className="relative h-max animate-fade-in">
+                        <p className="invisib text-3xl outline-none font-bold w-full text-center">{page.title}</p>
+                        <textarea value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} autoFocus className="text-3xl resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 outline-none font-bold w-full text-center" /> <br />
+                      </div>
+                    )
+                  }
+                  
                   <div className="relative">
                     <p className="text-center invisible outline-none text-lg text-black/80 font-semibold w-full mb-4">{page.subTitle}</p>
-                    <textarea value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} className="text-center resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none text-lg text-black/80 font-semibold h-full w-full mb-4" />
+                    <textarea value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} className={`${isLoading && "animate-pulse text-zinc-400"} text-center resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none text-lg text-black/80 font-semibold h-full w-full mb-4`} />
                   </div>
                   <ResizableTable
                     headers={["DATE", "NARRATION", "CREDIT", "DEBIT", "BALANCE"]}
@@ -131,7 +176,7 @@ const BalanceSheet: React.FC = () => {
                         ) : (
                           <>
                             {page.rows.map((row, rowIndex) => (
-                              <tr key={rowIndex}  className='relative [&>*]:animate-fade-in group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden'>
+                              <tr key={rowIndex} className='relative [&>*]:animate-fade-in group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden'>
                                 <td  className="  items-center relative ">
                                   <div style={{ width: `${tableWidth}px`}} className="bg-transparen bg-green-500 opacity-0 hover:opacity-100 !border-none group/line absolute z-[2] left-[-1px] bottom-0 translate-y-[4px] cursor-pointer h-1 rounded">
                                     <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="bg-green-500 hidden duration-300 group-hover/line:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-2 items-center justify-center font-semibold">+</button>
@@ -270,13 +315,13 @@ const BalanceSheet: React.FC = () => {
 
           {/* Global Actions */}
           <div className={`flex flex-wrap max-md:px-4 noExport flex-row gap-3 lg:gap-4 justify-end`}>
-            <LoadingButton
+            {/* <LoadingButton
               className="px-4 !py-2 bg-violet-500 text-white rounded"
               loading={isSaving}
               onClick={() => handleSaveFile()}
             >
               Save File
-            </LoadingButton>
+            </LoadingButton> */}
             <button
               className="px-4 py-2 bg-green-500 text-white rounded"
               onClick={downloadAllPagesCSV}

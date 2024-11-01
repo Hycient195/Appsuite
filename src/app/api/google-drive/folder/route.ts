@@ -1,5 +1,5 @@
-import { getAllFilesInFolder, initializeFolders } from '@/services/googleDriveService';
-import { NextResponse } from 'next/server';
+import { getAllFilesInFolder, initializeFolders, updateFileName } from '@/services/googleDriveService';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -8,4 +8,22 @@ export async function GET(request: Request) {
   if (!folderId) return NextResponse.json({ error: 'folderId is required' }, { status: 400 });
   const response = await getAllFilesInFolder(folderId);
   return NextResponse.json(response);
+}
+
+/* Update File Name */
+export async function POST(request: NextRequest) {
+  const { fileId, fileName } = await request.json();
+
+  if (!fileId || !fileName) {
+    return NextResponse.json(
+      { success: false, error: "fileId and fileName are required" },
+      { status: 400 }
+    );
+  }
+  const result = await updateFileName(fileId, fileName);
+  if (result.success) {
+    return NextResponse.json({ success: true, data: result.data });
+  } else {
+    return NextResponse.json({ success: false, error: result.error }, { status: 500 });
+  }
 }

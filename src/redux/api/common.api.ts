@@ -41,6 +41,14 @@ const api = createApi({
         body: formData
       })
     }),
+
+    updateFileName: builder.mutation<any, { fileId: string, fileName: string }>({
+      query: (formData) => ({
+        url: "api/google-drive/folder",
+        method: "POST",
+        body: formData
+      })
+    }),
     
     deleteFile: builder.mutation<any, string>({
       query: (fileId: string) => ({

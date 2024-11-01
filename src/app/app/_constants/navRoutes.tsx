@@ -1,4 +1,6 @@
+import authSlice from "@/redux/slices/auth.slice";
 import sharedSlice from "@/redux/slices/shared.slice";
+import { destroyCookie } from "nookies";
 
 export interface ISubRoute {
   text: string;
@@ -16,6 +18,23 @@ export interface INavRoute {
 
 export type TUserType = ("LANDLORD"|"PROPERTY_MANAGER"|"TENANT")
 
+const handleSignOut = (): void => {
+  window.location.assign("/sign-in");
+  authSlice.actions.clearCredentials();
+  destroyCookie({ }, "asAccessToken", { path: "/"});
+  destroyCookie({ }, "asUserProfile", { path: "/"});
+};
+
+export const signOutMobileRoute: INavRoute[] = [
+  {
+    text: "Sign Out",
+    href: "/sign-out",
+    action: handleSignOut,
+    icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+    </svg>  
+  }
+]
 
 export const commonRoutes: INavRoute[] = [
   {

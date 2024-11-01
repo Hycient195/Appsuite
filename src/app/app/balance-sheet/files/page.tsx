@@ -1,6 +1,6 @@
 "use client"
 
-import {  useEffect, useRef, useState } from "react";
+import {  MouseEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import TableSkeleton from "@/sharedComponents/skeletons/TableSkeleton";
 import LoadingButton from "@/sharedComponents/LoadingButton";
@@ -9,42 +9,12 @@ import api from "@/redux/api";
 
 
 export default function BalanceSheetFiles() {
-  // const bsContext = useContext(BalanceSheetFilesContext);
   const [ hasDeleted, sethasDeleted ] = useState<boolean>(false);
-
-  // const loadFiles = async () => {  
-  //   bsContext!.setResponse({ data: null, loading: true, success: false, error: null });
-  //   sethasDeleted(false);
-  //   const folderInit = await initializeFolders("BALANCE_SHEET");
-
-  //   if (folderInit.success) {
-  //     const filesResponse = await getAllFilesInFolder(folderInit.data);
-  //     console.log(filesResponse.data)
-  //     bsContext!.setResponse({ data: filesResponse.data || null, loading: false, success: filesResponse.success, error: filesResponse.error });
-  //   } else {
-  //     bsContext!.setResponse({ data: null, loading: false, success: false, error: folderInit.error });
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (!bsContext?.response?.data) loadFiles();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (hasDeleted) {
-  //     loadFiles();
-  //   }
-  // }, [ hasDeleted ])
-
   const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFilesQuery();
 
   useEffect(() => {
     getFiles("BALANCE_SHEET")
-  }, [getFiles, hasDeleted])
-
-  console.log(api)
-
-  console.log(data)
+  }, [ getFiles, hasDeleted ])
 
   return (
     <main className="h-full relative">
@@ -83,17 +53,30 @@ interface ITableRowProps {
 
 function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
   const router = useRouter();
-  const [ fileName, setFileName ] = useState<string>(file?.name)
+  const [ fileName, setFileName ] = useState<string>(file?.name?.replace(".csv", ""))
   const [ isEditing, setIsEditing ] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement|null>(null);
 
   const [ deleteDocument, { isLoading, isSuccess }] = api.commonApis.useDeleteFileMutation();
+  const [ updateFileName, { isLoading: isUpdatingFile, isSuccess: fileNameUpdateSuccess }] = api.commonApis.useUpdateFileNameMutation();
 
   useEffect(() => {
     if (isSuccess) {
       sethasDeleted(!hasDeleted);
     }
-  }, [isSuccess])
+  }, [isSuccess]);
+
+  const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (!isEditing) {
+      inputRef.current?.focus();
+      setIsEditing(true);
+    } else {
+      setIsEditing(false)
+      updateFileName({ fileId: file.id, fileName: fileName });
+    }
+  };
+
 
   return (
     <tr onClick={() => router.push(file?.id)} className="border-b border-dashed cursor-pointer odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
@@ -101,10 +84,10 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
         <div className="">
           <input
             type="text"
-            value={`${fileName}`}
+            value={fileName}
             ref={inputRef}
             onFocus={() => setIsEditing(true)}
-            onBlur={() => setIsEditing(false)}
+            onBlur={() => !isEditing && setIsEditing(false)}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
             className="inline-block w-full bg-transparent outline-none py-2 h-full"
@@ -114,12 +97,16 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
       <td>{file?.size}Kb</td>
       <td>
         <div className="flex flex-row items-center gap-2">
-          <button
-            className="px-4 py-2 bg-teal-500 text-white rounded"
-            onClick={(e) => { e.stopPropagation(); inputRef.current?.focus()}}
+          <LoadingButton
+            loading={isUpdatingFile}
+            success={fileNameUpdateSuccess}
+            successResetDuration={1500}
+            successText="Sucessful"
+            className="px-4 !py-2 bg-violet-500 text-white rounded"
+            onClick={handleEdit}
           >
-            { (isEditing) ? "Save" : "Rename" }
-          </button>
+            { isEditing ? "Save" : "Rename" }
+          </LoadingButton>
           <LoadingButton
             loading={isLoading}
             className="px-4 !py-2 bg-red-600 text-white rounded"

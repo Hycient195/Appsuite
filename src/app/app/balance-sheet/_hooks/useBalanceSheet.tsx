@@ -20,8 +20,8 @@ export const defaultPage: IPage = {
   rowsToAdd: 1
 };
 
-export const useBalanceSheet = () => {
-  const [pages, setPages] = useState<IPage[]>([{ ...defaultPage, rows: [{ ...defaultRow }] }]);
+export const useBalanceSheet = (fileName?: string) => {
+  const [pages, setPages] = useState<IPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
   const [history, setHistory] = useState<IPage[][]>([]);
   const [future, setFuture] = useState<IPage[][]>([]);
 

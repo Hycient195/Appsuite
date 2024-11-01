@@ -8,9 +8,10 @@ import { usePathname } from "next/navigation";
 interface IProps {
   route: Array<INavRoute>,
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>
+  className?: string;
 }
 
-export const NavList = ({ route, setIsOpen }: IProps) => {
+export const NavList = ({ route, setIsOpen, className }: IProps) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const pathname = usePathname();
@@ -27,7 +28,7 @@ export const NavList = ({ route, setIsOpen }: IProps) => {
   }
   
   return (
-    <ul className="flex flex-col gap-y-3 mb-[2vh] mt-2">
+    <ul className={`flex flex-col gap-y-3 mb-[2vh] mt-2 ${className}`}>
       {
         route.map((item: INavRoute, index: number) => (
           <li key={index} className={`border-l- ${highlightActive(item.href) ? "border-l-[#FF4512]" : "border-l-white"}`}>

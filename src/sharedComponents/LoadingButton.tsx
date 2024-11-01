@@ -1,4 +1,4 @@
-import { MouseEventHandler, ReactNode, CSSProperties } from "react";
+import { MouseEventHandler, ReactNode, CSSProperties, useState, useEffect } from "react";
 
 type TProps = {
   children: ReactNode;
@@ -11,19 +11,36 @@ type TProps = {
   disabled?: boolean;
   style?: CSSProperties;
   accentColor?: string | null;
+  successResetDuration?: number;
 };
 
 export default function LoadingButton({
   children,
   loading,
   successText,
-  success,
+  success = false,
   type = "button",
   className = "",
   onClick,
   disabled = false,
   style,
+  successResetDuration
 }: TProps) {
+
+  const [ isSuccess, setIsSuccess ] = useState(success);
+
+  useEffect(() => {
+    if (success) {
+      setIsSuccess(success);
+    }
+    if (successResetDuration) {
+      const timeout = setTimeout(() => {
+        setIsSuccess(false);
+        clearTimeout(timeout);
+      }, successResetDuration);
+    }
+  }, [ success ]);
+
   return (
     <>
       <style>
@@ -59,7 +76,7 @@ export default function LoadingButton({
         onClick={onClick}
         className={`flex align-center group h-max max-h-m relative btn justify-center py-2 ${
           loading ? "cursor-progress" : ""
-        } ${className} ${success ? "!bg-green-500 !text-white" : ""}`}
+        } ${className} ${isSuccess ? "!bg-green-500 !text-white" : ""}`}
       >
         <div
           className={`${
@@ -67,7 +84,7 @@ export default function LoadingButton({
           } absolute left-[50%] translate-x-[-20px] h-[18px] w-[40px] top-0 bottom-0 my-auto`}
         ></div>
         <span className={`${loading ? "invisible" : ""} py-0.5 animate-fade-in`}>
-          {success && successText ? successText : children}
+          {isSuccess && successText ? successText : children}
         </span>
         <div
           className={`${
