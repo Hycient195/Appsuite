@@ -89,7 +89,7 @@ const DashboardNav = memo(() => {
                   <div className="flex flex-row w-max items-center gap-3 md:gap-4 lg:gap-5">
                     {
                       navRoutes.find(x => x.href === rootPath)?.subRoutes?.map((subRoute: ISubRoute) => (
-                        <button onClick={() => handleNavigateToSubSection(subRoute.href)} key={subRoute.href} className={`px- py-4 md:py-5 relative flex flex-row items-center gap-1  ${(pathname?.split(/\//g)[3] === subRoute?.href?.split(/\//g)[0]) ? "border-l-black" : "border-l-white"}`}>
+                        <button onClick={() => handleNavigateToSubSection(subRoute.href)} key={subRoute.href} className={`px- py-4 md:py-5 relative flex flex-row font-medium text-black/80 items-center gap-1  ${(pathname?.split(/\//g)[3] === subRoute?.href?.split(/\//g)[0]) ? "border-l-black" : "border-l-white"}`}>
                           <div className={`${(pathname?.split(/\//g)[3] === subRoute?.href?.split(/\//g)[0]) && "bg-black"} h-3.5 w-1 rounded-full`}></div>
                           {subRoute?.icon && subRoute?.icon}
                           {subRoute.text}

@@ -3,7 +3,7 @@ import React from 'react';
 const TermsOfService: React.FC = () => {
   return (
    <main className="bg-zinc-100 md:p-4">
-     <div className="container mx-auto bg-white border border-zinc-200 rounded mx-auto px-[clamp(16px,3%,40px)] py-8 max-w-screen-lg">
+     <div className="container mx-auto bg-white border border-zinc-200 rounded px-[clamp(16px,3%,40px)] py-8 max-w-screen-lg">
       <h1 className="text-3xl font-semibold mb-6 text-center">Terms of Service</h1>
       <div className="line"></div>
       <section className="mb-6">

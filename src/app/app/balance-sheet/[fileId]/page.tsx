@@ -107,21 +107,24 @@ const BalanceSheet: React.FC = () => {
 
   useEffect(() => {
     // Skip the effect on the first render
+    const newTimer: NodeJS.Timer|null = null;
+
     if (isFirstRender.current) {
       isFirstRender.current = false; // Set to false after first render
       return;
-    }
-
-    if (saveTimer) {
-      clearTimeout(saveTimer);
-    }
-    const newTimer = setTimeout(() => {
-      if (!isFirstRender.current && !isLoading) {
-        handleSaveFile();
+    } else {
+      if (saveTimer) {
+        clearTimeout(saveTimer);
       }
-    }, 5000);
-
-    setSaveTimer(newTimer);
+      const newTimer = setTimeout(() => {
+        if (!isFirstRender.current && !isLoading) {
+          handleSaveFile();
+        }
+        clearTimeout(newTimer);
+      }, 5000);
+  
+      setSaveTimer(newTimer);
+    }
 
     return () => {
       if (newTimer) {
