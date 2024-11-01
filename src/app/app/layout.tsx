@@ -91,7 +91,7 @@ function AppLayout({ children }: IProps) {
               </figure>
               <div className="flex flex-col gap-1 justify-evenly h-full">
                 <h4 className="font-medium text-zinc-700">{loggInUser?.given_name} {loggInUser?.family_name}</h4>
-                {/* <p className="text-zinc-400 text-xs leading-[1.7ch] font-light">Premium User</p> */}
+                <p className="text-zinc-400 text-xs leading-[1.7ch] font-light">{loggInUser?.email}</p>
               </div>
               {/* <button className="absolute top-0 right-0">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-6">

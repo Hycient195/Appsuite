@@ -6,6 +6,8 @@ import TableSkeleton from "@/sharedComponents/skeletons/TableSkeleton";
 import LoadingButton from "@/sharedComponents/LoadingButton";
 import { IBalanceSheetFile } from "../_types/types";
 import api from "@/redux/api";
+import TableEmpty from "@/sharedComponents/emptyState/TableEmpty";
+import Link from "next/link";
 
 
 export default function BalanceSheetFiles() {
@@ -33,9 +35,21 @@ export default function BalanceSheetFiles() {
               ? (
                 <TableSkeleton numCols={3} numRows={28} />
               ) : (
-                data && data?.map((file, index) => (
-                  <TableRow key={`balance-sheet-file-${index}`} file={file} hasDeleted={hasDeleted} sethasDeleted={sethasDeleted} />
-                ))
+                data && (
+                  data?.length === 0
+                  ? (
+                    <TableEmpty colSpan={3} >
+                      <div className="flex flex-col gap-3">
+                        <p className="">No records to display.</p>
+                        <Link href="create" className="btn bg-black/90 w-max mx-auto text-white">Create Sheet</Link>
+                      </div>
+                    </TableEmpty>
+                  ) : (
+                    data?.map((file, index) => (
+                      <TableRow key={`balance-sheet-file-${index}`} file={file} hasDeleted={hasDeleted} sethasDeleted={sethasDeleted} />
+                    ))
+                  )
+                )
               )
             }
           </tbody>
@@ -73,7 +87,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
       setIsEditing(true);
     } else {
       setIsEditing(false)
-      updateFileName({ fileId: file.id, fileName: fileName });
+      updateFileName({ fileId: file.id, fileName: `${fileName}.csv` });
     }
   };
 

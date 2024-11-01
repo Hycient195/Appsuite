@@ -44,9 +44,10 @@ const SignIn = () => {
       setCookie(null, "asAccessToken", codeResponse.access_token, { path: "/", maxAge: (60 * 60 * 48) });
     },
     onError: onSignInError,
-    scope: "profile email",
+    scope: "profile email https://www.googleapis.com/auth/drive.file",
+    include_granted_scopes: true,
     // access_type: "", // Ensures refresh token is included in the response.
-    // prompt: "consent" // Ask the user to re-authorize to get a refresh token
+    prompt: "consent" // Ask the user to re-authorize to get a refresh token
   })
 
   return (
