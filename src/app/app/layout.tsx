@@ -78,7 +78,7 @@ function AppLayout({ children }: IProps) {
               <h2 className="text-xl font-sans font-semibold tracking-wide">APP SUITE</h2>
             </Link>
             <h4 className="text-neutral-400 text-xs mt-[2vh]">PRIMARY</h4>
-            <NavList route={navRoutes} />
+            <NavList route={navRoutes.map(x => { return { ...x, href: `/app/${x.href}`}})} />
             <h4 className="text-neutral-400 text-xs mt-[2vh]">COMMON</h4>
             <NavList route={commonRoutes} />
             <NavList className="md:hidden" route={signOutMobileRoute} />
@@ -90,7 +90,7 @@ function AppLayout({ children }: IProps) {
                 { loggInUser?.picture && <Image src={loggInUser?.picture} fill className="object-cover object-center" alt={`${loggInUser?.given_name} ${loggInUser?.family_name}`} /> }
               </figure>
               <div className="flex flex-col gap-1 justify-evenly h-full">
-                <h4 className="font-medium text-zinc-700">{loggInUser?.given_name} {loggInUser?.family_name}</h4>
+                <h4 className="font-medium text-zinc-700">{loggInUser?.name}</h4>
                 <p className="text-zinc-400 text-xs leading-[1.7ch] font-light">{loggInUser?.email}</p>
               </div>
               {/* <button className="absolute top-0 right-0">

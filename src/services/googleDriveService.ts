@@ -1,6 +1,7 @@
 "use server";
 
 import { ICreateFileRequest } from '@/types/shared.types';
+import { getNewAccessToken } from '@/utils/getRefreshToken';
 import { google } from 'googleapis';
 import { cookies } from 'next/headers';
 
@@ -13,7 +14,13 @@ const auth = new google.auth.OAuth2({
 
 async function getDriveService() {
   const accessToken = (await cookies()).get("asAccessToken")?.value;
-  auth.setCredentials({ access_token: accessToken });
+  if (accessToken) {
+    auth.setCredentials({ access_token: accessToken });
+  } else {
+    const refreshToken = (await cookies()).get("asRefreshToken")?.value;
+    const newAccessToken = (await getNewAccessToken(refreshToken as string));
+    auth.setCredentials({ access_token: newAccessToken?.access_token });
+  }
   return google.drive({ version: "v3", auth});
 }
 

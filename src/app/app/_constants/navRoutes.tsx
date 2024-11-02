@@ -1,5 +1,6 @@
 import authSlice from "@/redux/slices/auth.slice";
 import sharedSlice from "@/redux/slices/shared.slice";
+import { googleLogout } from "@react-oauth/google";
 import { destroyCookie } from "nookies";
 
 export interface ISubRoute {
@@ -22,7 +23,9 @@ const handleSignOut = (): void => {
   window.location.assign("/sign-in");
   authSlice.actions.clearCredentials();
   destroyCookie({ }, "asAccessToken", { path: "/"});
+  destroyCookie({ }, "asRefreshToken", { path: "/"});
   destroyCookie({ }, "asUserProfile", { path: "/"});
+  googleLogout();
 };
 
 export const signOutMobileRoute: INavRoute[] = [

@@ -8,9 +8,12 @@ import { IBalanceSheetFile } from "../_types/types";
 import api from "@/redux/api";
 import TableEmpty from "@/sharedComponents/emptyState/TableEmpty";
 import Link from "next/link";
+import { parseCookies } from "nookies";
 
 
 export default function BalanceSheetFiles() {
+  const cookieAccessToken = parseCookies().asAccessToken;
+
   const [ hasDeleted, sethasDeleted ] = useState<boolean>(false);
   const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFilesQuery();
 
@@ -31,25 +34,35 @@ export default function BalanceSheetFiles() {
           </thead>
           <tbody>
             {
-              isLoading
+              cookieAccessToken
+              ? (
+                isLoading
               ? (
                 <TableSkeleton numCols={3} numRows={28} />
-              ) : (
-                data && (
-                  data?.length === 0
-                  ? (
-                    <TableEmpty colSpan={3} >
-                      <div className="flex flex-col gap-3">
-                        <p className="">No records to display.</p>
-                        <Link href="create" className="btn bg-black/90 w-max mx-auto text-white">Create Sheet</Link>
-                      </div>
-                    </TableEmpty>
-                  ) : (
-                    data?.map((file, index) => (
-                      <TableRow key={`balance-sheet-file-${index}`} file={file} hasDeleted={hasDeleted} sethasDeleted={sethasDeleted} />
-                    ))
+                ) : (
+                  data && (
+                    data?.length === 0
+                    ? (
+                      <TableEmpty colSpan={3} >
+                        <div className="flex flex-col gap-3">
+                          <p className="">No records to display. {!cookieAccessToken && "Sign in"}</p>
+                          <Link href={!cookieAccessToken ? "/sign-in" : "create"} className="btn bg-black/90 w-max mx-auto text-white">{!cookieAccessToken ? "Sign in" : "Create Sheet"}</Link>
+                        </div>
+                      </TableEmpty>
+                    ) : (
+                      data?.map((file, index) => (
+                        <TableRow key={`balance-sheet-file-${index}`} file={file} hasDeleted={hasDeleted} sethasDeleted={sethasDeleted} />
+                      ))
+                    )
                   )
                 )
+              ) : (
+                <TableEmpty colSpan={3} >
+                  <div className="flex flex-col gap-3">
+                    <p className="">No records to display. {!cookieAccessToken && "Sign in"}</p>
+                    <Link href={!cookieAccessToken ? "/sign-in" : "create"} className="btn bg-black/90 w-max mx-auto text-white">{!cookieAccessToken ? "Sign in" : "Create Sheet"}</Link>
+                  </div>
+                </TableEmpty>
               )
             }
           </tbody>

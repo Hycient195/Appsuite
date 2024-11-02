@@ -121,7 +121,7 @@ const BalanceSheet: React.FC = () => {
           handleSaveFile();
         }
         clearTimeout(newTimer);
-      }, 5000);
+      }, 4000);
   
       setSaveTimer(newTimer);
     }

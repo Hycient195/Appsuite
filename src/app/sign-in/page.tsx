@@ -7,14 +7,13 @@ import { TokenResponse, useGoogleLogin } from "@react-oauth/google"
 import { GoogleIcon, LogoIcon } from "@/sharedComponents/CustomIcons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getNewAccessToken, getRefreshToken, IGetRefreshTokenResponse } from "@/utils/getRefreshToken";
 
 
 const SignIn = () => {
   const router = useRouter();
-  const [ signInResponse, setSignInResponse ] = useState<Omit<TokenResponse, "error" | "error_description" | "error_uri">>();
-  const[ profile, setProfile ] = useState();
 
-
+  const [ signInResponse, setSignInResponse ] = useState<IGetRefreshTokenResponse>();
   const onSignInError = (err: Pick<TokenResponse, "error" | "error_description" | "error_uri">) => {
     console.log(err)
   };
@@ -30,8 +29,7 @@ const SignIn = () => {
           }
       })
       .then((res) => {
-          setProfile(res.data);
-          setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 48) });
+          setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
           window.location.assign("/app/balance-sheet/create");
       })
       .catch((err) => console.log(err));
@@ -39,16 +37,27 @@ const SignIn = () => {
   }, [ signInResponse ]);
 
   const handleSignIn = useGoogleLogin({
-    onSuccess: (codeResponse) => {
-      setSignInResponse(codeResponse);
-      setCookie(null, "asAccessToken", codeResponse.access_token, { path: "/", maxAge: (60 * 60 * 48) });
+    onSuccess: async (codeResponse) => {
+      console.log(codeResponse)
+      const res = (await getRefreshToken(codeResponse));
+      if (res) {
+        setCookie(null, "asRefreshToken", res.refresh_token, { path: "/", maxAge: (60 * 60 * 24 * 7) });
+        setCookie(null, "asAccessToken", res.access_token, { path: "/", maxAge: res.expires });
+      }
+      setSignInResponse(res);
     },
     onError: onSignInError,
+    flow: "auth-code",
     scope: "profile email https://www.googleapis.com/auth/drive.file",
     include_granted_scopes: true,
     // access_type: "", // Ensures refresh token is included in the response.
-    prompt: "consent" // Ask the user to re-authorize to get a refresh token
-  })
+    // prompt: "consent" // Ask the user to re-authorize to get a refresh token
+  });
+
+  const getDummyRefreshTokenForPreviewWithoutSignIn = (): void => {
+    setCookie(null, "asRefreshToken", "DUMMY_PREVIEW_REFRESH_TOKEN", { path: "/", maxAge: (60 * 60 * 24 * 2) });
+    window.location.assign("/app/balance-sheet/null-id");
+  }
 
   return (
     <main className="h-screen bg-zinc-50 px-4">
@@ -69,7 +78,8 @@ const SignIn = () => {
             <div className="flex justify-center items-center flex-col gap-3">
               {/* <LoadingButton loading={isLoading} className="!px-10 rounded-md shadow !py-2.5 text-sl bg-primary text-white">Sign In</LoadingButton> */}
               <button onClick={() => handleSignIn()} className="btn bg-black text-white flex items-center gap-1"><GoogleIcon /> Sign in with google</button>
-              <button onClick={() => router.push("/app/balance-sheet/null-id")} className="btn !shadow-none !drop-shadow-none bg-white border border-zinc-300 text-zinc-500">Preview without sign in</button>
+              <button onClick={getDummyRefreshTokenForPreviewWithoutSignIn} className="btn !shadow-none !drop-shadow-none bg-white border border-zinc-300 text-zinc-500">Preview without sign in</button>
+              {/* <button onClick={iGet} className="btn !shadow-none !drop-shadow-none bg-white border border-zinc-300 text-zinc-500">Preview without sign in</button> */}
               <p className="text-zinc-400 text-center text-sm">Without signing in, all data would be lost when the page is refreshed</p>
             </div>
             <div className="line"></div>

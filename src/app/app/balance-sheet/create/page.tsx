@@ -7,6 +7,7 @@ import {  useEffect, useState } from "react";
 import { defaultPage, useBalanceSheet } from "../_hooks/useBalanceSheet";
 import api from "@/redux/api";
 import { useRouter } from "next/navigation";
+import { parseCookies } from "nookies";
 
 export default function CreateBalanceSheet() {
   const router = useRouter();
@@ -15,7 +16,8 @@ export default function CreateBalanceSheet() {
 
   const { generateCSVData } = useBalanceSheet();
 
-  const [ createFile, { isLoading, isSuccess, data }] = api.commonApis.useCreateFileMutation()
+  const [ createFile, { isLoading, isSuccess, isError, data }] = api.commonApis.useCreateFileMutation();
+  const cookieAccessToken = parseCookies().asAccessToken;
 
   const handleCreateFile = async () => {
     const pageDefault = [{ ...defaultPage, title: fileName }].map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
@@ -31,6 +33,8 @@ export default function CreateBalanceSheet() {
     }
   }, [ isSuccess, data?.data?.id, router ]);
 
+  console.log(isError)
+
   return (
     <main className="h-full">
       <div className="bg-whit border border-zinc-200 rounded-md min-h-full flex items-center justify-center">
@@ -39,6 +43,9 @@ export default function CreateBalanceSheet() {
             <FormText placeholder="Enter file name" value={fileName} onChange={(e) => setFileName(e.target.value)} />
             <SuccessBlock className="animate-fade-in" isSuccess={isSuccess}>
               File Created
+            </SuccessBlock>
+            <SuccessBlock className="animate-fade-in !bg-red-100 !text-red-600" isSuccess={isError}> {/* Success block but used for error */}
+            {!cookieAccessToken ? "Sign in to create file" : "Unable to create file"}
             </SuccessBlock>
           <LoadingButton loading={isLoading} onClick={handleCreateFile} className="btn bg-black text-white">Create File</LoadingButton>
         </div>

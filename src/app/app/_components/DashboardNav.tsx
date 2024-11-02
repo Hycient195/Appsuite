@@ -11,6 +11,7 @@ import slices from "@/redux/slices";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { googleLogout } from "@react-oauth/google";
 // import { ILoggedInUser } from "@/types/shared.types";
 
 const DashboardNav = memo(() => {
@@ -47,7 +48,9 @@ const DashboardNav = memo(() => {
     window.location.assign("/sign-in");
     authSlice.actions.clearCredentials();
     destroyCookie({ }, "asAccessToken", { path: "/"});
+    destroyCookie({ }, "asRefreshToken", { path: "/"});
     destroyCookie({ }, "asUserProfile", { path: "/"});
+    googleLogout();
   };
 
   return (
