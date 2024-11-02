@@ -29,9 +29,9 @@ export const getRefreshToken = async (
   const payload = {
     grant_type: 'authorization_code',
     code: codeResponse.code,
-    client_id: '701915377258-ngs8l1g749itbjp0ean81fk8rjhn1k1k.apps.googleusercontent.com',
-    client_secret: "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",
-    redirect_uri: 'http://localhost:3000',
+    client_id: process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID,
+    client_secret: process.env.NEXT_PUBLIE_GOOGLE_CLIENT_SECRET,
+    redirect_uri: process.env.NODE_ENV === "production" ? "https://app-suite.vercel.app" : 'http://localhost:3000',
   };
 
   try {
@@ -50,8 +50,8 @@ export const getNewAccessToken = async (refreshToken: string) => {
   const payloadForAccessToken = {
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
-    client_id: '701915377258-ngs8l1g749itbjp0ean81fk8rjhn1k1k.apps.googleusercontent.com',
-    client_secret: "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"
+    client_id: process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID,
+    client_secret: process.env.NEXT_PUBLIE_GOOGLE_CLIENT_SECRET
   };
 
   try {
