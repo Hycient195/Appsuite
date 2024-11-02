@@ -64,7 +64,7 @@ export const getNewAccessToken = async (refreshToken: string) => {
         },
       }
     );
-    setCookie(null, "asAccessToken", res.data.access_token, { path: "/", maxAge: res.data.expires });
+    setCookie(null, "asAccessToken", res.data.access_token, { path: "/", maxAge: (60 * 60) });
     console.log(res.data)
     return res.data
   } catch (err) {

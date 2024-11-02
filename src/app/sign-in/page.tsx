@@ -42,7 +42,7 @@ const SignIn = () => {
       const res = (await getRefreshToken(codeResponse));
       if (res) {
         setCookie(null, "asRefreshToken", res.refresh_token, { path: "/", maxAge: (60 * 60 * 24 * 7) });
-        setCookie(null, "asAccessToken", res.access_token, { path: "/", maxAge: res.expires });
+        setCookie(null, "asAccessToken", res.access_token, { path: "/", maxAge: (60 * 60) });
       }
       setSignInResponse(res);
     },
