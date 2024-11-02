@@ -14,13 +14,16 @@ const auth = new google.auth.OAuth2({
 
 async function getDriveService() {
   const accessToken = (await cookies()).get("asAccessToken")?.value;
-  if (accessToken) {
-    auth.setCredentials({ access_token: accessToken });
-  } else {
-    const refreshToken = (await cookies()).get("asRefreshToken")?.value;
-    const newAccessToken = (await getNewAccessToken(refreshToken as string));
-    auth.setCredentials({ access_token: newAccessToken?.access_token });
-  }
+  auth.setCredentials({ access_token: accessToken });
+  // if (accessToken) {
+  //   auth.setCredentials({ access_token: accessToken });
+  // } else {
+  //   const refreshToken = (await cookies()).get("asRefreshToken")?.value;
+  //   const newAccessToken = (await getNewAccessToken(refreshToken as string));
+  //   console.log(newAccessToken)
+
+  //   auth.setCredentials({ access_token: newAccessToken?.access_token });
+  // }
   return google.drive({ version: "v3", auth});
 }
 

@@ -1,20 +1,33 @@
-import {  createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {  BaseQueryFn, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import GLOBAL_BASEURL from "./_globalBaseURL";
 import { ICreateFileRequest, IUpdateFileRequest } from "@/types/shared.types";
 import { IBalanceSheetFile } from "@/app/app/balance-sheet/_types/types";
+import { parseCookies, setCookie } from "nookies";
+import { getNewAccessToken } from "@/utils/getRefreshToken";
 // import { parseCookies } from "nookies";
 
+
+const baseQueryWithAuth: BaseQueryFn = async (args, api, extraOptions) => {
+  const cookies = parseCookies();
+  const accessToken = cookies?.asAccessToken;
+  if (!accessToken) {
+    const refreshToken = cookies.asRefreshToken; 
+    const tokenResponse = (await getNewAccessToken(refreshToken as string));
+    if (tokenResponse) {
+      setCookie(null, "asAccessToken", tokenResponse.access_token, { path: "/", maxAge: (60 * 60) });
+      return { error: { status: 200, data: "New access token created" } }
+    } else {
+      return { error: { status: 400, data: "Unable to generate access token" } }
+    }
+  }
+  const baseQuery = fetchBaseQuery({ baseUrl: GLOBAL_BASEURL });
+  return baseQuery(args, api, extraOptions);
+};
 
 const api = createApi({
   reducerPath: "commonApis",
   tagTypes: [ "files" ],
-  baseQuery: fetchBaseQuery({
-    baseUrl: GLOBAL_BASEURL,
-    
-    // headers: {
-    //   Authorization:`Bearer ${parseCookies().pftoken}`
-    // }
-  }),
+  baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     createFile: builder.mutation<any, ICreateFileRequest>({
       query: (formData) => ({

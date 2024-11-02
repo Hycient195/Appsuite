@@ -23,9 +23,7 @@ export interface IGetAccessTokenResponse {
   token_type: string;
 }
 
-export const getRefreshToken = async (
-  codeResponse: CodeResponse,
-) => {
+export const getRefreshToken = async ( codeResponse: CodeResponse ) => {
   const payload = {
     grant_type: 'authorization_code',
     code: codeResponse.code,
@@ -64,8 +62,6 @@ export const getNewAccessToken = async (refreshToken: string) => {
         },
       }
     );
-    setCookie(null, "asAccessToken", res.data.access_token, { path: "/", maxAge: (60 * 60) });
-    console.log(res.data)
     return res.data
   } catch (err) {
     console.error('Error fetching new access token:', err);

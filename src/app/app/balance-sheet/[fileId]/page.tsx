@@ -32,13 +32,13 @@ const BalanceSheet: React.FC = () => {
     }
   }, [ tableContainerRef ])
 
-  window?.addEventListener("resize", () => {
-    if (tableContainerRef.current) {
-      setTableWidth(tableContainerRef.current.clientWidth)
-    }
-  })
-
-
+  if (typeof window !== "undefined") {
+    window?.addEventListener("resize", () => {
+      if (tableContainerRef.current) {
+        setTableWidth(tableContainerRef.current.clientWidth)
+      }
+    })
+  }
 
   const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Audit report on property.pdf`})
   const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` })
@@ -148,17 +148,18 @@ const BalanceSheet: React.FC = () => {
               <div key={pageIndex} ref={(el: HTMLDivElement) => ((singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el)} className="mb-8 w-full  max-w-[1080px] md:rounded mx-auto bg-white px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300">
                 <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
                   {
-                    isLoading
+                    !isLoading
                     ? (
-                      <>
-                        <p className="invisib text-3xl text-zinc-400 animate-pulse outline-none font-bold w-full text-center">PAGE TITLE</p>
-                        <br />
-                      </>
-                    ) : (
                       <div className="relative h-max animate-fade-in">
                         <p className="invisib text-3xl outline-none font-bold w-full text-center">{page.title}</p>
                         <textarea value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} autoFocus className="text-3xl resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 outline-none font-bold w-full text-center" /> <br />
                       </div>
+                      
+                    ) : (
+                      <>
+                        <p className="invisib text-3xl text-zinc-400 animate-pulse outline-none font-bold w-full text-center">PAGE TITLE</p>
+                        <br />
+                      </>
                     )
                   }
                   
