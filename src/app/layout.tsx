@@ -29,12 +29,10 @@ export default function RootLayout({
     <html lang="en">
       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID as string}>
         <ReduxProvider>
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-          >
+          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} >
             {children}
-        </body>
-      </ReduxProvider>
+          </body>
+        </ReduxProvider>
       </GoogleOAuthProvider>
     </html>
   );

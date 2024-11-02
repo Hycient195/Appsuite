@@ -24,6 +24,55 @@ const baseQueryWithAuth: BaseQueryFn = async (args, api, extraOptions) => {
   return baseQuery(args, api, extraOptions);
 };
 
+
+// const baseQuery = fetchBaseQuery({ baseUrl: GLOBAL_BASEURL });
+
+// async function getAccessToken(): Promise<string | null> {
+//   const cookies = parseCookies();
+//   let accessToken = cookies.asAccessToken;
+
+//   if (!accessToken) {
+//     const refreshToken = cookies.asRefreshToken;
+//     if (refreshToken) {
+//       const tokenResponse = await getNewAccessToken(refreshToken);
+//       if (tokenResponse) {
+//         accessToken = tokenResponse.access_token;
+//         setCookie(null, "asAccessToken", accessToken, {
+//           path: "/",
+//           maxAge: 60 * 60, // 1 hour in seconds
+//         });
+//       } else {
+//         throw new Error("Unable to generate access token");
+//       }
+//     } else {
+//       throw new Error("No refresh token available");
+//     }
+//   }
+
+//   return accessToken;
+// }
+
+// const baseQueryWithAuth: BaseQueryFn = async (args, api, extraOptions) => {
+//   try {
+//     const cookies = parseCookies();
+//   let accessToken = cookies.asAccessToken;
+//     console.log("Fired")
+//     console.log(accessToken)
+//     if (accessToken) {
+
+//       // Pass the modified headers to the base queryreturn baseQuery(args, api, extraOptions);
+//       return baseQuery(args, api, extraOptions);
+//     } else {
+//       // If we somehow have no access token, return an error
+//       return { error: { status: 403, data: "Access token missing" } };
+//     }
+//   } catch (error: any) {
+//     console.log("error Fired")
+//     // Handle any errors that occur during the token retrieval
+//     return { error: { status: 400, data: error?.message } };
+//   }
+// };
+
 const api = createApi({
   reducerPath: "commonApis",
   tagTypes: [ "files" ],

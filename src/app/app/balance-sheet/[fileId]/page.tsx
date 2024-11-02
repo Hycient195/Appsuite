@@ -147,7 +147,7 @@ const BalanceSheet: React.FC = () => {
               {/* @ts-ignore */}
               <div key={pageIndex} ref={(el: HTMLDivElement) => ((singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el)} className="mb-8 w-full  max-w-[1080px] md:rounded mx-auto bg-white px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300">
                 <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
-                  {
+                  {/* {
                     !isLoading
                     ? (
                       <div className="relative h-max animate-fade-in">
@@ -161,7 +161,11 @@ const BalanceSheet: React.FC = () => {
                         <br />
                       </>
                     )
-                  }
+                  } */}
+                  <div className="relative h-max">
+                    <p className="invisib text-3xl outline-none font-bold w-full text-center">{page.title}</p>
+                    <textarea value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} autoFocus className="text-3xl resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 outline-none font-bold w-full text-center" /> <br />
+                  </div>
                   
                   <div className="relative">
                     <p className="text-center invisible outline-none text-lg text-black/80 font-semibold w-full mb-4">{page.subTitle}</p>
@@ -172,15 +176,14 @@ const BalanceSheet: React.FC = () => {
                     minCellWidth={100}
                     tableContent={
                       <tbody ref={tbodyRef} className=''>
-                      {
-                        isLoading
-                        // true
-                        ? (
-                          <TableSkeleton numCols={5} className='py-1 px-2 !border-zinc-300' numRows={18} />
-                        ) : (
+                        {
+                          isLoading
+                          ? (
+                            <TableSkeleton numCols={5} className={`py-1 px-2 !border-zinc-300`} numRows={18} />
+                          ) : (
                           <>
                             {page.rows.map((row, rowIndex) => (
-                              <tr key={rowIndex} className='relative [&>*]:animate-fade-in group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden'>
+                              <tr key={rowIndex} className={`relative group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden`}>
                                 <td  className="  items-center relative ">
                                   <div style={{ width: `${tableWidth}px`}} className="bg-transparen bg-green-500 opacity-0 hover:opacity-100 !border-none group/line absolute z-[2] left-[-1px] bottom-0 translate-y-[4px] cursor-pointer h-1 rounded">
                                     <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="bg-green-500 hidden duration-300 group-hover/line:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-2 items-center justify-center font-semibold">+</button>
@@ -235,8 +238,9 @@ const BalanceSheet: React.FC = () => {
                               </tr>
                             ))}
                           </>
-                        )
-                      }
+                          )
+                        }
+                      
                       {/* Total Credit, Debit, and Final Balance Row */}
                       <tr>
                         <td className="px-1.5 tracking-wide py-2 text-right"/>
@@ -265,7 +269,7 @@ const BalanceSheet: React.FC = () => {
                     </button>
                     <button
                       className="px-4 py-2 bg-green-500  text-white rounded"
-                      onClick={() =>  createDocumentPDF(pageIndex, page.title)}
+                      onClick={() => !isLoading && createDocumentPDF(pageIndex, page.title)}
                     >
                       Download as PDF
                     </button>

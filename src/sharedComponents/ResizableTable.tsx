@@ -99,14 +99,14 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
           <thead className="w-full">
             <tr className=" select-none  w-full">
               {columns.map(({ ref, text }, i) => (
-                <th ref={ref} key={text} className="font-bold text-center py-2">
+                <td ref={ref} key={text} className="font-bold text-center py-2">
                   <span className=" whitespace-nowrap overflow-ellipsis overflow-hidden block">{text}</span>
                   <div
                     style={{ height: tableHeight }}
                     onMouseDown={() => mouseDown(i)}
                     className={`resize-handle block hover:bg-[#ccc] absolute cursor-col-resize w-[3px] right-0 top-0 z-[1] border-r-2 !border-r-transparent  ${activeIndex === i ? "!border-r !border-r-[#517ea5]" : "idle"}`}
                   />
-                </th>
+                </td>
               ))}
             </tr>
           </thead>

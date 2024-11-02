@@ -33,8 +33,6 @@ export default function CreateBalanceSheet() {
     }
   }, [ isSuccess, data?.data?.id, router ]);
 
-  console.log(isError)
-
   return (
     <main className="h-full">
       <div className="bg-whit border border-zinc-200 rounded-md min-h-full flex items-center justify-center">
