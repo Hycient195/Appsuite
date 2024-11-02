@@ -18,7 +18,7 @@ export default function BalanceSheetFiles() {
   const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFilesQuery();
 
   useEffect(() => {
-    getFiles("BALANCE_SHEET")
+    getFiles("BALANCE_SHEET");
   }, [ getFiles, hasDeleted ])
 
   return (
