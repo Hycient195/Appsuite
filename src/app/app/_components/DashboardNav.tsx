@@ -120,7 +120,7 @@ const DashboardNav = memo(() => {
         <li id="saveIconPosition" className="">
           {/* Save Icon is inserted using react portal teleportation */}
         </li>
-        <li className="bg-zinc-100 shadow-sm p-1 rounded-full flex flex-row items-center">
+        <li className="bg-zinc-100 max-md:hidden shadow-sm p-1 rounded-full flex flex-row items-center">
           <Badge className="m-l-2" badgeContent={0} color="error">
             <button onClick={showNotifications} className="h-[40px] w-[40px] rounded-full  flex items-center justify-center border bg-white border-slate-400/60 shado overflow-hidden">
               <svg width="15" height="19" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">

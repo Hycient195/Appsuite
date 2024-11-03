@@ -7,7 +7,8 @@ import { TokenResponse, useGoogleLogin } from "@react-oauth/google"
 import { GoogleIcon, LogoIcon } from "@/sharedComponents/CustomIcons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getNewAccessToken, getRefreshToken, IGetRefreshTokenResponse } from "@/utils/getRefreshToken";
+import { getRefreshToken, IGetRefreshTokenResponse } from "@/utils/getRefreshToken";
+import { ILoggedInUser } from "@/types/shared.types";
 
 
 const SignIn = () => {
@@ -18,19 +19,27 @@ const SignIn = () => {
     console.log(err)
   };
 
+  // console.log(data)
+
   useEffect(() => {
     const cookieAccessToken = parseCookies().asAccessToken;
     if (signInResponse) {
       axios
-      .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${signInResponse.access_token??cookieAccessToken}`, {
+      .get<ILoggedInUser>(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${signInResponse.access_token??cookieAccessToken}`, {
           headers: {
               Authorization: `Bearer ${signInResponse.access_token??cookieAccessToken}`,
               Accept: 'application/json'
           }
       })
       .then((res) => {
-          setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
-          window.location.assign("/app/balance-sheet/create");
+        axios.post<ILoggedInUser>("/api/user/sign-in", res.data)
+          .then((signInRes) => {
+            setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
+            window.location.assign("/app/balance-sheet/create");
+          }).catch(() => {
+            setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
+            window.location.assign("/app/balance-sheet/create");
+          })
       })
       .catch((err) => console.log(err));
     }
@@ -38,7 +47,6 @@ const SignIn = () => {
 
   const handleSignIn = useGoogleLogin({
     onSuccess: async (codeResponse) => {
-      console.log(codeResponse)
       const res = (await getRefreshToken(codeResponse));
       if (res) {
         setCookie(null, "asRefreshToken", res.refresh_token, { path: "/", maxAge: (60 * 60 * 24 * 7) });

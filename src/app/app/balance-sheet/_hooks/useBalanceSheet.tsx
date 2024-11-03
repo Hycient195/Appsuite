@@ -11,8 +11,10 @@ const defaultRow: IRow = {
 };
 
 export const defaultPage: IPage = {
-  title: "STATEMENT OF ACCOUNT",
-  subTitle: "FROM PERIOD OF 1ST <MONTH> <YEAR> TO 31TH <MONTH> <YEAR>",
+  // title: "STATEMENT OF ACCOUNT",
+  // subTitle: "FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>",
+  title: "",
+  subTitle: "",
   rows: [{ ...defaultRow }], // Create a fresh copy for each default page
   totalCredit: 0,
   totalDebit: 0,
@@ -126,6 +128,8 @@ export const useBalanceSheet = (fileName?: string) => {
         // Set balance based on the previous page's final balance if it exists
         previousBalance = pages[pageIndex - 1]?.finalBalance || 0;
         row.balance = previousBalance;
+        row.credit = "0";
+        row.debit = "0"
       } else {
         // Calculate balance based on credit and debit
         row.balance =

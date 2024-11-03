@@ -45,7 +45,7 @@ const DraggablePage: React.FC<IProps> = ({ pageIndex, movePage, children }) => {
       {children}
       
       {/* Drag handle at the top right */}
-      <div className="absolute top-4 right-4 cursor-move" ref={drag as unknown as LegacyRef<HTMLDivElement>}>
+      <div className="noExport absolute top-3 right-4 cursor-move" ref={drag as unknown as LegacyRef<HTMLDivElement>}>
         <svg
           className="w-6 h-6 text-gray-500"
           fill="none"

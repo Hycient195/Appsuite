@@ -1,6 +1,6 @@
-import {  BaseQueryFn, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { BaseQueryFn, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import GLOBAL_BASEURL from "./_globalBaseURL";
-import { ICreateFileRequest, IUpdateFileRequest } from "@/types/shared.types";
+import { ICreateFileRequest, ILoggedInUser, IUpdateFileRequest } from "@/types/shared.types";
 import { IBalanceSheetFile } from "@/app/app/balance-sheet/_types/types";
 import { parseCookies, setCookie } from "nookies";
 import { getNewAccessToken } from "@/utils/getRefreshToken";
@@ -75,9 +75,18 @@ const baseQueryWithAuth: BaseQueryFn = async (args, api, extraOptions) => {
 
 const api = createApi({
   reducerPath: "commonApis",
-  tagTypes: [ "files" ],
+  tagTypes: [ "files", "user" ],
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
+    signInUser: builder.mutation<any, ILoggedInUser>({
+      query: (formData) => ({
+        url: "api/user/sign-in",
+        method: "POST",
+        body: formData
+      }),
+      invalidatesTags: () => [{ type: "user" }]
+    }),
+
     createFile: builder.mutation<any, ICreateFileRequest>({
       query: (formData) => ({
         url: "api/google-drive/file",
