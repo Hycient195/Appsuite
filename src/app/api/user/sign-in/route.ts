@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       ...loggedInUser,
       modules: {
         BALANCE_SHEET: { preferences: {} },
-        // INVOICE_GENERATOR: { preferences: {} },
+        INVOICE_GENERATOR: { preferences: {} },
       },
       createdAt: new Date(),
       updatedAt: new Date()

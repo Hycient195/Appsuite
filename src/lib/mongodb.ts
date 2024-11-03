@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.NEXT_PUBLIC_MONGODB_URI as string;
+// console.log(MONGODB_URI)
 // const MONGODB_URI = "mongodb://localhost:27017/?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000";
 
 if (!MONGODB_URI) {

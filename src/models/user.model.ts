@@ -32,6 +32,7 @@ const UserSchema = new Schema<IUserModelDocument>({
   picture: { type: String, required: true },
   modules: {
     BALANCE_SHEET: { preferences: { type: Schema.Types.Mixed, default: {} } },
+    INVOICE_GENERATOR: { preferences: { type: Schema.Types.Mixed, default: {} } },
   },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

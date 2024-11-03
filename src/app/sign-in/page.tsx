@@ -32,13 +32,14 @@ const SignIn = () => {
           }
       })
       .then((res) => {
+        console.log(res.data)
         axios.post<ILoggedInUser>("/api/user/sign-in", res.data)
           .then((signInRes) => {
             setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
-            window.location.assign("/app/balance-sheet/create");
+            // window.location.assign("/app/balance-sheet/create");
           }).catch(() => {
             setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
-            window.location.assign("/app/balance-sheet/create");
+            // window.location.assign("/app/balance-sheet/create");
           })
       })
       .catch((err) => console.log(err));
