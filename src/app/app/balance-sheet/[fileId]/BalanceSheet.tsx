@@ -185,13 +185,13 @@ const BalanceSheet: React.FC<{pagesFromServer: IPage[], isLoggedIn: boolean, loa
                     )
                   } */}
                   <div className="relative h-max mb-2">
-                    <p className="invisib py-2 text-3xl border-2 border-white outline-none font-bold w-full text-center">{page.title}<span className="invisible">.</span></p>
-                    <textarea value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='TITLE HERE...' autoFocus className="noExport text-3xl py-2 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 outline-none border-2 border-zinc-300/80 font-bold w-full text-center" />
+                    <p className="invisib py-1 text-3xl border-2 border-white outline-none font-bold w-full text-center">{page.title}<span className="invisible">.</span></p>
+                    <textarea value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='TITLE HERE...' autoFocus className="noExport text-3xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 outline-none border-2 border-zinc-300/80 font-bold w-full text-center" />
                   </div>
                   
-                  <div className="relative">
-                    <p className="text-center py-1 border-2 border-white invisibl outline-none text-lg text-black/80 font-semibold w-full mb-4">{page.subTitle}<span className="invisible">.</span></p>
-                    <textarea value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='SUBTITLE [eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>]...' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border-2 border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full mb-4`} />
+                  <div className="relative mb-3">
+                    <p className="text-center py-1 border-2 border-white invisibl outline-none text-lg text-black/80 font-semibold w-full">{page.subTitle}<span className="invisible">.</span></p>
+                    <textarea value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='SUBTITLE [eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>]...' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border-2 border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full`} />
                   </div>
                   <ResizableTable
                     headers={["DATE", "NARRATION", "CREDIT", "DEBIT", "BALANCE"]}
@@ -206,8 +206,7 @@ const BalanceSheet: React.FC<{pagesFromServer: IPage[], isLoggedIn: boolean, loa
                           
                           )
                         } */}
-
-<>
+                          <>
                             {page.rows.map((row, rowIndex) => (
                               <tr key={rowIndex} className={`relative group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden`}>
                                 <td  className="  items-center relative ">

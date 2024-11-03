@@ -6,7 +6,7 @@ import { google } from 'googleapis';
 import { cookies } from 'next/headers';
 
 
-const APP_SUITE_FOLDER_NAME = "APPSUITE_APPS";
+const APP_SUITE_FOLDER_NAME = "APPSTACK_APPS";
 
 const auth = new google.auth.OAuth2({
   apiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY,
