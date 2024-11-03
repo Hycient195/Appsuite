@@ -14,13 +14,14 @@ import Teleport from '@/utils/Teleport';
 import StatusIcon from '@/sharedComponents/CustomIcons';
 import { IPage } from '../_types/types';
 
-const BalanceSheet: React.FC<{pageCsv: IPage[], isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ pageCsv, isLoggedIn, loadedSucessfully }) => {
+const BalanceSheet: React.FC<{pagesFromServer: IPage[], isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ pagesFromServer, isLoggedIn, loadedSucessfully }) => {
 
-  // console.log(pageCsv)
   const params = useParams<any>();
 
   const tableContainerRef = useRef<HTMLTableRowElement|null>(null);
   const tbodyRef = useRef<HTMLTableSectionElement|null>(null);
+  const inputRefs = useRef<Map<string, HTMLInputElement | HTMLTextAreaElement | null>>(new Map());
+
   const [ tableWidth, setTableWidth ] = useState(2);
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
   const isFirstRender = useRef(true); // Ref to track the first render
@@ -49,6 +50,31 @@ const BalanceSheet: React.FC<{pageCsv: IPage[], isLoggedIn: boolean, loadedSuces
     updatedPages.splice(toIndex, 0, movedPage);
     setPages(updatedPages);
     updatePages(updatedPages);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement|HTMLTextAreaElement>, pageIndex: number, rowIndex: number, columnKey: string) => {
+    const directionMap: Record<string, { rowOffset: number; colOffset: number }> = {
+      ArrowUp: { rowOffset: -1, colOffset: 0 },
+      ArrowDown: { rowOffset: 1, colOffset: 0 },
+      ArrowLeft: { rowOffset: 0, colOffset: -1 },
+      ArrowRight: { rowOffset: 0, colOffset: 1 },
+    };
+
+    const { rowOffset, colOffset } = directionMap[event.key] || {};
+    if (rowOffset === undefined || colOffset === undefined) return;
+
+    event.preventDefault();
+
+    // Get next row and column based on offset
+    const nextRowIndex = rowIndex + rowOffset;
+    const nextColumnIndex = Object.keys(pages[pageIndex].rows[rowIndex]).indexOf(columnKey) + colOffset;
+    const nextColumnKey = Object.keys(pages[pageIndex].rows[rowIndex])[nextColumnIndex];
+    
+    if (nextColumnKey && pages[pageIndex].rows[nextRowIndex]) {
+      const nextCellId = `${pageIndex}-${nextRowIndex}-${nextColumnKey}`;
+      const nextInput = inputRefs.current.get(nextCellId);
+      nextInput?.focus();
+    }
   };
 
   const moveRow = (draggedRowIndex: number, targetRowIndex: number, pageIndex: number) => {
@@ -81,7 +107,6 @@ const BalanceSheet: React.FC<{pageCsv: IPage[], isLoggedIn: boolean, loadedSuces
     canUndo,
     canRedo,
     handleCSVImport,
-    loadCSVData,
     generateCSVData,
     downloadPageCSV,
     downloadAllPagesCSV,
@@ -91,14 +116,8 @@ const BalanceSheet: React.FC<{pageCsv: IPage[], isLoggedIn: boolean, loadedSuces
     updatePages
   } = useBalanceSheet();
 
-  // useEffect(() => {
-  //   if (isSuccess) {
-  //     loadCSVData(parseCSV(data));
-  //   }
-  // }, [ isSuccess ]);
-
   useEffect(() => {
-    setPages(pageCsv)
+    setPages(pagesFromServer)
   }, [ ]);
 
   const handleSaveFile = () => {
@@ -196,43 +215,43 @@ const BalanceSheet: React.FC<{pageCsv: IPage[], isLoggedIn: boolean, loadedSuces
                                     <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="bg-green-500 hidden duration-300 group-hover/line:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-2 items-center justify-center font-semibold">+</button>
                                   </div>
                                   <input
+                                    ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-date`, el)}}
                                     type="text"
                                     value={row.date}
                                     className='w-full h-full px-1 text-right focus:outline focus:outline-2 focus:outline-zinc-400 font-medium'
-                                    onChange={e =>
-                                      handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value))
-                                    }
+                                    onChange={e => handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value))}
+                                    onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "date")}
                                   />
                                 </td>
                                 <td className="  items-center relative">
                                   <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{row.narration}</p>
                                   <textarea
+                                    ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-narration`, el)}}
                                     value={row.narration}
                                     rows={1}
                                     className={`w-full ${(row.narration === "BALANCE BROUGHT FORWARD" && rowIndex === 0) ? "text-zinc-400/80 font-sans tracking-wide font-bold" : "font-medium"} absolute px-2 items-center resize-none h-full p-1 left-0 top-0 text-left bg-transparent focus:outline !overflow-visible no-scrollbar focus:outline-2 focus:outline-zinc-400`}
-                                    onChange={e =>
-                                      handleInputChange(pageIndex, rowIndex, 'narration', e.target.value)
-                                    }
+                                    onChange={e => handleInputChange(pageIndex, rowIndex, 'narration', e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "narration")}
                                   />
                                 </td>
-                                <td className="  items-center">
+                                <td className="  items-center" >
                                   <input
+                                    ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-credit`, el)}}
                                     className='w-full h-full px-1 text-right text-green-600 focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
                                     value={splitInThousand(row.credit === "0" ? "" : row.credit)}
                                     disabled={(!!row.debit&&row.debit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
-                                    onChange={e =>
-                                      handleInputChange(pageIndex, rowIndex, 'credit', e.target.value?.replace(/,/ig,"")?.replace(/[A-Z]/ig, ""))
-                                    }
+                                    onChange={e => handleInputChange(pageIndex, rowIndex, 'credit', e.target.value?.replace(/,/ig,"")?.replace(/[A-Z]/ig, ""))}
+                                    onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "credit")}
                                   />
                                 </td>
                                 <td className="items-center">
                                   <input
+                                    ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-debit`, el)}}
                                     className='w-full h-full px-1 text-right text-red-600 focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
                                     value={splitInThousand(Number(row.debit) === 0 ? "" : row.debit)}
                                     disabled={(!!row.credit&&row.credit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
-                                    onChange={e =>
-                                      handleInputChange(pageIndex, rowIndex, 'debit', e.target.value?.replace(/,/ig,"")?.replace(/[A-Z]/ig, ""))
-                                    }
+                                    onChange={e => handleInputChange(pageIndex, rowIndex, 'debit', e.target.value?.replace(/,/ig,"")?.replace(/[A-Z]/ig, ""))}
+                                    onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "debit")}
                                   />
                                 </td>
                                 <td className={`peer/test px-2 relative text-right flex justify-end font-medium text-black/80 items-center ${row.balance < 0 && "text-red-600"}`}>

@@ -45,5 +45,5 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
     pages = [ { ...defaultPage } ]
   }
 
-  return <BalanceSheet pageCsv={pages} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
+  return <BalanceSheet pagesFromServer={pages} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
 }
