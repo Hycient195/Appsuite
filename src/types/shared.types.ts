@@ -15,8 +15,8 @@ export interface IUpdateFileRequest {
   content: string;
 }
 
-// type TModules = [ "ACCOUNT_LEDGER", "INVOICE_GENERATOR" ]
-// export type TModules =  ("ACCOUNT_LEDGER"|"INVOICE_GENERATOR" )
+// type TModules = [ "FINANCE_TRACKER", "INVOICE_GENERATOR" ]
+// export type TModules =  ("FINANCE_TRACKER"|"INVOICE_GENERATOR" )
 
 // export interface IUserModel {
 //   id: string;

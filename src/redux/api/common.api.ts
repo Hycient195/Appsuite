@@ -1,7 +1,7 @@
 import { BaseQueryFn, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import GLOBAL_BASEURL from "./_globalBaseURL";
 import { ICreateFileRequest, ILoggedInUser, IUpdateFileRequest } from "@/types/shared.types";
-import { IBalanceSheetFile } from "@/app/app/account-ledger/_types/types";
+import { IBalanceSheetFile } from "@/app/app/finance-tracker/_types/types";
 import { parseCookies, setCookie } from "nookies";
 import { getNewAccessToken } from "@/utils/getRefreshToken";
 // import { parseCookies } from "nookies";

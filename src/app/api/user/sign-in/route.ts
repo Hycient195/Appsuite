@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const user: IUserModel = {
       ...loggedInUser,
       modules: {
-        ACCOUNT_LEDGER: { preferences: {} },
+        FINANCE_TRACKER: { preferences: {} },
         INVOICE_GENERATOR: { preferences: {} },
       },
       createdAt: new Date(),

@@ -75,8 +75,8 @@ export const commonRoutes: INavRoute[] = [
 
 export const navRoutes: INavRoute[] = [
   {
-    text: "Account Ledger",
-    href: "account-ledger",
+    text: "Finance Tracker",
+    href: "finance-tracker",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
