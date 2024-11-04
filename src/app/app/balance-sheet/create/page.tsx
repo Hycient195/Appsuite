@@ -38,7 +38,7 @@ export default function CreateBalanceSheet() {
       <div className="bg-whit border border-zinc-200 rounded-md min-h-full flex items-center justify-center">
         <div className="max-w-lg mx-auto w-full border border-zinc-200 -translate-y-[clamp(10px,3vh,100px)] rounded-lg bg-white flex gap-3 flex-col p-[clamp(16px,2%,40px)] shadow-inne">
           <h2 className="text-xl font-sans font-semibold text-center tracking-wide">Create Sheet</h2>
-            <FormText placeholder="Enter file name" value={fileName} onChange={(e) => setFileName(e.target.value)} />
+            <FormText placeholder="Enter file name (eg. Statement of Account)" value={fileName} onChange={(e) => setFileName(e.target.value)} />
             <SuccessBlock className="animate-fade-in" isSuccess={isSuccess}>
               File Created
             </SuccessBlock>
