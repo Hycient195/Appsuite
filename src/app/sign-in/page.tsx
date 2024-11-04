@@ -36,10 +36,10 @@ const SignIn = () => {
         axios.post<ILoggedInUser>("/api/user/sign-in", res.data)
           .then((signInRes) => {
             setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
-            window.location.assign("/app/balance-sheet/create");
+            window.location.assign("/app/account-ledger/create");
           }).catch(() => {
             setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
-            window.location.assign("/app/balance-sheet/create");
+            window.location.assign("/app/account-ledger/create");
           })
       })
       .catch((err) => console.log(err));
@@ -65,7 +65,7 @@ const SignIn = () => {
 
   const getDummyRefreshTokenForPreviewWithoutSignIn = (): void => {
     setCookie(null, "asRefreshToken", "DUMMY_PREVIEW_REFRESH_TOKEN", { path: "/", maxAge: (60 * 60 * 24 * 2) });
-    window.location.assign("/app/balance-sheet/null-id");
+    window.location.assign("/app/account-ledger/null-id");
   }
 
   return (

@@ -1,7 +1,7 @@
 // models/User.ts
 import mongoose, { Schema, Document, model, models } from 'mongoose';
 
-export type TModules = "BALANCE_SHEET" | "INVOICE_GENERATOR";
+export type TModules = "ACCOUNT_LEDGER" | "INVOICE_GENERATOR";
 
 export interface IUserModel {
   id: string;
@@ -31,7 +31,7 @@ const UserSchema = new Schema<IUserModelDocument>({
   family_name: { type: String, required: true },
   picture: { type: String, required: true },
   modules: {
-    BALANCE_SHEET: { preferences: { type: Schema.Types.Mixed, default: {} } },
+    ACCOUNT_LEDGER: { preferences: { type: Schema.Types.Mixed, default: {} } },
     INVOICE_GENERATOR: { preferences: { type: Schema.Types.Mixed, default: {} } },
   },
   createdAt: { type: Date, default: Date.now },

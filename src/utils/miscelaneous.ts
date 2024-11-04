@@ -1,4 +1,4 @@
-import { IPage } from "@/app/app/balance-sheet/_types/types";
+import { IPage } from "@/app/app/account-ledger/_types/types";
 import { SelectChangeEvent } from "@mui/material";
 import { ChangeEvent } from "react";
 

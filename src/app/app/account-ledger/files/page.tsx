@@ -18,7 +18,7 @@ export default function BalanceSheetFiles() {
   const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFilesQuery();
 
   useEffect(() => {
-    getFiles("BALANCE_SHEET");
+    getFiles("ACCOUNT_LEDGER");
   }, [ getFiles, hasDeleted ])
 
   return (
@@ -51,7 +51,7 @@ export default function BalanceSheetFiles() {
                       </TableEmpty>
                     ) : (
                       data?.map((file, index) => (
-                        <TableRow key={`balance-sheet-file-${index}`} file={file} hasDeleted={hasDeleted} sethasDeleted={sethasDeleted} />
+                        <TableRow key={`account-ledger-file-${index}`} file={file} hasDeleted={hasDeleted} sethasDeleted={sethasDeleted} />
                       ))
                     )
                   )

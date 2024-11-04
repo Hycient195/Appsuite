@@ -86,11 +86,11 @@ function App() {
               <a href="#income-expense" className="text-highlightColor font-semibold">Learn More</a>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
-              <h3 className="text-xl font-semibold mb-4">Balance Sheet Manager</h3>
+              <h3 className="text-xl font-semibold mb-4">Account Ledger Manager</h3>
               <p className="text-secondary mb-6">
                 Create and organize your balance sheets with ease, featuring multi-page support and CSV export.
               </p>
-              <a href="#balance-sheet" className="text-highlightColor font-semibold">Learn More</a>
+              <a href="#account-ledger" className="text-highlightColor font-semibold">Learn More</a>
             </div>
             <div className="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
               <h3 className="text-xl font-semibold mb-4">Single-Purpose Utilities</h3>

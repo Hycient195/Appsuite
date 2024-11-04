@@ -21,7 +21,7 @@ export default function CreateBalanceSheet() {
 
   const handleCreateFile = async () => {
     const pageDefault = [{ ...defaultPage, title: fileName }].map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-    createFile({ appName: "BALANCE_SHEET", fileName: `${fileName}.csv`, content: pageDefault, mimeType: "text/csv"});
+    createFile({ appName: "ACCOUNT_LEDGER", fileName: `${fileName}.csv`, content: pageDefault, mimeType: "text/csv"});
   };
 
   useEffect(() => {
