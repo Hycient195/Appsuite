@@ -96,6 +96,32 @@ export const splitInThousand = (num: string | number) => {
   }
 };
 
+export const splitInThousandForTextInput = (num: string | number) => {
+  const numStr = typeof num === "number" ? num?.toString() : num;
+  // const integerPart = numStr?.includes(".") ? numStr?.split(".")?.[0] : numStr;
+  // const decimalPart = numStr?.includes(".") ?  numStr?.split(".")?.[1] : "";
+  const addCommas = (num: string) => num?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  return addCommas(numStr)??"";
+
+};
+
+// export const splitInThousand = (num: string | number) => {
+//   const numStr = typeof num === "number" ? num.toString() : num;
+//   const integerPart = numStr?.includes(".") ? numStr.split(".")[0] : numStr;
+//   const decimalPart = numStr?.includes(".") ? numStr.split(".")[1] : "";
+//   const addCommas = (num: string) => num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+//   const formattedInteger = addCommas(integerPart ?? "");
+
+//   if (numStr) {
+//     // If there is a decimal point but no decimal part, add the trailing period.
+//     return decimalPart !== undefined ? `${formattedInteger}.${decimalPart}` : formattedInteger + (numStr.endsWith(".") ? "." : "");
+//   } else {
+//     return "";
+//   }
+// };
+
 export const convertToMinutes = (seconds?: number): string => {
   const minutes = Math.floor(seconds as number / 60);
   const remainingSeconds = seconds as number % 60;

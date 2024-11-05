@@ -11,8 +11,6 @@ const defaultRow: IRow = {
 };
 
 export const defaultPage: IPage = {
-  // title: "STATEMENT OF ACCOUNT",
-  // subTitle: "FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>",
   title: "",
   subTitle: "",
   rows: [{ ...defaultRow }], // Create a fresh copy for each default page
@@ -131,10 +129,9 @@ export const useBalanceSheet = (fileName?: string) => {
         row.debit = "0"
       } else {
         // Calculate balance based on credit and debit
-        row.balance =
-          previousBalance +
-          (!isNaN(parseFloat(row.credit)) ? parseFloat(row.credit) : 0) -
-          (!isNaN(parseFloat(row.debit)) ? parseFloat(row.debit) : 0);
+        row.balance = Number(
+          (previousBalance +(!isNaN(parseFloat(row.credit)) ? parseFloat(row.credit) : 0) - (!isNaN(parseFloat(row.debit)) ? parseFloat(row.debit) : 0)).toFixed(2)
+        );
         previousBalance = row.balance;
       }
     });
@@ -165,9 +162,9 @@ export const useBalanceSheet = (fileName?: string) => {
       finalBalance = row.balance; // The last row's balance
     });
 
-    page.totalCredit = totalCredit;
-    page.totalDebit = totalDebit;
-    page.finalBalance = finalBalance;
+    page.totalCredit = Number(totalCredit?.toFixed(2));
+    page.totalDebit = Number(totalDebit?.toFixed(2));
+    page.finalBalance = Number(finalBalance?.toFixed(2));
   };
 
   // General function to update the pages and manage history for undo/redo
@@ -335,10 +332,10 @@ export const useBalanceSheet = (fileName?: string) => {
 
   const generateCSVData = (page: IPage) => {
     const rowsCSV = page.rows
-      .map(row => `${row.date},"${row.narration}",${row.credit},${row.debit},${row.balance}`)
+      .map(row => `"${row.date}","${row.narration}","${row.credit}","${row.debit}","${row.balance}"`)
       .join('\n');
     const totalCSV = `,TOTAL,${page.totalCredit},${page.totalDebit},${page.finalBalance}`
-    return `${page.title},,,,\n${page.subTitle},,,,\nDate,Narration,Credit,Debit,Balance\n${rowsCSV}\n${totalCSV}`;
+    return `"${page.title}",,,,\n"${page.subTitle}",,,,\nDate,Narration,Credit,Debit,Balance\n${rowsCSV}\n${totalCSV}`;
   };
 
   const downloadCSV = (csvData: string, filename: string) => {

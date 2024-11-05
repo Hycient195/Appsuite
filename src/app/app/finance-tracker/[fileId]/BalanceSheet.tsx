@@ -1,9 +1,9 @@
 "use client"
 
 import React, { LegacyRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useBalanceSheet } from '../_hooks/useBalanceSheet';
+import { defaultPage, useBalanceSheet } from '../_hooks/useBalanceSheet';
 import ResizableTable from '@/sharedComponents/ResizableTable';
-import { formatDateInput, parseCSV, splitInThousand } from '@/utils/miscelaneous';
+import { formatDateInput, parseCSV, splitInThousand, splitInThousandForTextInput } from '@/utils/miscelaneous';
 import useGeneratePDF from '@/sharedHooks/useGeneratePDF';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -120,8 +120,12 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
   } = useBalanceSheet();
 
   useEffect(() => {
-    loadCSVData(Papa.parse(csvString)?.data as string[][])
-  }, [])
+    if (csvString) {
+      loadCSVData(Papa.parse(csvString)?.data as string[][])
+    } else {
+      setPages([{ ...defaultPage }]);
+    }
+  }, []);
 
   const handleSaveFile = () => {
     if (isLoggedIn && loadedSucessfully) {
@@ -240,9 +244,9 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                                   <input
                                     ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-credit`, el)}}
                                     className='w-full h-full px-1 text-right text-green-600 focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
-                                    value={splitInThousand(row.credit === "0" ? "" : row.credit)}
+                                    value={splitInThousandForTextInput(row.credit === "0" ? "" : row.credit)}
                                     disabled={(!!row.debit&&row.debit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
-                                    onChange={e => handleInputChange(pageIndex, rowIndex, 'credit', e.target.value?.replace(/,/ig,"")?.replace(/[A-Z]/ig, ""))}
+                                    onChange={e => handleInputChange(pageIndex, rowIndex, 'credit', e.target.value?.replace(/[^0-9.]/g, ""))}
                                     onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "credit")}
                                   />
                                 </td>
@@ -250,9 +254,9 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                                   <input
                                     ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-debit`, el)}}
                                     className='w-full h-full px-1 text-right text-red-600 focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
-                                    value={splitInThousand(Number(row.debit) === 0 ? "" : row.debit)}
+                                    value={splitInThousandForTextInput(row.debit === "0" ? "" : row.debit)}
                                     disabled={(!!row.credit&&row.credit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
-                                    onChange={e => handleInputChange(pageIndex, rowIndex, 'debit', e.target.value?.replace(/,/ig,"")?.replace(/[A-Z]/ig, ""))}
+                                    onChange={e => handleInputChange(pageIndex, rowIndex, 'debit', e.target.value?.replace(/[^0-9.]/g, ""))}
                                     onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "debit")}
                                   />
                                 </td>
