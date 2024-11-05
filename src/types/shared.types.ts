@@ -13,6 +13,7 @@ export interface ICreateFileRequest { appName: string, fileName: string, content
 export interface IUpdateFileRequest {
   fileId: string;
   content: string;
+  mimeType: string;
 }
 
 // type TModules = [ "FINANCE_TRACKER", "INVOICE_GENERATOR" ]

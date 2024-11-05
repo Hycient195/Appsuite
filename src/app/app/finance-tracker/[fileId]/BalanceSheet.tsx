@@ -12,9 +12,11 @@ import { useParams } from 'next/navigation';
 import api from '@/redux/api';
 import Teleport from '@/utils/Teleport';
 import StatusIcon from '@/sharedComponents/CustomIcons';
+import Papa from "papaparse";
+
 import { IPage } from '../_types/types';
 
-const BalanceSheet: React.FC<{pagesFromServer: IPage[], isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ pagesFromServer, isLoggedIn, loadedSucessfully }) => {
+const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
 
   const params = useParams<any>();
 
@@ -110,6 +112,7 @@ const BalanceSheet: React.FC<{pagesFromServer: IPage[], isLoggedIn: boolean, loa
     generateCSVData,
     downloadPageCSV,
     downloadAllPagesCSV,
+    loadCSVData,
     handleInputChange,
     updateRowsToAdd,
     setPages,
@@ -117,13 +120,13 @@ const BalanceSheet: React.FC<{pagesFromServer: IPage[], isLoggedIn: boolean, loa
   } = useBalanceSheet();
 
   useEffect(() => {
-    setPages(pagesFromServer)
-  }, [ ]);
+    loadCSVData(Papa.parse(csvString)?.data as string[][])
+  }, [])
 
   const handleSaveFile = () => {
     if (isLoggedIn && loadedSucessfully) {
       const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-      saveFile({ fileId: params?.fileId, content: csvData })
+      saveFile({ fileId: params?.fileId, content: csvData, mimeType: "text/csv" })
     }
   }
 

@@ -33,17 +33,19 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
     rowsToAdd: 1
   };
 
-  let pages: IPage[] = [ { ...defaultPage } ]
+  // let pages: IPage[] = [ { ...defaultPage } ]
+  let csvString = "";
   let loadedSucessfully = false;
 
   try {
-    const decodedPageString = (await readFile((await params).fileId))
-    pages = convertToPages(parseCSV(decodedPageString as string));
+    csvString = (await readFile((await params).fileId)) as string;
+    // pages = convertToPages(parseCSV(decodedPageString as string));
     loadedSucessfully = true;
   } catch (error) {
     console.log(`Error fetching products`, error);
-    pages = [ { ...defaultPage } ]
+    csvString = "";
+    // pages = [ { ...defaultPage } ]
   }
 
-  return <BalanceSheet pagesFromServer={pages} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
+  return <BalanceSheet csvString={csvString} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
 }

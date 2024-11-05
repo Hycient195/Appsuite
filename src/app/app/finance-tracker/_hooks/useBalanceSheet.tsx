@@ -63,7 +63,6 @@ export const useBalanceSheet = (fileName?: string) => {
   };
 
   const removePage = (pageIndex: number) => {
-    console.log(pageIndex)
     if (pages.length === 1) return; // Prevent removing all pages
     const updatedPages = pages.filter((_, idx) => idx !== pageIndex);
     updatePages(updatedPages);
@@ -205,6 +204,7 @@ export const useBalanceSheet = (fileName?: string) => {
       Papa.parse(file, {
         complete: (result) => {
           const csvData = result.data;
+          // console.log(csvData)
           loadCSVData(csvData as string[][], pageIndex); // Use the method to load CSV data
         },
         skipEmptyLines: true,
@@ -335,10 +335,10 @@ export const useBalanceSheet = (fileName?: string) => {
 
   const generateCSVData = (page: IPage) => {
     const rowsCSV = page.rows
-      .map(row => `${row.date},${row.narration},${row.credit},${row.debit},${row.balance}`)
+      .map(row => `${row.date},"${row.narration}",${row.credit},${row.debit},${row.balance}`)
       .join('\n');
     const totalCSV = `,TOTAL,${page.totalCredit},${page.totalDebit},${page.finalBalance}`
-    return `${page.title}\n${page.subTitle}\nDate,Narration,Credit,Debit,Balance\n${rowsCSV}\n${totalCSV}`;
+    return `${page.title},,,,\n${page.subTitle},,,,\nDate,Narration,Credit,Debit,Balance\n${rowsCSV}\n${totalCSV}`;
   };
 
   const downloadCSV = (csvData: string, filename: string) => {

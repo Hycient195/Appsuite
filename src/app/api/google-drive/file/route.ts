@@ -17,9 +17,9 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { fileId, content } = await request.json();
+  const { fileId, content, mimeType } = await request.json();
   if (!fileId || !content) return NextResponse.json({ error: 'fileId and content are required' }, { status: 400 });
-  const response = await updateFile(fileId, content);
+  const response = await updateFile(fileId, content, mimeType);
   return NextResponse.json(response);
 }
 

@@ -85,12 +85,12 @@ export async function readFile (fileId: string) {
   return response.data;
 };
 
-export async function updateFile (fileId: string, content: string) {
+export async function updateFile (fileId: string, content: string, mimeType: string) {
   const driveService = await getDriveService();
   return driveService.files.update({
     fileId,
     media: {
-      mimeType: 'text/plain',
+      mimeType: mimeType,
       body: content,
     },
   });

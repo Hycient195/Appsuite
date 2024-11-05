@@ -195,11 +195,14 @@ export function parseCSV(data: string): string[][] {
 
     for (let i = 0; i < row.length; i++) {
       const char = row[i];
+      
 
       // Toggle the insideQuotes flag if we encounter a quote
       if (char === '"') {
         insideQuotes = !insideQuotes;
-      } else if (char === "," && !insideQuotes) {
+      } else if (char === "," && !insideQuotes && (row[i+1] !== " ")) {
+      //   console.log(row[i])
+      // console.log(row[i+1])
         // If we encounter a comma and we're not inside quotes, end the current cell
         cells.push(currentCell.trim());
         currentCell = "";
