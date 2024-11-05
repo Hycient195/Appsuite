@@ -7,16 +7,16 @@ const defaultRow: IRow = {
   narration: '',
   credit: "",
   debit: "",
-  balance: 0,
+  balance: "",
 };
 
 export const defaultPage: IPage = {
   title: "",
   subTitle: "",
   rows: [{ ...defaultRow }], // Create a fresh copy for each default page
-  totalCredit: 0,
-  totalDebit: 0,
-  finalBalance: 0,
+  totalCredit: "0",
+  totalDebit: "0",
+  finalBalance: "0",
   rowsToAdd: 1
 };
 
@@ -26,6 +26,7 @@ export const useBalanceSheet = (fileName?: string) => {
   const [future, setFuture] = useState<IPage[][]>([]);
 
   const prevPagesRef = useRef(pages);
+  const inputRefs = useRef<Map<string, HTMLInputElement | HTMLTextAreaElement | null>>(new Map());
 
   const updateRowsToAdd = (pageNumber: number, action: ("increament"|"decreament"|null), defaltValue?: number): void => {
     const pageCopy = [ ...pages ]
@@ -81,7 +82,7 @@ export const useBalanceSheet = (fileName?: string) => {
   
     for (let i = 0; i < rowsToAdd; i++) {
       if (page?.rows?.length > 1) {
-        const previousBalance = (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex - 1].balance : 0;
+        const previousBalance = (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex - 1].balance : "0";
         page.rows.splice(rowIndex + i, 0, { ...defaultRow, balance: previousBalance, date: (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex-1].date.slice(0,8) : ""});
       } else {
         page.rows.push({ ...defaultRow });
@@ -117,20 +118,20 @@ export const useBalanceSheet = (fileName?: string) => {
   };
 
   const calculatePageBalances = useCallback((page: IPage, pageIndex: number) => {
-    let previousBalance = 0;
+    let previousBalance = "0";
 
     // Loop through each row to calculate balances
     page.rows.forEach((row, rowIndex) => {
       if (rowIndex === 0 && row.narration === 'BALANCE BROUGHT FORWARD') {
         // Set balance based on the previous page's final balance if it exists
-        previousBalance = pages[pageIndex - 1]?.finalBalance || 0;
+        previousBalance = String((pages[pageIndex - 1]?.finalBalance || "0"));
         row.balance = previousBalance;
         row.credit = "0";
         row.debit = "0"
       } else {
         // Calculate balance based on credit and debit
-        row.balance = Number(
-          (previousBalance +(!isNaN(parseFloat(row.credit)) ? parseFloat(row.credit) : 0) - (!isNaN(parseFloat(row.debit)) ? parseFloat(row.debit) : 0)).toFixed(2)
+        row.balance = String(
+          ((!isNaN(parseFloat(previousBalance)) ? parseFloat(previousBalance) : 0) +(!isNaN(parseFloat(row.credit)) ? parseFloat(row.credit?.replace(/,/ig,"")) : 0) - (!isNaN(parseFloat(row.debit)) ? parseFloat(row.debit.replace(/,/ig,"")) : 0))?.toFixed(2)
         );
         previousBalance = row.balance;
       }
@@ -157,14 +158,14 @@ export const useBalanceSheet = (fileName?: string) => {
     let finalBalance = 0;
 
     page.rows.forEach(row => {
-      totalCredit += !isNaN(parseFloat(row.credit as unknown as string)) ? parseFloat(row.credit as unknown as string) : 0;
-      totalDebit += !isNaN(parseFloat(row.debit as unknown as string)) ? parseFloat(row.debit as unknown as string) : 0;
-      finalBalance = row.balance; // The last row's balance
+      totalCredit += !isNaN(parseFloat(row.credit as unknown as string)) ? parseFloat(row.credit?.replace(/,/ig,"") as unknown as string) : 0;
+      totalDebit += !isNaN(parseFloat(row.debit as unknown as string)) ? parseFloat(row.debit?.replace(/,/ig,"") as unknown as string) : 0;
+      finalBalance = !isNaN(parseFloat(row.balance as unknown as string)) ? parseFloat(row.balance?.replace(/,/ig,"") as unknown as string) : 0; // The last row's balance
     });
 
-    page.totalCredit = Number(totalCredit?.toFixed(2));
-    page.totalDebit = Number(totalDebit?.toFixed(2));
-    page.finalBalance = Number(finalBalance?.toFixed(2));
+    page.totalCredit = String(totalCredit?.toFixed(2));
+    page.totalDebit = String(totalDebit?.toFixed(2));
+    page.finalBalance = String(finalBalance?.toFixed(2));
   };
 
   // General function to update the pages and manage history for undo/redo
@@ -193,15 +194,16 @@ export const useBalanceSheet = (fileName?: string) => {
   const canUndo = history.length > 0;
   const canRedo = future.length > 0;
 
-  /** CSV Functionality section */
 
+  /* ============================================= */
+  /** CSV, Load and Download Functionality Section */
+  /* ============================================= */
   const handleCSVImport = (event: ChangeEvent<HTMLInputElement>, pageIndex?: number) => {
     const file = event.target.files![0];
     if (file) {
       Papa.parse(file, {
         complete: (result) => {
           const csvData = result.data;
-          // console.log(csvData)
           loadCSVData(csvData as string[][], pageIndex); // Use the method to load CSV data
         },
         skipEmptyLines: true,
@@ -209,7 +211,6 @@ export const useBalanceSheet = (fileName?: string) => {
       
     }
   };
-
 
   const importCSV = async (file: File) => {
     const text = await file.text();
@@ -233,13 +234,13 @@ export const useBalanceSheet = (fileName?: string) => {
           narration,
           credit,
           debit,
-          balance: parseFloat(balance) || 0,
+          balance: balance || "0",
         };
       });
 
-      const totalCredit = parseFloat(totalLine[2]) || 0;
-      const totalDebit = parseFloat(totalLine[3]) || 0;
-      const finalBalance = parseFloat(totalLine[4]) || 0;
+      const totalCredit = (parseFloat(totalLine[2]) || 0)?.toFixed(2);
+      const totalDebit = (parseFloat(totalLine[3]) || 0)?.toFixed(2);
+      const finalBalance = (parseFloat(totalLine[4]) || 0)?.toFixed(2);
 
       const importedPage: IPage = {
         title,
@@ -261,10 +262,12 @@ export const useBalanceSheet = (fileName?: string) => {
     if (pageIndex) {
       const pagesCopy = [ ...pages ];
       pagesCopy.splice(pageIndex, 1, ...convertToPages(csvData))
+      // console.log(pagesCopy)
       setPages(pagesCopy);
       updatePages(pagesCopy)
     } else {
       const pagesData = convertToPages(csvData);
+      // console.log(pagesData)
       setPages(pagesData);
       updatePages(pagesData)
     }   
@@ -273,7 +276,7 @@ export const useBalanceSheet = (fileName?: string) => {
   function convertToPages(data: string[][]) {
     const pages = [];
     // let currentPage: { title: string, subTitle: string, rows: IRow[], totalCredit: number, totalDebit: number, finalBalance: number} = { title: '', subTitle: '', rows: [], totalCredit: 0, totalDebit: 0, finalBalance: 0 };
-    let currentPage: IPage = { title: '', subTitle: '', rows: [], totalCredit: 0, totalDebit: 0, finalBalance: 0, rowsToAdd: 1 };
+    let currentPage: IPage = { title: '', subTitle: '', rows: [], totalCredit: "0", totalDebit: "0", finalBalance: "0", rowsToAdd: 1 };
   
     for (let i = 0; i < data.length; i++) {
       const row = data[i];
@@ -282,7 +285,7 @@ export const useBalanceSheet = (fileName?: string) => {
       if (row.length === 5 && row.every(cell => cell === '') && i < data.length - 1 && data[i + 1].every(cell => cell === '')) {
         // Push current page to pages and reset for a new page
         pages.push(currentPage);
-        currentPage = { title: '', subTitle: '', rows: [], totalCredit: 0, totalDebit: 0, finalBalance: 0, rowsToAdd: 1 };
+        currentPage = { title: '', subTitle: '', rows: [], totalCredit: "0", totalDebit: "0", finalBalance: "0", rowsToAdd: 1 };
         i++; // Skip the second separator row
         continue;
       }
@@ -292,21 +295,24 @@ export const useBalanceSheet = (fileName?: string) => {
       } else if (currentPage.subTitle === '') {
         currentPage.subTitle = row[0]; // Second row is the subTitle
       } else if (row[0] === '' && row[1] === 'TOTAL') {
+        console.log(row[i])
         // Parse total row
-        currentPage.totalCredit = parseFloat(row[2] || "0");
-        currentPage.totalDebit = parseFloat(row[3] || "0");
-        currentPage.finalBalance = parseFloat(row[4] || "0");
+        currentPage.totalCredit = (parseFloat(row[2] || "0"))?.toFixed(2);
+        currentPage.totalDebit = (parseFloat(row[3] || "0"))?.toFixed(2);
+        currentPage.finalBalance = (parseFloat(row[4] || "0"))?.toFixed(2);
         currentPage.rowsToAdd = 1
       } else if (row[0] !== 'Date') { // Skip header row
         // Parse row data
         const [date, narration, credit, debit, balance] = row;
+
         currentPage.rows.push({
           date: date || '',
           narration: narration || '',
-          credit: String( parseFloat(credit?.replace(/,/ig,"") || "0")),
-          debit: String(parseFloat(debit?.replace(/,/ig,"") || "0")),
-          balance: parseFloat(balance || "0"),
+          credit: String( credit || "0"),
+          debit: String(debit || "0"),
+          balance: String(balance || "0")
         });
+        
       }
     }
   
@@ -314,7 +320,7 @@ export const useBalanceSheet = (fileName?: string) => {
     if (currentPage.rows.length > 0) {
       pages.push(currentPage);
     }
-  
+    // console.log(pages)
     return pages;
   }
 
@@ -334,8 +340,8 @@ export const useBalanceSheet = (fileName?: string) => {
     const rowsCSV = page.rows
       .map(row => `"${row.date}","${row.narration}","${row.credit}","${row.debit}","${row.balance}"`)
       .join('\n');
-    const totalCSV = `,TOTAL,${page.totalCredit},${page.totalDebit},${page.finalBalance}`
-    return `"${page.title}",,,,\n"${page.subTitle}",,,,\nDate,Narration,Credit,Debit,Balance\n${rowsCSV}\n${totalCSV}`;
+    const totalCSV = `,"TOTAL","${page.totalCredit}","${page.totalDebit}","${page.finalBalance}" `
+    return `"${page.title}",,,,\n"${page.subTitle}",,,,\n"Date","Narration","Credit","Debit","Balance"\n${rowsCSV}\n${totalCSV}`;
   };
 
   const downloadCSV = (csvData: string, filename: string) => {
@@ -357,6 +363,71 @@ export const useBalanceSheet = (fileName?: string) => {
 
   }, [pages, history, future, calculatePageBalances]);
 
+
+  /* ===================================== */
+  /** Event Handlers Functionality Section */
+  /* ===================================== */
+  const handleNumericInputBlur = (pageIndex: number, rowIndex: number, field: string, event: ChangeEvent<HTMLInputElement>): void => {
+    const value = event.target.value?.replace(/,/ig,"");
+
+    // Parse the value to a number to ensure it's valid, then format with two decimal places.
+    if (!isNaN(Number(value))) {
+      const formattedValue = !isNaN(parseFloat(value)) ? parseFloat(value).toFixed(2) : "0";
+      handleInputChange(pageIndex, rowIndex, field, formattedValue);
+    } else {
+      console.error("Invalid input: Please enter a valid number.");
+    }
+  };
+
+  /* Sample for row reorder by drag and drop functionality not yet implemented */
+  const moveRow = (draggedRowIndex: number, targetRowIndex: number, pageIndex: number) => {
+    const pagesCopy = [ ...pages ];
+    const currentPageRows = pages[pageIndex];
+    
+    if (!currentPageRows || draggedRowIndex === targetRowIndex) {
+      return;
+    }
+  
+    const updatedRows = [...currentPageRows.rows];
+    const [movedRow] = updatedRows.splice(draggedRowIndex, 1);
+    updatedRows.splice(targetRowIndex, 0, movedRow);
+    pagesCopy[pageIndex].rows = updatedRows;
+    setPages(pagesCopy);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement|HTMLTextAreaElement>, pageIndex: number, rowIndex: number, columnKey: string) => {
+    const directionMap: Record<string, { rowOffset: number; colOffset: number }> = {
+      ArrowUp: { rowOffset: -1, colOffset: 0 },
+      ArrowDown: { rowOffset: 1, colOffset: 0 },
+      ArrowLeft: { rowOffset: 0, colOffset: -1 },
+      ArrowRight: { rowOffset: 0, colOffset: 1 },
+    };
+
+    const { rowOffset, colOffset } = directionMap[event.key] || {};
+    if (rowOffset === undefined || colOffset === undefined) return;
+
+    event.preventDefault();
+
+    // Get next row and column based on offset
+    const nextRowIndex = rowIndex + rowOffset;
+    const nextColumnIndex = Object.keys(pages[pageIndex].rows[rowIndex]).indexOf(columnKey) + colOffset;
+    const nextColumnKey = Object.keys(pages[pageIndex].rows[rowIndex])[nextColumnIndex];
+    
+    if (nextColumnKey && pages[pageIndex].rows[nextRowIndex]) {
+      const nextCellId = `${pageIndex}-${nextRowIndex}-${nextColumnKey}`;
+      const nextInput = inputRefs.current.get(nextCellId);
+      nextInput?.focus();
+    }
+  };
+
+  const movePage = (fromIndex: number, toIndex: number) => {
+    const updatedPages = [...pages];
+    const [movedPage] = updatedPages.splice(fromIndex, 1);
+    updatedPages.splice(toIndex, 0, movedPage);
+    setPages(updatedPages);
+    updatePages(updatedPages);
+  };
+
   return {
     updatePageTitle,
     updatePageSubtitle,
@@ -370,6 +441,7 @@ export const useBalanceSheet = (fileName?: string) => {
     redo,
     canUndo,
     canRedo,
+
     handleCSVImport,
     importCSV,
     loadCSVData,
@@ -379,6 +451,12 @@ export const useBalanceSheet = (fileName?: string) => {
     handleInputChange,
     updateRowsToAdd,
     setPages,
-    updatePages
+    updatePages,
+
+    handleNumericInputBlur,
+    moveRow,
+    handleKeyDown,
+    inputRefs,
+    movePage
   };
 };

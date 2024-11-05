@@ -3,16 +3,16 @@ export interface IRow {
   narration: string;
   credit: string;
   debit: string;
-  balance: number;
+  balance: string;
 }
 
 export interface IPage {
   title: string;
   subTitle: string;
   rows: IRow[];
-  totalCredit: number;
-  totalDebit: number;
-  finalBalance: number;
+  totalCredit: string;
+  totalDebit: string;
+  finalBalance: string;
   rowsToAdd: number;
 }
 

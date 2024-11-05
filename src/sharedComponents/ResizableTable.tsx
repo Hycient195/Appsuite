@@ -33,7 +33,7 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
     setActiveIndex(index);
   };
 
-  const fractions = useRef<number[]>([12.5,50,12.5,12.5,12.5]);
+  const fractions = useRef<number[]>([11.5,48,13.5,13.5,13.5]);
 
   const mouseMove = useCallback(
     (e: MouseEvent) => {
@@ -91,20 +91,20 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
   return (
     <div className="containe max-w-screen-lg mx-auto">
       <div className="table-wrapper grid bg-green-5">
-        <table className="resizeable-table w-full [&_th]:relative
-          [&_td]:border-t [&_td:not(:last-of-type)]:border-r [&_th]:border-t [&_th:not(:last-of-type)]:border-r [&]:border-zinc-400 [&_*]:border-zinc-400 border-x border-b
+        <table className="relative resizeable-table w-full [&_th]:relative
+          [&_td]:border-t [&_td:not(:last-of-type)]:border-r [&_th]:border-t [&_th:not(:last-of-type)]:border-r [&]:border-zinc-500 [&_*]:border-zinc-500 border-x border-b
           [&_thead]:!contents [&_tbody]:!contents [&_tr]:!contents
-          grid grid-cols-[12.5%_50%_12.5%_12.5%_12.5%]"
+          grid grid-cols-[11.5%_48%_13.5%_13.5%_13.5%]"
           ref={tableElement}>
           <thead className="w-full">
-            <tr className=" select-none  w-full">
+            <tr style={{ fontFamily: "sans-serif"}} className=" select-none  w-full">
               {columns.map(({ ref, text }, i) => (
-                <td ref={ref} key={text} className="font-bold text-center py-2">
+                <td ref={ref} key={text} className="font-bold text-center py-1.5 relative">
                   <span className=" whitespace-nowrap overflow-ellipsis overflow-hidden block">{text}</span>
                   <div
                     style={{ height: tableHeight }}
                     onMouseDown={() => mouseDown(i)}
-                    className={`resize-handle block hover:bg-[#ccc] absolute cursor-col-resize w-[3px] right-0 top-0 z-[1] border-r-2 !border-r-transparent  ${activeIndex === i ? "!border-r !border-r-[#517ea5]" : "idle"}`}
+                    className={`resize-handle block hover:bg-[#ccc] absolute cursor-col-resize w-[3px] right-0 !top-0 z-[1] border-r-2 !border-r-transparent  ${activeIndex === i ? "!border-r !border-r-[#517ea5]" : "idle"}`}
                   />
                 </td>
               ))}

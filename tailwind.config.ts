@@ -39,6 +39,10 @@ const config: Config = {
         "dark-gray": "#262626",
         test: "red"
       },
+      fontFamily: {
+        helvetica: ["Helvetica"],
+        "work-sans": [ "Work-Sans"]
+      },
       keyframes: {
         "slide-in-right": {
           from: {
