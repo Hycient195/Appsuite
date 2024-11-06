@@ -9,9 +9,11 @@ import Link from "next/link";
 import { getNewAccessToken, getRefreshToken, IGetRefreshTokenResponse } from "@/utils/getRefreshToken";
 import { ILoggedInUser } from "@/types/shared.types";
 import LoadingButton from "@/sharedComponents/LoadingButton";
+import { useRouter } from "next/navigation";
 
 
 const SignIn = () => {
+  const router = useRouter();
   const [ isSigningIn, setIsSigningIn ] = useState<boolean>(false);
   
   /* Automatically route the user to the application if already signed in */
@@ -21,7 +23,7 @@ const SignIn = () => {
       const accessToken = cookies?.asAccessToken
       const refreshToken = cookies?.asRefreshToken
       if (accessToken) {
-        window.location.assign("/app/finance-tracker/create");
+        router.push("/app/finance-tracker/create");
       } else {
         if (refreshToken) {
           const tokenResponse = (await getNewAccessToken(refreshToken as string));
