@@ -91,7 +91,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
     if (isSuccess) {
       sethasDeleted(!hasDeleted);
     }
-  }, [isSuccess]);
+  }, [ isSuccess ]);
 
   const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -121,7 +121,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
           />
         </div>
       </td>
-      <td>{file?.size}Kb</td>
+      <td>{file?.size} Kb</td>
       <td>
         <div className="flex flex-row items-center gap-2">
           <LoadingButton

@@ -6,13 +6,33 @@ import { parseCookies, setCookie } from "nookies";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google"
 import { GoogleIcon, LogoIcon } from "@/sharedComponents/CustomIcons";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { getRefreshToken, IGetRefreshTokenResponse } from "@/utils/getRefreshToken";
+import { getNewAccessToken, getRefreshToken, IGetRefreshTokenResponse } from "@/utils/getRefreshToken";
 import { ILoggedInUser } from "@/types/shared.types";
+import LoadingButton from "@/sharedComponents/LoadingButton";
 
 
 const SignIn = () => {
-  const router = useRouter();
+  const [ isSigningIn, setIsSigningIn ] = useState<boolean>(false);
+  
+  /* Automatically route the user to the application if already signed in */
+  useEffect(() => {
+    (async() => {
+      const cookies = parseCookies();
+      const accessToken = cookies?.asAccessToken
+      const refreshToken = cookies?.asRefreshToken
+      if (accessToken) {
+        window.location.assign("/app/finance-tracker/create");
+      } else {
+        if (refreshToken) {
+          const tokenResponse = (await getNewAccessToken(refreshToken as string));
+          if (tokenResponse) {
+            setCookie(null, "asAccessToken", tokenResponse.access_token, { path: "/", maxAge: (60 * 60) });
+            window.location.assign("/app/finance-tracker/create");
+          }
+        }
+      }
+    })();
+  }, [])
 
   const [ signInResponse, setSignInResponse ] = useState<IGetRefreshTokenResponse>();
   const onSignInError = (err: Pick<TokenResponse, "error" | "error_description" | "error_uri">) => {
@@ -35,9 +55,11 @@ const SignIn = () => {
         console.log(res.data)
         axios.post<ILoggedInUser>("/api/user/sign-in", res.data)
           .then((signInRes) => {
+            setIsSigningIn(false);
             setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
             window.location.assign("/app/finance-tracker/create");
           }).catch(() => {
+            setIsSigningIn(false);
             setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
             window.location.assign("/app/finance-tracker/create");
           })
@@ -48,6 +70,7 @@ const SignIn = () => {
 
   const handleSignIn = useGoogleLogin({
     onSuccess: async (codeResponse) => {
+      setIsSigningIn(true);
       const res = (await getRefreshToken(codeResponse));
       if (res) {
         setCookie(null, "asRefreshToken", res.refresh_token, { path: "/", maxAge: (60 * 60 * 24 * 7) });
@@ -86,7 +109,7 @@ const SignIn = () => {
             
             <div className="flex justify-center items-center flex-col gap-3">
               {/* <LoadingButton loading={isLoading} className="!px-10 rounded-md shadow !py-2.5 text-sl bg-primary text-white">Sign In</LoadingButton> */}
-              <button onClick={() => handleSignIn()} className="btn bg-black text-white flex items-center gap-1"><GoogleIcon /> Sign in with google</button>
+              <LoadingButton loading={isSigningIn} onClick={() => handleSignIn()} className="btn bg-black text-white flex items-center gap-1"><span className="flex flex-row items-center gap-1"><GoogleIcon /> Sign in with google</span></LoadingButton>
               <button onClick={getDummyRefreshTokenForPreviewWithoutSignIn} className="btn !shadow-none !drop-shadow-none bg-white border border-zinc-300 text-zinc-500">Preview without sign in</button>
               {/* <button onClick={iGet} className="btn !shadow-none !drop-shadow-none bg-white border border-zinc-300 text-zinc-500">Preview without sign in</button> */}
               <p className="text-zinc-400 text-center text-sm">Without signing in, all data would be lost when the page is refreshed</p>

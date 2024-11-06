@@ -280,7 +280,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
             </button>
             <label
               htmlFor='csv-import'
-              className="px-4 py-2 bg-rose-500 text-white rounded"
+              className="px-4 py-2 cursor-pointer bg-rose-500 text-white rounded"
             >
               Import CSV
               <input id='csv-import' type="file" accept=".csv" className='hidden' onChange={handleCSVImport} />
