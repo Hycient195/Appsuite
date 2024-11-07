@@ -1,6 +1,6 @@
 import { IPage } from "@/app/app/finance-tracker/_types/types";
 import { SelectChangeEvent } from "@mui/material";
-import { ChangeEvent } from "react";
+import { ChangeEvent, LegacyRef } from "react";
 
 export const currencyMap = {
   NGN: "₦",

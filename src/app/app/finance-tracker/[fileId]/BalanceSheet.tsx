@@ -3,7 +3,7 @@
 import React, { ChangeEvent, LegacyRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { defaultPage, useBalanceSheet } from '../_hooks/useBalanceSheet';
 import ResizableTable from '@/sharedComponents/ResizableTable';
-import { formatDateInput, parseCSV, splitInThousand, splitInThousandForTextInput } from '@/utils/miscelaneous';
+import { formatDateInput, splitInThousand, splitInThousandForTextInput } from '@/utils/miscelaneous';
 import useGeneratePDF from '@/sharedHooks/useGeneratePDF';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -20,6 +20,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
 
   const tableContainerRef = useRef<HTMLTableRowElement|null>(null);
   const tbodyRef = useRef<HTMLTableSectionElement|null>(null);
+  const cursorPositionRef = useRef<number | null>(null);
 
   const [ tableWidth, setTableWidth ] = useState(2);
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
@@ -117,6 +118,19 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     };
   }, [ pages ]);
 
+  const resetCursorPosition = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.target;
+  
+    // Delay setting the cursor to ensure it updates after re-render
+    // console.log(event.target.value)
+    console.log(cursorPositionRef.current)
+    const arr = [3,6]
+    setTimeout(() => {
+      input.selectionStart = arr.includes(cursorPositionRef.current as number) ? ((cursorPositionRef.current as number) + 1) : cursorPositionRef.current;
+      input.selectionEnd = arr.includes(cursorPositionRef.current as number) ? ((cursorPositionRef.current as number) + 1) : cursorPositionRef.current;
+    }, 0);
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Teleport rootId='saveIconPosition'>
@@ -159,7 +173,9 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                                   type="text"
                                   value={row.date}
                                   className='w-full h-full px-1 text-right focus:outline focus:outline-2 focus:outline-zinc-400 font-medium'
-                                  onChange={e => handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value))}
+                                  onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value)), cursorPositionRef.current = e.target.selectionStart, resetCursorPosition(e) }}
+                                  // onChange={e => handleInputChange(pageIndex, rowIndex, 'date', e.target.value)}
+                                  // onChange={e => handleDateChange(pageIndex, rowIndex, "date", e, handleInputChange)}
                                   onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "date")}
                                 />
                               </td>

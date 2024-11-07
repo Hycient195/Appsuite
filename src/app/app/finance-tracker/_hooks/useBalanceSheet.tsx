@@ -83,7 +83,7 @@ export const useBalanceSheet = (fileName?: string) => {
     for (let i = 0; i < rowsToAdd; i++) {
       if (page?.rows?.length > 1) {
         const previousBalance = (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex - 1].balance : "0";
-        page.rows.splice(rowIndex + i, 0, { ...defaultRow, balance: previousBalance, date: (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex-1].date.slice(0,8) : ""});
+        page.rows.splice(rowIndex + i, 0, { ...defaultRow, balance: previousBalance, date: (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex-1].date.slice(2,10) : ""});
       } else {
         page.rows.push({ ...defaultRow });
       }
