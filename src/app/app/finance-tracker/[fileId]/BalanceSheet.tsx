@@ -147,17 +147,17 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                 <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
 
                   <div className="relative h-max">
-                    <p style={{ fontFamily: "sans-serif"}} className="invisib py-1 text-3xl border-2 border-white outline-none font-bold w-ful text-center">{page.title}<span className="invisible">.</span></p>
-                    <textarea style={{ fontFamily: "sans-serif"}} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='TITLE HERE...' autoFocus className="noExport text-3xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border-2 border-zinc-300/80 font-bold w-ma w-ful mx-auto text-center" />
+                    <p style={{ fontFamily: "sans-serif"}} className="invisib py-1 text-3xl border- border-white outline-none font-bold w-ful text-center">{page.title}<span className="invisible">.</span></p>
+                    <textarea style={{ fontFamily: "sans-serif"}} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ TITLE HERE... ]' autoFocus className="noExport text-3xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border- border-zinc-300/80 font-bold w-ma w-ful mx-auto text-center" />
                   </div>
                   <div className="mb-2 noExport" />
                   <div className="relative mb-1">
-                    <p style={{ fontFamily: "sans-serif"}} className="text-center  py-1 border-2 border-white invisibl outline-none text-lg text-black/80 font-semibold w-full">{page.subTitle}<span className="invisible">.</span></p>
-                    <textarea style={{ fontFamily: "sans-serif"}} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='SUBTITLE [eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>]...' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border-2 border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full`} />
+                    <p style={{ fontFamily: "sans-serif"}} className="text-center  py-1 border- border-white invisibl outline-none text-lg text-black/80 font-semibold w-full">{page.subTitle}<span className="invisible">.</span></p>
+                    <textarea style={{ fontFamily: "sans-serif"}} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ SUBTITLE; eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>... ]' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border- border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full`} />
                   </div>
                   <div className="mb-3 noExport" />
                   <ResizableTable
-                    headers={["DATE", "NARRATION", "CREDIT", "DEBIT", "BALANCE"]}
+                    headers={["DATE", "NARRATION", "DEBIT", "CREDIT", "BALANCE"]}
                     minCellWidth={100}
                     tableContent={
                       <tbody ref={tbodyRef} className=''>
@@ -174,8 +174,6 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                                   value={row.date}
                                   className='w-full h-full px-1 text-right focus:outline focus:outline-2 focus:outline-zinc-400 font-medium'
                                   onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value)), cursorPositionRef.current = e.target.selectionStart, resetCursorPosition(e) }}
-                                  // onChange={e => handleInputChange(pageIndex, rowIndex, 'date', e.target.value)}
-                                  // onChange={e => handleDateChange(pageIndex, rowIndex, "date", e, handleInputChange)}
                                   onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "date")}
                                 />
                               </td>
@@ -190,29 +188,29 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                                   onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "narration")}
                                 />
                               </td>
-                              <td className="items-center" >
-                                <input
-                                  ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-credit`, el)}}
-                                  className='w-full h-full px-1 text-right text-green-600 focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
-                                  value={splitInThousandForTextInput(row.credit === "0" ? "" : row.credit)}
-                                  disabled={(!!row.debit&&row.debit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
-                                  onChange={e => handleInputChange(pageIndex, rowIndex, 'credit', e.target.value?.replace(/[^0-9.]/g, ""))}
-                                  onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "credit")}
-                                  onBlur={(e) => handleNumericInputBlur(pageIndex, rowIndex, "credit", e)}
-                                />
-                              </td>
                               <td className="flex items-center">
                                 <input
-                                  ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-debit`, el)}}
+                                  ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-credit`, el)}}
                                   className='w-full h-full px-1 text-right text-red-600 focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
                                   value={splitInThousandForTextInput(row.debit === "0" ? "" : row.debit)}
                                   disabled={(!!row.credit&&row.credit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
                                   onChange={e => handleInputChange(pageIndex, rowIndex, 'debit', e.target.value?.replace(/[^0-9.]/g, ""))}
-                                  onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "debit")}
+                                  onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "credit")}
                                   onBlur={(e) => handleNumericInputBlur(pageIndex, rowIndex, "debit", e)}
                                 />
                               </td>
-                              <td className={`peer/test px-1 relative text-right flex justify-end text-black/80 items-center ${parseFloat(row.balance) < 0 && "text-red-600"} ${(rowIndex === 0 && row?.narration === "BALANCE BROUGHT FORWARD") ? "!font-bold" : "font-medium"}`}>
+                              <td className="items-center" >
+                                <input
+                                  ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-debit`, el)}}
+                                  className='w-full h-full px-1 text-right text-green-600 focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+                                  value={splitInThousandForTextInput(row.credit === "0" ? "" : row.credit)}
+                                  disabled={(!!row.debit&&row.debit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
+                                  onChange={e => handleInputChange(pageIndex, rowIndex, 'credit', e.target.value?.replace(/[^0-9.]/g, ""))}
+                                  onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "debit")}
+                                  onBlur={(e) => handleNumericInputBlur(pageIndex, rowIndex, "credit", e)}
+                                />
+                              </td>
+                              <td className={`peer/test  px-1 relative text-right flex justify-end text-black/80 items-center ${parseFloat(row.balance) < 0 && "text-red-600"} ${(rowIndex === 0 && row?.narration === "BALANCE BROUGHT FORWARD") ? "!font-bold" : "font-medium"}`}>
                                 <div className="bg-transparen bg-transparent bg-tes w-[calc(100%+10px)] -right-3 !border-none z-[-1 absolute bg-green-30 bottom- cursor-pointer h-full">
                                   <button onClick={() => removeRow(pageIndex, rowIndex)} className="peer/removeBtn bg-red-400  duration-300 z-[3] hidden group-hover/row:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-3 items-center justify-center font-semibold">-</button>
                                   <div style={{ width: `${tableWidth}px`}} className="remove-hover w-full h-full hidden peer-hover/removeBtn:block bg-red-400/20 -translate-x-3 top-0 right-0 absolute "></div>
@@ -227,8 +225,8 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                       <tr style={{ fontFamily: "sans-serif"}} >
                         <td className="px-1 py-2 text-right"/>
                         <td className="px-1 py-2 text-center font-bold">TOTAL</td>
-                        <td className="px-1 py-2 text-right font-bold text-green-600">{splitInThousand(page.totalCredit)}</td>
                         <td className="px-1 py-2 text-right font-bold text-red-600">{splitInThousand(page.totalDebit)}</td>
+                        <td className="px-1 py-2 text-right font-bold text-green-600">{splitInThousand(page.totalCredit)}</td>
                         <td className="px-1 py-2 text-right font-bold">{splitInThousand(page.finalBalance)}</td>
                       </tr>
                     </tbody>
@@ -241,10 +239,10 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                       <input id={`csv-import-${pageIndex}`} type="file" accept=".csv" className='hidden' name={`${pageIndex}`} onChange={(e) => handleCSVImport(e, pageIndex)} />
                     </label>
                     <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => downloadPageCSV(pageIndex)}>
-                      Download Page CSV
+                      Download CSV
                     </button>
                     <button className="px-4 py-2 bg-green-500  text-white rounded" onClick={() => createDocumentPDF(pageIndex, page.title)} >
-                      Download as PDF
+                      Download PDF
                     </button>
                     <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => removePage(pageIndex)} >
                       Remove Page
