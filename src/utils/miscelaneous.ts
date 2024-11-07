@@ -197,17 +197,29 @@ export const gaugeDueDate = (
   return { percentage, color };
 };
 
-export const formatDateInput = (value: string): string => {
+// export const formatDateInput = (value: string): string => {
+//   const cleaned = value.replace(/\D/g, '');
+//   // const cleaned = value.replace(/[^\d-]/g, '');
+
+//   const year = cleaned.slice(0, 4);
+//   const month = cleaned.slice(4, 6);
+//   const day = cleaned.slice(6, 8);
+
+//   if (cleaned.length <= 4) return year;
+//   if (cleaned.length <= 6) return `${year}-${month}`;
+//   return `${year}-${month}-${day}`;
+// };
+
+export const formatDateInput = (value: string, delimiter: string = "-"): string => {
   const cleaned = value.replace(/\D/g, '');
-  // const cleaned = value.replace(/[^\d-]/g, '');
 
-  const year = cleaned.slice(0, 4);
-  const month = cleaned.slice(4, 6);
-  const day = cleaned.slice(6, 8);
+  const day = cleaned.slice(0, 2);
+  const month = cleaned.slice(2, 4);
+  const year = cleaned.slice(4, 8);
 
-  if (cleaned.length <= 4) return year;
-  if (cleaned.length <= 6) return `${year}-${month}`;
-  return `${year}-${month}-${day}`;
+  if (cleaned.length <= 2) return day;
+  if (cleaned.length <= 4) return `${day}${delimiter}${month}`;
+  return `${day}${delimiter}${month}${delimiter}${year}`;
 };
 
 export function parseCSV(data: string): string[][] {
