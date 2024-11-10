@@ -9,6 +9,7 @@ import api from "@/redux/api";
 import TableEmpty from "@/sharedComponents/emptyState/TableEmpty";
 import Link from "next/link";
 import { parseCookies } from "nookies";
+import { MenuItem, Select } from "@mui/material";
 
 
 export default function BalanceSheetFiles() {
@@ -86,12 +87,20 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
 
   const [ deleteDocument, { isLoading, isSuccess }] = api.commonApis.useDeleteFileMutation();
   const [ updateFileName, { isLoading: isUpdatingFile, isSuccess: fileNameUpdateSuccess }] = api.commonApis.useUpdateFileNameMutation();
+  const [ getFileVersions, { data: fileVersions, isLoading: isGettingFileVersions, isError: fileVersionsIsError }] = api.commonApis.useLazyGetFileVersionsQuery();
+  const [ restoreFileVersion, { isLoading: isRestoringFileVersion, isError: fileRestoreIsError, isSuccess: fileRestoreIsSuccess }] = api.commonApis.useRestoreFileVersionMutation();
 
   useEffect(() => {
     if (isSuccess) {
       sethasDeleted(!hasDeleted);
     }
   }, [ isSuccess ]);
+
+  useEffect(() => {
+    if (fileRestoreIsSuccess) {
+      router.push(file?.id);
+    }
+  }, [ fileRestoreIsSuccess ])
 
   const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -104,6 +113,14 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
     }
   };
 
+  const handleGetFileVersions = (e: MouseEvent<HTMLButtonElement|any>, fileId: string) => {
+    e.stopPropagation();
+    getFileVersions(fileId);
+  }
+
+  // const handleGetFileVersions
+
+  console.log(fileVersions)
 
   return (
     <tr onClick={() => router.push(file?.id)} className="border-b border-dashed cursor-pointer odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
@@ -113,9 +130,9 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
             type="text"
             value={fileName}
             ref={inputRef}
-            onFocus={() => setIsEditing(true)}
+            // onFocus={() => setIsEditing(true)}
             onBlur={() => !isEditing && setIsEditing(false)}
-            onClick={(e) => e.stopPropagation()}
+            // onClick={(e) => e.stopPropagation()}
             onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
             className="inline-block w-full bg-transparent outline-none py-2 h-full"
           />
@@ -134,6 +151,38 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
           >
             { isEditing ? "Save" : "Rename" }
           </LoadingButton>
+          {/* <LoadingButton loading={isRestoringFileVersion} success={fileRestoreIsSuccess} onClick={(e) => e.stopPropagation()} className="!px-4 !py-2 !bg-amber-400 rounded-md relative">
+            <span>Versions</span>
+            <Select
+              onMouseDown={(e) => handleGetFileVersions(e, file?.id)}
+              itemID="location"
+              defaultValue={0}
+              value={0}
+              className="[&>*]:!py-0 [&>*]:!px-0 !absolute !w-full !opacity-0 !bg-tes !left-0 !h-full !top-0 [&>*]:!border-none  pr- font-semibold text-md text-zinc-600 min-w-[40px]"
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Age"
+            >
+              <MenuItem className="">Versions</MenuItem>
+              {
+                !isGettingFileVersions
+                ? (
+                  !fileVersionsIsError
+                  ? (
+                    fileVersions && fileVersions?.map((version, index) => (
+                      <MenuItem onClick={() => restoreFileVersion({ fileId: file?.id, revisionId: version?.id, mimeType: "text/csv" })} key={`file-version-${index}`} className="flex gap-2"><span className="text-zinc-400">Timestamp: </span> {version?.modifiedTime?.split(".")[0]?.replace("T", " ")}</MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem className="">No file versions</MenuItem>
+                  )
+                  
+                ) : (
+                  <MenuItem className="">Loading ...</MenuItem>
+                )
+              }
+              
+            </Select>
+          </LoadingButton> */}
           <LoadingButton
             loading={isLoading}
             className="px-4 !py-2 bg-red-600 text-white rounded"

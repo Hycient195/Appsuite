@@ -13,6 +13,8 @@ import api from '@/redux/api';
 import Teleport from '@/utils/Teleport';
 import StatusIcon from '@/sharedComponents/CustomIcons';
 import Papa from "papaparse";
+import { IUpdateFileRequest } from '@/types/shared.types';
+import Image from 'next/image';
 
 const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
 
@@ -45,6 +47,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
   const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` })
   
   const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
+  const [ uploadImage, { isLoading: isUploadingImage, isSuccess: isUploadingImageSuccess} ] = api.commonApis.useUploadImageMutation();
 
   const {
     pages,
@@ -58,6 +61,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     redo,
     canUndo,
     canRedo,
+    updateImageUrl,
     handleCSVImport,
     generateCSVData,
     downloadPageCSV,
@@ -82,10 +86,10 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     }
   }, []);
 
-  const handleSaveFile = () => {
+  const handleSaveFile = (saveType: IUpdateFileRequest["updateType"]) => {
     if (isLoggedIn && loadedSucessfully) {
       const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-      saveFile({ fileId: params?.fileId, content: csvData, mimeType: "text/csv" })
+      saveFile({ fileId: params?.fileId, content: csvData, mimeType: "text/csv", updateType: saveType })
     }
   }
 
@@ -102,8 +106,8 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
         clearTimeout(saveTimer);
       }
       const newTimer = setTimeout(() => {
-        if (!isFirstRender.current && isLoggedIn && loadedSucessfully) {
-          handleSaveFile();
+        if (!isFirstRender.current && isLoggedIn && loadedSucessfully && !isFirstRender.current) {
+          handleSaveFile("autosave");
         }
         clearTimeout(newTimer);
       }, 3000);
@@ -118,12 +122,50 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     };
   }, [ pages ]);
 
+  useEffect(() => {
+    if (isUploadingImageSuccess) {
+      
+    }
+  }, [ isUploadingImageSuccess ])
+
+  const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>, pageIndex: number) => {
+    const newUrl = e.target.value;
+    // setImageUrl(newUrl);
+    updateImageUrl(newUrl, pageIndex);
+  };
+
+  // useEffect(() => {
+  //   // Skip the effect on the first render
+  //   if (isFirstRender.current) {
+  //     isFirstRender.current = false;
+  //     return;
+  //   }
+
+  //   // Clear the previous timer
+  //   if (saveTimer) {
+  //     clearTimeout(saveTimer);
+  //   }
+
+  //   // Set a new timer to autosave after 3 seconds
+  //   const newTimer = setTimeout(() => {
+  //     if (isLoggedIn && loadedSucessfully) {
+  //       handleSaveFile("autosave");
+  //     }
+  //   }, 3000);
+
+  //   setSaveTimer(newTimer);
+
+  //   // Clear the timer on cleanup
+  //   return () => {
+  //     if (newTimer) {
+  //       clearTimeout(newTimer);
+  //     }
+  //   };
+  // }, [pages]);
+
+
   const resetCursorPosition = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
-  
-    // Delay setting the cursor to ensure it updates after re-render
-    // console.log(event.target.value)
-    console.log(cursorPositionRef.current)
     const arr = [3,6]
     setTimeout(() => {
       input.selectionStart = arr.includes(cursorPositionRef.current as number) ? ((cursorPositionRef.current as number) + 1) : cursorPositionRef.current;
@@ -131,29 +173,35 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     }, 0);
   };
 
+  const handleAddImageURL = (pageIndex: number, imageUrl: string): void => {
+    updateImageUrl("https://www.nairaland.com/attachments/14813012_nnpclogo_jpeg26c1f6fedaaf45fdf84e047f1ceb9a4c", 0)
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Teleport rootId='saveIconPosition'>
-        <button onClick={handleSaveFile} className="h-max flex items-center justify-center my-auto">
+        <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
           <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
         </button>
       </Teleport>
       <main className=" w-full border-zinc-200 ">
+     
         <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
           {(pages).map((page, pageIndex) => (
             <DraggablePage key={pageIndex} pageIndex={pageIndex} movePage={movePage}>
+               
               {/* @ts-ignore */}
               <div key={pageIndex} ref={(el: HTMLDivElement) => ((singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el)} className="mb-8 w-full  max-w-[1080px] md:rounded mx-auto bg-white px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300">
+                {/* { page?.imageUrl && <Image height={90} width={90} src={page.imageUrl as string} alt='alternative' className='object-contain ml-4' /> } */}
                 <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
-
                   <div className="relative h-max">
                     <p style={{ fontFamily: "sans-serif"}} className="invisib py-1 text-3xl border- border-white outline-none font-bold w-ful text-center">{page.title}<span className="invisible">.</span></p>
-                    <textarea style={{ fontFamily: "sans-serif"}} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ TITLE HERE... ]' autoFocus className="noExport text-3xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border- border-zinc-300/80 font-bold w-ma w-ful mx-auto text-center" />
+                    <textarea style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ TITLE HERE... ]' autoFocus className="noExport text-3xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border- border-zinc-300/80 font-bold w-ma w-ful mx-auto text-center" />
                   </div>
                   <div className="mb-2 noExport" />
                   <div className="relative mb-1">
                     <p style={{ fontFamily: "sans-serif"}} className="text-center  py-1 border- border-white invisibl outline-none text-lg text-black/80 font-semibold w-full">{page.subTitle}<span className="invisible">.</span></p>
-                    <textarea style={{ fontFamily: "sans-serif"}} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ SUBTITLE; eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>... ]' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border- border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full`} />
+                    <textarea style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ SUBTITLE; eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>... ]' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border- border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full`} />
                   </div>
                   <div className="mb-3 noExport" />
                   <ResizableTable
@@ -178,7 +226,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                                 />
                               </td>
                               <td className="  items-center relative">
-                                <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{row.narration}</p>
+                                <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{row.narration}</p> {/* Placeholder to hold textarea height autoresize */}
                                 <textarea
                                   ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-narration`, el)}}
                                   value={row.narration}
@@ -238,6 +286,9 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                       Load CSV
                       <input id={`csv-import-${pageIndex}`} type="file" accept=".csv" className='hidden' name={`${pageIndex}`} onChange={(e) => handleCSVImport(e, pageIndex)} />
                     </label>
+                    {/* <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => handleAddImageURL(pageIndex, "sdf")}>
+                      Add Logo
+                    </button> */}
                     <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => downloadPageCSV(pageIndex)}>
                       Download CSV
                     </button>

@@ -1,6 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Papa from "papaparse";
 import { IPage, IRow } from '../_types/types';
+import { useCancelableDebounce } from '@/sharedHooks/useCancellableDebounce';
 
 const defaultRow: IRow = {
   date: '',
@@ -17,16 +18,28 @@ export const defaultPage: IPage = {
   totalCredit: "0",
   totalDebit: "0",
   finalBalance: "0",
-  rowsToAdd: 1
+  rowsToAdd: 1,
+  imageUrl: ""
 };
 
 export const useBalanceSheet = (fileName?: string) => {
   const [pages, setPages] = useState<IPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
   const [history, setHistory] = useState<IPage[][]>([]);
   const [future, setFuture] = useState<IPage[][]>([]);
+  const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
+  const [ tempHistoryStack, setTempHistoryStack ] = useState<IPage[]|null>(null);
+
 
   const prevPagesRef = useRef(pages);
   const inputRefs = useRef<Map<string, HTMLInputElement | HTMLTextAreaElement | null>>(new Map());
+
+  const updateImageUrl = (url: string, pageIndex: number) => {
+    const pageCopy = [...pages];
+    pageCopy[pageIndex].imageUrl = url;
+    updatePages(pageCopy);
+  };
+
+
 
   const updateRowsToAdd = (pageNumber: number, action: ("increament"|"decreament"|null), defaltValue?: number): void => {
     const pageCopy = [ ...pages ]
@@ -41,12 +54,14 @@ export const useBalanceSheet = (fileName?: string) => {
   const updatePageTitle = (value: string, pageNumber: number): void => {
     const pageCopy = [ ...pages ]
     pageCopy[pageNumber].title = value;
-    setPages(pageCopy)
+    setPages(pageCopy);
+    updatePages(pageCopy)
   }
 
   const updatePageSubtitle = (value: string, pageNumber: number): void => {
     const pageCopy = [ ...pages ]
     pageCopy[pageNumber].subTitle = value;
+    updatePages(pageCopy)
     setPages(pageCopy)
   }
 
@@ -57,7 +72,6 @@ export const useBalanceSheet = (fileName?: string) => {
     };
     const updatedPages = [...pages];
     updatedPages.splice(afterPageIndex + 1, 0, newPage);
-
     updatePages(updatedPages);
   };
 
@@ -108,10 +122,8 @@ export const useBalanceSheet = (fileName?: string) => {
     const updatedPages = [...pages];
     const page = { ...updatedPages[pageIndex], rows: [...updatedPages[pageIndex].rows] };
     const row = { ...page.rows[rowIndex] };
-    
     (row[field as keyof IRow] as string | number) =  value;
     page.rows[rowIndex] = row;
-
     calculatePageTotals(page);
     updatedPages[pageIndex] = page;
     updatePages(updatedPages);
@@ -168,12 +180,28 @@ export const useBalanceSheet = (fileName?: string) => {
     page.finalBalance = String(finalBalance?.toFixed(2));
   };
 
-  // General function to update the pages and manage history for undo/redo
   const updatePages = (updatedPages: IPage[]) => {
+    setPages(updatedPages);
     setHistory([...history, pages]); // Save the current state to history
     setFuture([]); // Clear future stack on new action
-    setPages(updatedPages);
   };
+
+  // const updatePages = (updatedPages: IPage[]) => {
+  //   setPages(updatedPages);
+  //   if (!tempHistoryStack) setTempHistoryStack(pages);
+
+  //   if (saveTimer) clearTimeout(saveTimer);
+  //   const newTimer = setTimeout(() => {
+  //     if (tempHistoryStack) {
+  //       setHistory([...history, tempHistoryStack]);
+  //       setFuture([]);
+  //     }
+  //     setTempHistoryStack(null);
+  //   }, 300);
+
+  //   setSaveTimer(newTimer);
+  // };
+
 
   const undo = () => {
     if (!canUndo) return;
@@ -208,7 +236,7 @@ export const useBalanceSheet = (fileName?: string) => {
         },
         skipEmptyLines: true,
       });
-      
+      updatePages([ ...pages ]);
     }
   };
 
@@ -262,14 +290,13 @@ export const useBalanceSheet = (fileName?: string) => {
     if (pageIndex) {
       const pagesCopy = [ ...pages ];
       pagesCopy.splice(pageIndex, 1, ...convertToPages(csvData))
-      // console.log(pagesCopy)
       setPages(pagesCopy);
-      updatePages(pagesCopy)
+      // updatePages(pagesCopy)
     } else {
       const pagesData = convertToPages(csvData);
       // console.log(pagesData)
       setPages(pagesData);
-      updatePages(pagesData)
+      // updatePages(pagesData)
     }   
   };
 
@@ -294,9 +321,10 @@ export const useBalanceSheet = (fileName?: string) => {
         currentPage.title = row[0]; // First row is the title
       } else if (currentPage.subTitle === '') {
         currentPage.subTitle = row[0]; // Second row is the subTitle
-      } else if (row[0] === '' && row[1] === 'TOTAL') {
+      } else if (row[1] === 'TOTAL') {
         console.log(row[i])
         // Parse total row
+        currentPage.imageUrl = row[0];
         currentPage.totalCredit = (parseFloat(row[2] || "0"))?.toFixed(2);
         currentPage.totalDebit = (parseFloat(row[3] || "0"))?.toFixed(2);
         currentPage.finalBalance = (parseFloat(row[4] || "0"))?.toFixed(2);
@@ -340,7 +368,7 @@ export const useBalanceSheet = (fileName?: string) => {
     const rowsCSV = page.rows
       .map(row => `"${row.date}","${row.narration}","${row.credit}","${row.debit}","${row.balance}"`)
       .join('\n');
-    const totalCSV = `,"TOTAL","${page.totalCredit}","${page.totalDebit}","${page.finalBalance}" `
+    const totalCSV = `${page.imageUrl??""},"TOTAL","${page.totalCredit}","${page.totalDebit}","${page.finalBalance}" `
     return `"${page.title}",,,,\n"${page.subTitle}",,,,\n"Date","Narration","Credit","Debit","Balance"\n${rowsCSV}\n${totalCSV}`;
   };
 
@@ -441,6 +469,7 @@ export const useBalanceSheet = (fileName?: string) => {
     redo,
     canUndo,
     canRedo,
+    updateImageUrl,
 
     handleCSVImport,
     importCSV,
@@ -457,6 +486,6 @@ export const useBalanceSheet = (fileName?: string) => {
     moveRow,
     handleKeyDown,
     inputRefs,
-    movePage
+    movePage,
   };
 };

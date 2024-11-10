@@ -14,6 +14,7 @@ export interface IPage {
   totalDebit: string;
   finalBalance: string;
   rowsToAdd: number;
+  imageUrl?: string;
 }
 
 export interface IBalanceSheetFile {

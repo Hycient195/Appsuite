@@ -1,6 +1,7 @@
-import BalanceSheet from "./BalanceSheet";
 import { readFile } from "@/services/googleDriveService";
+import BalanceSheet from "./BalanceSheet";
 import { cookies } from "next/headers";
+import { getNewAccessToken } from "@/utils/getRefreshToken";
 
 interface IProps {
   params: Promise<{
@@ -16,10 +17,17 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
   let loadedSucessfully = false;
 
   try {
+    // if (!isLoggedIn) {
+    //   const refreshToken = appCookies.get("asRefreshToken")?.value;
+    //   if (refreshToken && refreshToken !== "DUMMY_PREVIEW_REFRESH_TOKEN") {
+    //     const tokenResponse = (await getNewAccessToken(refreshToken as string));
+    //     appCookies.set("asAccessToken", tokenResponse?.access_token as string, { maxAge: (60*60)})
+    //   }
+    // }
     csvString = (await readFile((await params).fileId)) as string;
     loadedSucessfully = true;
   } catch (error) {
-    console.log(`Error fetching products`, error);
+    console.log(`Error fetching balance sheet`, error);
     csvString = "";
   }
 

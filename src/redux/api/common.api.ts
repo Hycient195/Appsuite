@@ -1,6 +1,6 @@
 import { BaseQueryFn, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import GLOBAL_BASEURL from "./_globalBaseURL";
-import { ICreateFileRequest, ILoggedInUser, IUpdateFileRequest } from "@/types/shared.types";
+import { ICreateFileRequest, IFileVersions, ILoggedInUser, IUpdateFileRequest, TMimeTypes } from "@/types/shared.types";
 import { IBalanceSheetFile } from "@/app/app/finance-tracker/_types/types";
 import { parseCookies, setCookie } from "nookies";
 import { getNewAccessToken } from "@/utils/getRefreshToken";
@@ -11,13 +11,15 @@ const baseQueryWithAuth: BaseQueryFn = async (args, api, extraOptions) => {
   const cookies = parseCookies();
   const accessToken = cookies?.asAccessToken;
   if (!accessToken) {
-    const refreshToken = cookies.asRefreshToken; 
-    const tokenResponse = (await getNewAccessToken(refreshToken as string));
-    if (tokenResponse) {
-      setCookie(null, "asAccessToken", tokenResponse.access_token, { path: "/", maxAge: (60 * 60) });
-      return { error: { status: 200, data: "New access token created" } }
-    } else {
-      return { error: { status: 400, data: "Unable to generate access token" } }
+    const refreshToken = cookies.asRefreshToken;
+    if (refreshToken && refreshToken !== "DUMMY_PREVIEW_REFRESH_TOKEN") {
+      const tokenResponse = (await getNewAccessToken(refreshToken as string));
+      if (tokenResponse) {
+        setCookie(null, "asAccessToken", tokenResponse.access_token, { path: "/", maxAge: (60 * 60) });
+        return { error: { status: 200, data: "New access token created" } }
+      } else {
+        return { error: { status: 400, data: "Unable to generate access token" } }
+      }
     }
   }
   const baseQuery = fetchBaseQuery({ baseUrl: GLOBAL_BASEURL });
@@ -75,7 +77,7 @@ const baseQueryWithAuth: BaseQueryFn = async (args, api, extraOptions) => {
 
 const api = createApi({
   reducerPath: "commonApis",
-  tagTypes: [ "files", "user" ],
+  tagTypes: [ "files", "user", "fileVersions" ],
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     signInUser: builder.mutation<any, ILoggedInUser>({
@@ -129,6 +131,26 @@ const api = createApi({
       invalidatesTags: () => [{ type: "files" }]
     }),
     
+    getFileVersions: builder.query<IFileVersions[], string>({
+      query: (fileId: string) => `api/google-drive/file-version?fileId=${fileId}`,
+      providesTags: () => [{ type: "fileVersions" }]
+    }),
+
+    restoreFileVersion: builder.mutation<any, { fileId: string, revisionId: string, mimeType: TMimeTypes }>({
+      query: (formData) => ({
+        url: "api/google-drive/file-version",
+        method: "POST",
+        body: formData
+      })
+    }),
+    uploadImage: builder.mutation<any, { fileId: string, fileName: string }>({
+      query: (formData) => ({
+        url: "api/google-drive/image",
+        method: "POST",
+        body: formData
+      })
+    }),
+
   })
 })
 

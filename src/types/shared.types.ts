@@ -14,7 +14,16 @@ export interface IUpdateFileRequest {
   fileId: string;
   content: string;
   mimeType: string;
+  updateType: ("autosave"|"versionedSave")
 }
+
+export interface IFileVersions {
+  id: string;
+  keepForever: boolean;
+  modifiedTime: string;
+}
+
+export type TMimeTypes = "text/csv"
 
 // type TModules = [ "FINANCE_TRACKER", "INVOICE_GENERATOR" ]
 // export type TModules =  ("FINANCE_TRACKER"|"INVOICE_GENERATOR" )

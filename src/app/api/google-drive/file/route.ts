@@ -1,4 +1,4 @@
-import { createFile, deleteFile, readFile, updateFile } from "@/services/googleDriveService";
+import { createFile, readFile, updateFile, deleteFile } from "@/services/googleDriveService";
 import { ICreateFileRequest } from "@/types/shared.types";
 import { NextResponse } from "next/server";
 
@@ -17,9 +17,9 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { fileId, content, mimeType } = await request.json();
+  const { fileId, content, mimeType, updateType } = await request.json();
   if (!fileId || !content) return NextResponse.json({ error: 'fileId and content are required' }, { status: 400 });
-  const response = await updateFile(fileId, content, mimeType);
+  const response = await updateFile(fileId, content, mimeType, updateType);
   return NextResponse.json(response);
 }
 

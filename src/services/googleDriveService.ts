@@ -1,9 +1,10 @@
 "use server";
 
-import { ICreateFileRequest } from '@/types/shared.types';
+import { ICreateFileRequest, TMimeTypes } from '@/types/shared.types';
 import { getNewAccessToken } from '@/utils/getRefreshToken';
 import { google } from 'googleapis';
 import { cookies } from 'next/headers';
+import nookies, { setCookie } from 'nookies';
 
 
 const APP_SUITE_FOLDER_NAME = "APPSUITE_APPS";
@@ -13,17 +14,9 @@ const auth = new google.auth.OAuth2({
 });
 
 async function getDriveService() {
-  const accessToken = (await cookies()).get("asAccessToken")?.value;
+  const cookieStore = (await cookies());
+  const accessToken = cookieStore.get("asAccessToken")?.value;
   auth.setCredentials({ access_token: accessToken });
-  // if (accessToken) {
-  //   auth.setCredentials({ access_token: accessToken });
-  // } else {
-  //   const refreshToken = (await cookies()).get("asRefreshToken")?.value;
-  //   const newAccessToken = (await getNewAccessToken(refreshToken as string));
-  //   console.log(newAccessToken)
-
-  //   auth.setCredentials({ access_token: newAccessToken?.access_token });
-  // }
   return google.drive({ version: "v3", auth});
 }
 
@@ -85,7 +78,7 @@ export async function readFile (fileId: string) {
   return response.data;
 };
 
-export async function updateFile (fileId: string, content: string, mimeType: string) {
+export async function updateFile (fileId: string, content: string, mimeType: string, updateType: ("autosave"|"versionedSave")) {
   const driveService = await getDriveService();
   return driveService.files.update({
     fileId,
@@ -93,6 +86,7 @@ export async function updateFile (fileId: string, content: string, mimeType: str
       mimeType: mimeType,
       body: content,
     },
+    keepRevisionForever: (updateType === "versionedSave") ? true : false
   });
 };
 
@@ -126,3 +120,57 @@ export async function getAllFilesInFolder (folderId: string) {
   });
   return response.data.files;
 };
+
+export async function listFileVersions(fileId: string) {
+  const driveService = await getDriveService();
+  const response = await driveService.revisions.list({
+    fileId,
+    fields: 'revisions(id, modifiedTime, keepForever)',
+  });
+  return response.data.revisions;
+}
+
+export async function restoreFileVersion(fileId: string, revisionId: string, mimeType: string) {
+  const driveService = await getDriveService();
+  const revision = await driveService.revisions.get({
+    fileId,
+    revisionId,
+    alt: 'media',
+  });
+
+  // Re-update the file with the old revision content to restore it
+  return driveService.files.update({
+    fileId,
+    media: {
+      // mimeType: 'application/vnd.google-apps.document',
+      mimeType: mimeType,
+      body: revision.data,
+    },
+  });
+}
+
+export async function uploadImage(image: any, fileName: string) {
+  const driveService = await getDriveService();
+  const rootFolderId = (await getOrCreateFolder(APP_SUITE_FOLDER_NAME));
+  if (!rootFolderId) return;
+  const financeTrackerFolderId = await getOrCreateFolder('FINANCE_TRACKER', rootFolderId);
+  if (!financeTrackerFolderId) return;
+  const imagesFolderId = await getOrCreateFolder('images', financeTrackerFolderId);
+  if (!imagesFolderId) return;
+
+  // Decode the image data (assuming base64 encoding)
+  const buffer = Buffer.from(image, 'base64');
+
+  // Upload the image
+  return await driveService.files.create({
+    requestBody: {
+      name: fileName,
+      parents: [imagesFolderId],
+    },
+    media: {
+      mimeType: 'image/jpeg', // Change this as necessary
+      body: buffer,
+    },
+    fields: 'id, webViewLink',
+  });
+}
