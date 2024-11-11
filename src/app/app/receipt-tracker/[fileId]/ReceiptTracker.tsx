@@ -292,14 +292,25 @@ const ReceiptTracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSu
                                   onBlur={(e) => handleNumericInputBlur(pageIndex, rowIndex, "receipt", e)}
                                 /> */}
                                 <div className="bg-transparen bg-transparent peer/test flex flex-row gap-2 items-center relative bg-tes w-[calc(100%+10px)] -right-3 !border-none z-[-1 absolute bg-green-30 bottom- cursor-pointer h-full">
-                                  <label htmlFor={`file-input-${pageIndex}-${rowIndex}`} className='noExport'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
-                                    </svg>
-                                    <input type="file" id={`file-input-${pageIndex}-${rowIndex}`} className='hidden' onChange={(e) => handleUploadImage(e, pageIndex, rowIndex)} />
-                                  </label>
-                                  { (row?.receipt && row?.receipt !== "0") && <a href={row.receipt} target='_blank' rel='noreferrer' className="!text-red-600 underline">Link</a> }
-
+                                  
+                                  {
+                                    (row?.receipt && row?.receipt !== "0") ? (
+                                      <>
+                                        <a href={row.receipt} target='_blank' rel='noreferrer' className="!text-blue-600 underline">Link</a>
+                                        <button className='noExport'>
+                                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                          </svg>
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <label htmlFor={`file-input-${pageIndex}-${rowIndex}`} className='noExport' title='You can drag and drop in the column cell to upload a receipt'>
+                                        <p className="text-purple-600 underline">Upload</p>
+                                        <input disabled={!isLoggedIn} type="file" id={`file-input-${pageIndex}-${rowIndex}`} className='hidden' onChange={(e) => handleUploadImage(e, pageIndex, rowIndex)} />
+                                      </label>
+                                    )
+                                  }
+                                  
                                   <button onClick={() => removeRow(pageIndex, rowIndex)} className="peer/removeBtn bg-red-400  duration-300 z-[3] hidden group-hover/row:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-3 items-center justify-center font-semibold">-</button>
                                   <div style={{ width: `${tableWidth}px`}} className="remove-hover w-full h-full hidden peer-hover/removeBtn:block bg-red-400/20 -translate-x-3 top-0 right-0 absolute "></div>
                                 </div>
