@@ -1,6 +1,6 @@
 // pages/api/drive/listFileVersions.ts
 import { listFileVersions, restoreFileVersion } from '@/services/googleDriveService';
-import type { NextApiRequest, NextApiResponse } from 'next';
+// import type { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 
 type Data = {

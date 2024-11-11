@@ -25,6 +25,11 @@ export interface IFileVersions {
 
 export type TMimeTypes = "text/csv"
 
+export interface IUploadFileRequest {
+  fileId: string;
+  content: Blob|File
+}
+
 // type TModules = [ "FINANCE_TRACKER", "INVOICE_GENERATOR" ]
 // export type TModules =  ("FINANCE_TRACKER"|"INVOICE_GENERATOR" )
 

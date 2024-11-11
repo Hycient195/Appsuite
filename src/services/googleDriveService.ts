@@ -1,10 +1,8 @@
 "use server";
 
-import { ICreateFileRequest, TMimeTypes } from '@/types/shared.types';
-import { getNewAccessToken } from '@/utils/getRefreshToken';
+import { ICreateFileRequest, IUploadFileRequest } from '@/types/shared.types';
 import { google } from 'googleapis';
 import { cookies } from 'next/headers';
-import nookies, { setCookie } from 'nookies';
 
 
 const APP_SUITE_FOLDER_NAME = "APPSUITE_APPS";
@@ -17,7 +15,7 @@ async function getDriveService() {
   const cookieStore = (await cookies());
   const accessToken = cookieStore.get("asAccessToken")?.value;
   auth.setCredentials({ access_token: accessToken });
-  return google.drive({ version: "v3", auth});
+  return google.drive({ version: "v3", auth });
 }
 
 // Create or find the AppSuite folder
@@ -149,28 +147,92 @@ export async function restoreFileVersion(fileId: string, revisionId: string, mim
   });
 }
 
-export async function uploadImage(image: any, fileName: string) {
+// Create or find the specific folder for a file, storing primary, versions, and recovery files
+export async function getOrCreateFileFolder(appName: string, fileName: string) {
+  const appFolderId = await initializeFolders(appName);
+  if (!appFolderId) throw new Error(`Folder for ${appName} not found`);
+
+  // Create a folder named after the file, which will contain the file and its backups
+  return getOrCreateFolder(fileName, appFolderId);
+}
+
+// CRUD Operations for files
+export async function createFileInFolder({ appName, fileName, content, mimeType }: ICreateFileRequest) {
   const driveService = await getDriveService();
-  const rootFolderId = (await getOrCreateFolder(APP_SUITE_FOLDER_NAME));
-  if (!rootFolderId) return;
-  const financeTrackerFolderId = await getOrCreateFolder('FINANCE_TRACKER', rootFolderId);
-  if (!financeTrackerFolderId) return;
-  const imagesFolderId = await getOrCreateFolder('images', financeTrackerFolderId);
-  if (!imagesFolderId) return;
+  const fileFolderId = await getOrCreateFileFolder(appName, fileName);
+  if (!fileFolderId) throw new Error(`Folder for ${fileName} in ${appName} not found`);
 
-  // Decode the image data (assuming base64 encoding)
-  const buffer = Buffer.from(image, 'base64');
-
-  // Upload the image
-  return await driveService.files.create({
+  // Create the primary file with the same name as the folder
+  return driveService.files.create({
     requestBody: {
       name: fileName,
-      parents: [imagesFolderId],
+      parents: [fileFolderId],
+      mimeType,
     },
     media: {
-      mimeType: 'image/jpeg', // Change this as necessary
-      body: buffer,
+      mimeType,
+      body: content,
     },
-    fields: 'id, webViewLink',
   });
+}
+
+import { Readable } from "stream"
+
+/**
+ * Saves a content file in the same folder as the specified file ID.
+ * @param fileId - ID of the existing file to get the parent folder from.
+ * @param content - The file content to upload as Blob or File.
+ * @returns The URL of the uploaded file with view permissions for everyone.
+ */
+export async function saveFileInFileFolder({ fileId, content }: IUploadFileRequest): Promise<string | null> {
+  console.log(fileId)
+  const driveService = await getDriveService();
+  
+  try {
+    // Retrieve file metadata to find its direct parent folder
+    const fileMetadata = await driveService.files.get({
+      fileId,
+      fields: 'parents',
+    });
+
+    const parentFolderId = fileMetadata.data.parents?.[0];
+    if (!parentFolderId) {
+      throw new Error(`Parent folder for file ID ${fileId} not found`);
+    }
+
+    const fileBuffer = content.stream();
+
+    // Upload the new file to the identified parent folder
+    const fileResponse = await driveService.files.create({
+      requestBody: {
+        name: `Uploaded File - ${Date.now()}`,  // Customize file name as needed
+        parents: [parentFolderId],
+      },
+      media: {
+        mimeType: content.type,
+        body: Readable.from(fileBuffer as any),
+      },
+      fields: 'id, webViewLink',
+      supportsAllDrives: true,
+    });
+
+    const newFileId = fileResponse.data.id;
+    if (!newFileId) {
+      throw new Error("Failed to create the file in the parent folder");
+    }
+
+    // Update permissions to allow public view access
+    await driveService.permissions.create({
+      fileId: newFileId,
+      requestBody: {
+        role: 'reader',
+        type: 'anyone',
+      },
+    });
+
+    return fileResponse.data.webViewLink || null;
+  } catch (error) {
+    console.error("Error saving file in file folder:", error);
+    return null;
+  }
 }

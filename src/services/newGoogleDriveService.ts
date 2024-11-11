@@ -211,3 +211,29 @@ export async function createTemporaryFile (folderId: string, content: string, mi
     },
   });
 }
+
+export async function uploadImage(image: any, fileName: string) {
+  const driveService = await getDriveService();
+  const rootFolderId = (await getOrCreateFolder(APP_SUITE_FOLDER_NAME));
+  if (!rootFolderId) return;
+  const financeTrackerFolderId = await getOrCreateFolder('FINANCE_TRACKER', rootFolderId);
+  if (!financeTrackerFolderId) return;
+  const imagesFolderId = await getOrCreateFolder('images', financeTrackerFolderId);
+  if (!imagesFolderId) return;
+
+  // Decode the image data (assuming base64 encoding)
+  const buffer = Buffer.from(image, 'base64');
+
+  // Upload the image
+  return await driveService.files.create({
+    requestBody: {
+      name: fileName,
+      parents: [imagesFolderId],
+    },
+    media: {
+      mimeType: 'image/jpeg', // Change this as necessary
+      body: buffer,
+    },
+    fields: 'id, webViewLink',
+  });
+}

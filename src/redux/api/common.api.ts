@@ -1,6 +1,6 @@
 import { BaseQueryFn, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import GLOBAL_BASEURL from "./_globalBaseURL";
-import { ICreateFileRequest, IFileVersions, ILoggedInUser, IUpdateFileRequest, TMimeTypes } from "@/types/shared.types";
+import { ICreateFileRequest, IFileVersions, ILoggedInUser, IUpdateFileRequest, IUploadFileRequest, TMimeTypes } from "@/types/shared.types";
 import { IBalanceSheetFile } from "@/app/app/finance-tracker/_types/types";
 import { parseCookies, setCookie } from "nookies";
 import { getNewAccessToken } from "@/utils/getRefreshToken";
@@ -98,6 +98,24 @@ const api = createApi({
       invalidatesTags: () => [{ type: "files" }]
     }),
 
+    createFileInFolder: builder.mutation<any, ICreateFileRequest>({
+      query: (formData) => ({
+        url: "api/google-drive/file-in-folder",
+        method: "POST",
+        body: formData
+      }),
+      invalidatesTags: () => [{ type: "files" }]
+    }),
+
+    saveFileInFileFolder: builder.mutation<any, IUploadFileRequest>({
+      query: (formData) => ({
+        url: "api/google-drive/file-in-folder",
+        method: "PATCH",
+        body: formData
+      }),
+      invalidatesTags: () => [{ type: "files" }]
+    }),
+
     getFile: builder.query({
       query: (fileId: string) => `api/google-drive/file?fileId=${fileId}`,
     }),
@@ -143,6 +161,7 @@ const api = createApi({
         body: formData
       })
     }),
+    
     uploadImage: builder.mutation<any, { fileId: string, fileName: string }>({
       query: (formData) => ({
         url: "api/google-drive/image",

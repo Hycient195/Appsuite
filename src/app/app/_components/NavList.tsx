@@ -28,7 +28,7 @@ export const NavList = ({ route, setIsOpen, className }: IProps) => {
   }
   
   return (
-    <ul className={`flex flex-col gap-y-3 mb-[2vh] mt-2 ${className}`}>
+    <ul className={`flex flex-col gap-y-2.5 mb-[2vh] mt-2 ${className}`}>
       {
         route.map((item: INavRoute, index: number) => (
           <li key={index} className={`border-l- ${highlightActive(item.href) ? "border-l-[#FF4512]" : "border-l-white"}`}>
