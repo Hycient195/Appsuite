@@ -1,9 +1,9 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Papa from "papaparse";
-import { IPage, IRow } from '../_types/types';
+import { IReceiptTrackerPage, IReceiptTrackerTableRow } from '../_types/types';
 import { useCancelableDebounce } from '@/sharedHooks/useCancellableDebounce';
 
-const defaultRow: IRow = {
+const defaultRow: IReceiptTrackerTableRow = {
   date: '',
   receiptName: '',
   amount: "",
@@ -11,7 +11,7 @@ const defaultRow: IRow = {
   receipt: "",
 };
 
-export const defaultPage: IPage = {
+export const defaultPage: IReceiptTrackerPage = {
   title: "",
   subTitle: "",
   rows: [{ ...defaultRow }], // Create a fresh copy for each default page
@@ -24,11 +24,11 @@ export const defaultPage: IPage = {
 };
 
 export const useReceiptTracker = (fileName?: string) => {
-  const [pages, setPages] = useState<IPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
-  const [history, setHistory] = useState<IPage[][]>([]);
-  const [future, setFuture] = useState<IPage[][]>([]);
+  const [pages, setPages] = useState<IReceiptTrackerPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
+  const [history, setHistory] = useState<IReceiptTrackerPage[][]>([]);
+  const [future, setFuture] = useState<IReceiptTrackerPage[][]>([]);
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
-  const [ tempHistoryStack, setTempHistoryStack ] = useState<IPage[]|null>(null);
+  const [ tempHistoryStack, setTempHistoryStack ] = useState<IReceiptTrackerPage[]|null>(null);
 
 
   const prevPagesRef = useRef(pages);
@@ -123,14 +123,14 @@ export const useReceiptTracker = (fileName?: string) => {
     const updatedPages = [...pages];
     const page = { ...updatedPages[pageIndex], rows: [...updatedPages[pageIndex].rows] };
     const row = { ...page.rows[rowIndex] };
-    (row[field as keyof IRow] as string | number) =  value;
+    (row[field as keyof IReceiptTrackerTableRow] as string | number) =  value;
     page.rows[rowIndex] = row;
     calculatePageTotals(page);
     updatedPages[pageIndex] = page;
     updatePages(updatedPages);
   };
 
-  const calculatePageBalances = useCallback((page: IPage, pageIndex: number) => {
+  const calculatePageBalances = useCallback((page: IReceiptTrackerPage, pageIndex: number) => {
     let previousBalance = "0";
 
     // Loop through each row to calculate balances
@@ -140,7 +140,7 @@ export const useReceiptTracker = (fileName?: string) => {
         previousBalance = String((pages[pageIndex - 1]?.totalSubTotal || "0"));
         row.subTotal = previousBalance;
         row.amount = "0";
-        row.receipt = "0"
+        row.receipt = ""
       } else {
         // Calculate subTotal based on amount and receipt
         row.subTotal = String(
@@ -165,29 +165,29 @@ export const useReceiptTracker = (fileName?: string) => {
   },[ pages ]);
 
   // Calculate total amount, receipt, and final subTotal for a page
-  const calculatePageTotals = (page: IPage) => {
+  const calculatePageTotals = (page: IReceiptTrackerPage) => {
     let totalAmount = 0;
-    let receipt = 0;
+    // let receipt = 0;
     let totalSubTotal = 0;
 
     page.rows.forEach(row => {
       totalAmount += !isNaN(parseFloat(row.amount as unknown as string)) ? parseFloat(row.amount?.replace(/,/ig,"") as unknown as string) : 0;
-      receipt += !isNaN(parseFloat(row.receipt as unknown as string)) ? parseFloat(row.receipt?.replace(/,/ig,"") as unknown as string) : 0;
+      // receipt += !isNaN(parseFloat(row.receipt as unknown as string)) ? parseFloat(row.receipt?.replace(/,/ig,"") as unknown as string) : 0;
       totalSubTotal = !isNaN(parseFloat(row.subTotal as unknown as string)) ? parseFloat(row.subTotal?.replace(/,/ig,"") as unknown as string) : 0; // The last row's subTotal
     });
 
     page.totalAmount = String(totalAmount?.toFixed(2));
-    page.receipt = String(receipt?.toFixed(2));
+    // page.receipt = String(receipt?.toFixed(2));
     page.totalSubTotal = String(totalSubTotal?.toFixed(2));
   };
 
-  const updatePages = (updatedPages: IPage[]) => {
+  const updatePages = (updatedPages: IReceiptTrackerPage[]) => {
     setPages(updatedPages);
     setHistory([...history, pages]); // Save the current state to history
     setFuture([]); // Clear future stack on new action
   };
 
-  // const updatePages = (updatedPages: IPage[]) => {
+  // const updatePages = (updatedPages: IReceiptTrackerPage[]) => {
   //   setPages(updatedPages);
   //   if (!tempHistoryStack) setTempHistoryStack(pages);
 
@@ -243,7 +243,7 @@ export const useReceiptTracker = (fileName?: string) => {
 
   const importCSV = async (file: File) => {
     const text = await file.text();
-    const importedPages: IPage[] = [];
+    const importedPages: IReceiptTrackerPage[] = [];
     
     const sections = text.split('\n,,,,\n,,,,\n'); // Split pages by the separator in 'downloadAllPagesCSV'
     
@@ -256,7 +256,7 @@ export const useReceiptTracker = (fileName?: string) => {
       const rowLines = lines.slice(3, lines.length - 1); // Rows are after headers and before totals
       const totalLine = lines[lines.length - 1].split(',');
 
-      const rows: IRow[] = rowLines.map(line => {
+      const rows: IReceiptTrackerTableRow[] = rowLines.map(line => {
         const [date, receiptName, amount, receipt, subTotal] = line.split(',');
         return {
           date,
@@ -271,7 +271,7 @@ export const useReceiptTracker = (fileName?: string) => {
       const receipt = (parseFloat(totalLine[3]) || 0)?.toFixed(2);
       const totalSubTotal = (parseFloat(totalLine[4]) || 0)?.toFixed(2);
 
-      const importedPage: IPage = {
+      const importedPage: IReceiptTrackerPage = {
         title,
         subTitle,
         rows,
@@ -303,8 +303,8 @@ export const useReceiptTracker = (fileName?: string) => {
 
   function convertToPages(data: string[][]) {
     const pages = [];
-    // let currentPage: { title: string, subTitle: string, rows: IRow[], totalAmount: number, receipt: number, totalSubTotal: number} = { title: '', subTitle: '', rows: [], totalAmount: 0, receipt: 0, totalSubTotal: 0 };
-    let currentPage: IPage = { title: '', subTitle: '', rows: [], totalAmount: "0", receipt: "0", totalSubTotal: "0", rowsToAdd: 1 };
+    // let currentPage: { title: string, subTitle: string, rows: IReceiptTrackerTableRow[], totalAmount: number, receipt: number, totalSubTotal: number} = { title: '', subTitle: '', rows: [], totalAmount: 0, receipt: 0, totalSubTotal: 0 };
+    let currentPage: IReceiptTrackerPage = { title: '', subTitle: '', rows: [], totalAmount: "0", receipt: "0", totalSubTotal: "0", rowsToAdd: 1 };
   
     for (let i = 0; i < data.length; i++) {
       const row = data[i];
@@ -365,7 +365,7 @@ export const useReceiptTracker = (fileName?: string) => {
     downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
   };
 
-  const generateCSVData = (page: IPage) => {
+  const generateCSVData = (page: IReceiptTrackerPage) => {
     const rowsCSV = page.rows
       .map(row => `"${row.date}","${row.receiptName}","${row.amount}","${row.receipt}","${row.subTotal}"`)
       .join('\n');

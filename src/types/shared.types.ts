@@ -30,6 +30,8 @@ export interface IUploadFileRequest {
   content: Blob|File
 }
 
+export interface IRenameFolderAndPrimaryFileRequest { folderId: string, primaryFileMimeType: TMimeTypes, newFileName: string}
+
 // type TModules = [ "FINANCE_TRACKER", "INVOICE_GENERATOR" ]
 // export type TModules =  ("FINANCE_TRACKER"|"INVOICE_GENERATOR" )
 

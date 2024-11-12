@@ -1,4 +1,4 @@
-export interface IRow {
+export interface IReceiptTrackerTableRow {
   date: string;
   receiptName: string;
   amount: string;
@@ -6,10 +6,10 @@ export interface IRow {
   receipt: string;
 }
 
-export interface IPage {
+export interface IReceiptTrackerPage {
   title: string;
   subTitle: string;
-  rows: IRow[];
+  rows: IReceiptTrackerTableRow[];
   totalAmount: string;
   totalSubTotal: string;
   receipt: string;

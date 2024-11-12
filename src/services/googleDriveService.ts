@@ -1,8 +1,9 @@
 "use server";
 
-import { ICreateFileRequest, IUploadFileRequest } from '@/types/shared.types';
 import { google } from 'googleapis';
 import { cookies } from 'next/headers';
+import { Readable } from "stream"
+import { ICreateFileRequest, IRenameFolderAndPrimaryFileRequest, IUploadFileRequest, TMimeTypes } from '@/types/shared.types';
 
 
 const APP_SUITE_FOLDER_NAME = "APPSUITE_APPS";
@@ -176,7 +177,7 @@ export async function createFileInFolder({ appName, fileName, content, mimeType 
   });
 }
 
-import { Readable } from "stream"
+
 
 /**
  * Saves a content file in the same folder as the specified file ID.
@@ -184,7 +185,7 @@ import { Readable } from "stream"
  * @param content - The file content to upload as Blob or File.
  * @returns The URL of the uploaded file with view permissions for everyone.
  */
-export async function saveFileInFileFolder({ fileId, content }: IUploadFileRequest): Promise<string | null> {
+export async function saveFileInFileFolder({ fileId, content }: IUploadFileRequest): Promise<{ id: string|null, url: string|null}> {
   console.log(fileId)
   const driveService = await getDriveService();
   
@@ -229,10 +230,224 @@ export async function saveFileInFileFolder({ fileId, content }: IUploadFileReque
         type: 'anyone',
       },
     });
-
-    return fileResponse.data.webViewLink || null;
+    
+    return { id: fileResponse.data.id || null,  url: fileResponse.data.webViewLink || null };
   } catch (error) {
     console.error("Error saving file in file folder:", error);
-    return null;
+    return { id: null, url: null };
+  }
+}
+
+/**
+ * Renames a folder and its primary file with the specified MIME type.
+ * @param folderId - The ID of the folder to rename.
+ * @param primaryFileMimeType - The MIME type of the primary file to rename.
+ * @param newFileName - The new name for the folder and primary file.
+ * @returns A result object indicating success or failure.
+ */
+export async function renameFolderAndPrimaryFile({
+  folderId,
+  primaryFileMimeType,
+  newFileName
+}: IRenameFolderAndPrimaryFileRequest): Promise<{ success: boolean; folderNameUpdated?: boolean; primaryFileNameUpdated?: boolean; error?: string }> {
+  const driveService = await getDriveService();
+  
+  try {
+    // Step 1: Rename the folder with the new file name
+    await driveService.files.update({
+      fileId: folderId,
+      requestBody: { name: newFileName },
+    });
+
+    // Step 2: Find the primary file with the specified MIME type in the folder
+    const fileResponse = await driveService.files.list({
+      q: `'${folderId}' in parents and mimeType='${primaryFileMimeType}'`,
+      fields: 'files(id, name)',
+      pageSize: 1, // Retrieve only the first matching file
+    });
+
+    const primaryFile = fileResponse.data.files?.[0];
+    if (!primaryFile) {
+      throw new Error(`Primary file with MIME type ${primaryFileMimeType} not found in folder ${folderId}`);
+    }
+
+    // Step 3: Rename the primary file with the new file name
+    await driveService.files.update({
+      fileId: primaryFile.id || undefined,
+      requestBody: { name: newFileName },
+    });
+
+    return {
+      success: true,
+      folderNameUpdated: true,
+      primaryFileNameUpdated: true,
+    };
+  } catch (error) {
+    console.error("Error renaming folder and primary file:", error);
+    return {
+      success: false,
+      error: "Failed to rename folder and primary file. " + (error as Error).message,
+    };
+  }
+}
+
+/**
+ * Retrieves all subfolders within the specified AppSuite application folder,
+ * along with the primary file in each subfolder matching the specified MIME type.
+ *
+ * @param folderName - Name of the application folder in AppSuite (e.g., "RECEIPT_TRACKER").
+ * @param primaryFileMimeType - MIME type of the primary file to find in each subfolder.
+ * @returns An array of objects, each containing the subfolder properties and primary file properties.
+ */
+export async function getFoldersWithPrimaryFile(folderName: string, primaryFileMimeType: TMimeTypes) {
+  const driveService = await getDriveService();
+
+  try {
+    // Step 1: Find the AppSuite Apps root folder
+    const appSuiteFolderId = await getOrCreateFolder(APP_SUITE_FOLDER_NAME);
+    if (!appSuiteFolderId) throw new Error("AppSuite root folder not found.");
+
+    // Step 2: Find the application folder (e.g., "RECEIPT_TRACKER") within the AppSuite root folder
+    const appFolderId = await getOrCreateFolder(folderName, appSuiteFolderId);
+    if (!appFolderId) throw new Error(`Folder '${folderName}' not found in AppSuite.`);
+
+    // Step 3: Get all subfolders within the application folder
+    const subfoldersResponse = await driveService.files.list({
+      q: `'${appFolderId}' in parents and mimeType='application/vnd.google-apps.folder'`,
+      fields: 'files(id, name)',
+    });
+
+    const subfolders = subfoldersResponse.data.files || [];
+
+    // Step 4: Retrieve the primary file in each subfolder based on the specified MIME type
+    const foldersWithPrimaryFile = await Promise.all(
+      subfolders.map(async (subfolder) => {
+        const primaryFileResponse = await driveService.files.list({
+          q: `'${subfolder.id}' in parents and mimeType='${primaryFileMimeType}'`,
+          fields: 'files(id, name, mimeType, size)',
+          pageSize: 1, // Get only the first matching file
+        });
+
+        const primaryFile = primaryFileResponse.data.files?.[0] || null;
+
+        return {
+          folderId: subfolder.id,
+          folderName: subfolder.name,
+          primaryFile: primaryFile
+            ? {
+                fileId: primaryFile.id,
+                fileName: primaryFile.name,
+                mimeType: primaryFile.mimeType,
+                size: primaryFile.size,
+              }
+            : null,
+        };
+      })
+    );
+
+    return foldersWithPrimaryFile;
+  } catch (error) {
+    console.error("Error retrieving folders with primary files:", error);
+    throw new Error("Failed to retrieve folders with primary files.");
+  }
+}
+
+/** Corrent Implementation of method below, but wring usecase */
+// /**
+//  * Fetches folders with a specified name and their primary file based on MIME type.
+//  * @param folderName - The name of the folder to search for.
+//  * @param primaryFileMimeType - The MIME type of the primary file in each subfolder.
+//  * @returns An array of objects with each containing folder and primary file details.
+//  */
+// export async function getFoldersWithPrimaryFile(
+//   folderName: string,
+//   primaryFileMimeType: TMimeTypes
+// ): Promise<Array<{ folderId: string; folderName: string; primaryFile?: { id: string; name: string } }> | null> {
+//   const driveService = await getDriveService();
+
+//   try {
+//     // Step 1: Search for all folders with the specified folder name
+//     const folderResponse = await driveService.files.list({
+//       q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
+//       fields: 'files(id, name)',
+//     });
+
+//     const folders = folderResponse.data.files;
+//     if (!folders || folders.length === 0) {
+//       throw new Error(`No folders found with the name ${folderName}`);
+//     }
+
+//     // Step 2: Iterate through each folder and find the primary file with the specified MIME type
+//     const foldersWithPrimaryFiles = await Promise.all(
+//       folders.map(async (folder) => {
+//         // Fetch the primary file in the current folder based on MIME type
+//         const primaryFileResponse = await driveService.files.list({
+//           q: `'${folder.id}' in parents and mimeType='${primaryFileMimeType}'`,
+//           fields: 'files(id, name)',
+//           pageSize: 1, // Retrieve only the first matching file
+//         });
+
+//         const primaryFile = primaryFileResponse.data.files?.[0];
+
+//         return {
+//           folderId: folder.id,
+//           folderName: folder.name,
+//           primaryFile: primaryFile
+//             ? { id: primaryFile.id, name: primaryFile.name }
+//             : undefined,
+//         };
+//       })
+//     );
+
+//     return foldersWithPrimaryFiles as unknown as ReturnType<typeof getFoldersWithPrimaryFile>;
+//   } catch (error) {
+//     console.error("Error fetching folders and primary files:", error);
+//     return null;
+//   }
+// }
+
+/**
+ * Deletes a folder and all its contents (files and subfolders) recursively.
+ * @param folderId - The ID of the folder to delete.
+ */
+export async function deleteFolderAllFilesInFolder(folderId: string): Promise<{ success: boolean; error?: string }> {
+  const driveService = await getDriveService();
+
+  try {
+    // Step 1: List all files and folders within the specified folder
+    const listFilesAndFolders = async (parentId: string) => {
+      return await driveService.files.list({
+        q: `'${parentId}' in parents`,
+        fields: 'files(id, name, mimeType)',
+      });
+    };
+
+    // Step 2: Recursively delete all files and subfolders
+    const deleteRecursively = async (parentId: string) => {
+      const response = await listFilesAndFolders(parentId);
+      const items = response.data.files;
+
+      if (items) {
+        for (const item of items) {
+          if (item.mimeType === 'application/vnd.google-apps.folder') {
+            // If the item is a folder, delete its contents recursively
+            await deleteRecursively(item.id as string);
+          }
+          // Delete the file or folder
+          await driveService.files.delete({ fileId: item.id as string });
+        }
+      }
+    };
+
+    // Start recursive deletion with the specified folder
+    await deleteRecursively(folderId);
+
+    // Step 3: Delete the root folder itself
+    await driveService.files.delete({ fileId: folderId });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting folder and its contents:", error);
+    return { success: false, error: `Failed to delete folder: ${error}` };
   }
 }

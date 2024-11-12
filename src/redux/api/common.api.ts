@@ -1,9 +1,10 @@
 import { BaseQueryFn, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import GLOBAL_BASEURL from "./_globalBaseURL";
-import { ICreateFileRequest, IFileVersions, ILoggedInUser, IUpdateFileRequest, IUploadFileRequest, TMimeTypes } from "@/types/shared.types";
+import { ICreateFileRequest, IFileVersions, ILoggedInUser, IRenameFolderAndPrimaryFileRequest, IUpdateFileRequest, IUploadFileRequest, TMimeTypes } from "@/types/shared.types";
 import { IBalanceSheetFile } from "@/app/app/finance-tracker/_types/types";
 import { parseCookies, setCookie } from "nookies";
 import { getNewAccessToken } from "@/utils/getRefreshToken";
+import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
 // import { parseCookies } from "nookies";
 
 
@@ -107,10 +108,10 @@ const api = createApi({
       invalidatesTags: () => [{ type: "files" }]
     }),
 
-    saveFileInFileFolder: builder.mutation<any, IUploadFileRequest>({
+    saveFileInFileFolder: builder.mutation<{ id: string, url: string }, IUploadFileRequest>({
       query: (formData) => ({
         url: "api/google-drive/file-in-folder",
-        method: "PATCH",
+        method: "PUT",
         body: formData
       }),
       invalidatesTags: () => [{ type: "files" }]
@@ -118,6 +119,11 @@ const api = createApi({
 
     getFile: builder.query({
       query: (fileId: string) => `api/google-drive/file?fileId=${fileId}`,
+    }),
+
+    getFoldersWithPrimaryFile: builder.query<Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>, { folderName: string, primaryFileMimeType: TMimeTypes }>({
+      query: ({ folderName, primaryFileMimeType }) => `api/google-drive/file-in-folder?folderName=${folderName}&primaryFileMimeType=${primaryFileMimeType}`,
+      providesTags: () => [{ type: "files" }]
     }),
 
     getFiles: builder.query<IBalanceSheetFile[], string>({
@@ -140,10 +146,26 @@ const api = createApi({
         body: formData
       })
     }),
+
+    renameFolderAndPrimaryFile: builder.mutation<any, IRenameFolderAndPrimaryFileRequest>({
+      query: (formData) => ({
+        url: "api/google-drive/file-in-folder",
+        method: "PATCH",
+        body: formData
+      })
+    }),
     
     deleteFile: builder.mutation<any, string>({
       query: (fileId: string) => ({
         url: `api/google-drive/file?fileId=${fileId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: () => [{ type: "files" }]
+    }),
+
+    deleteFolderAllFilesInFolder: builder.mutation<any, string>({
+      query: (folderId: string) => ({
+        url: `api/google-drive/file?folderId=${folderId}`,
         method: "DELETE",
       }),
       invalidatesTags: () => [{ type: "files" }]

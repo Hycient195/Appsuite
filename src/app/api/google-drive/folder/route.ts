@@ -1,5 +1,5 @@
 // import { getAllFilesInFolder, initializeFolders, updateFileName } from '@/services/googleDriveService';
-import { initializeFolders, getAllFilesInFolder, updateFileName } from '@/services/googleDriveService';
+import { initializeFolders, getAllFilesInFolder, updateFileName, deleteFolderAllFilesInFolder } from '@/services/googleDriveService';
 import { get, request } from 'http';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -30,18 +30,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// // import { createHandler, Post, Get, HttpCode, Req } from 'next-api-decorators';
-
-// class FolderHandler {
-//   @get
-//   async getFiles(request: Request) {
-//     const { searchParams } = new URL(request.url);
-//     const folderName = searchParams.get('folderName');
-//     const folderId = await initializeFolders(folderName as string)
-//     if (!folderId) return NextResponse.json({ error: 'folderId is required' }, { status: 400 });
-//     const response = await getAllFilesInFolder(folderId);
-//     return NextResponse.json(response);
-//   }
-// }
-
-// // export default createHandler(FolderHandler);
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const folderId = searchParams.get('folderId');
+  if (!folderId) return NextResponse.json({ error: 'folderId is required' }, { status: 400 });
+  const response = await deleteFolderAllFilesInFolder(folderId);
+  return NextResponse.json(response);
+}
