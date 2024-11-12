@@ -131,40 +131,6 @@ const ReceiptTracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSu
     }
   }, [ isUploadImageInFolderSuccess ])
 
-  // console.log(uploadImageToFolderSuccess)
-  // console.log(params?.fileId)
-
-
-
-  // useEffect(() => {
-  //   // Skip the effect on the first render
-  //   if (isFirstRender.current) {
-  //     isFirstRender.current = false;
-  //     return;
-  //   }
-
-  //   // Clear the previous timer
-  //   if (saveTimer) {
-  //     clearTimeout(saveTimer);
-  //   }
-
-  //   // Set a new timer to autosave after 3 seconds
-  //   const newTimer = setTimeout(() => {
-  //     if (isLoggedIn && loadedSucessfully) {
-  //       handleSaveFile("autosave");
-  //     }
-  //   }, 3000);
-
-  //   setSaveTimer(newTimer);
-
-  //   // Clear the timer on cleanup
-  //   return () => {
-  //     if (newTimer) {
-  //       clearTimeout(newTimer);
-  //     }
-  //   };
-  // }, [pages]);
-
 
   const resetCursorPosition = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
@@ -353,11 +319,12 @@ interface ITableRowProps {
 function TableRow({ row, pageIndex, rowIndex, inputRefs, handleInputChange, insertRow, handleKeyDown, tableWidth, cursorPositionRef, resetCursorPosition, handleNumericInputBlur, removeRow, isLoggedIn, pages, setPages, params }: ITableRowProps) {
 
   const [ isLoading, setIsLoading ] = useState({ uploading: false, deleting: false, removingRow: false });
+  const [ isDragging, setIsDragging ] = useState<boolean>(false);
   
-  const handleUploadReceipt = async (e: React.ChangeEvent<HTMLInputElement>, pageIndex: number, rowIndex: number) => {
-    if (!e.target.files || !isLoggedIn) return;
+  const handleUploadReceipt = async (file: any, pageIndex: number, rowIndex: number) => {
+    if (!file || !isLoggedIn) return;
     setIsLoading({ ...isLoading, uploading: true });
-    const imageFile = e.target.files[0];
+    const imageFile = file;
     const data = new FormData();
     data.append("content", imageFile);
     data.append("fileId", params?.fileId);
@@ -400,6 +367,39 @@ function TableRow({ row, pageIndex, rowIndex, inputRefs, handleInputChange, inse
       );
     } else {
       removeRow(pageIndex, rowIndex);
+    }
+  };
+
+  // Prevent the default behavior to allow the drop event
+  const handleReceiptDragOver = (e: any) => {
+    e.preventDefault();
+    if (!row?.receipt || row?.receipt === "0") setIsDragging(true);
+  };
+
+  // Optional: add styling or other effects when a file is dragged over
+  const handleReceiptDragEnter = (e: any) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+    if (!row?.receipt || row?.receipt === "0") setIsDragging(true);
+  };
+
+  const handleReceiptDragLeave = (e: any) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    setIsDragging(false);
+  };
+
+  const handleReceiptDrop = (e: any) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    setIsDragging(false);
+
+    const files = e.dataTransfer.files;
+
+    if (files && files.length > 0 && (!row?.receipt || row?.receipt === "0")) {
+      // Call the provided upload handler with the event and indices
+      handleUploadReceipt(files[0], pageIndex, rowIndex, );
+      e.dataTransfer.clearData();
     }
   };
 
@@ -447,7 +447,12 @@ function TableRow({ row, pageIndex, rowIndex, inputRefs, handleInputChange, inse
         {splitInThousand(row.subTotal)}
       </td>
 
-      <td className={`flex items-center ${!isLoading ? "cursor-not-allowed" : ""}`}>
+      <td onDragOver={handleReceiptDragOver}
+        onDragEnter={handleReceiptDragEnter}
+        onDragLeave={handleReceiptDragLeave}
+        onDrop={handleReceiptDrop}
+        className={`flex items-center ${!isLoading ? "cursor-not-allowed" : ""}`}
+      >
         <div className="bg-transparen bg-transparent peer/test flex flex-row gap-2 items-center relative bg-tes w-[calc(100%+10px)] -right-3 !border-none z-[-1 absolute bg-green-30 bottom- cursor-pointer h-full">
           {
             (row?.receipt && row?.receipt !== "0") ? (
@@ -478,7 +483,7 @@ function TableRow({ row, pageIndex, rowIndex, inputRefs, handleInputChange, inse
             )
           }
           <button onClick={() => handleRemoveRow(pageIndex, rowIndex, row)} className="peer/removeBtn bg-red-400  duration-300 z-[3] hidden group-hover/row:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-3 items-center justify-center font-semibold">-</button>
-          <div style={{ width: `${tableWidth}px`}} className={`${(isLoading.deleting && isLoading.removingRow) ? "!bg-red-500/70 animate-pulse !block" : ""}  remove-hover w-full h-full hidden peer-hover/removeBtn:block bg-red-400/20 -translate-x-3 top-0 right-0 absolute`}></div>
+          <div style={{ width: `${tableWidth}px`}} className={`${isDragging ? "!block !bg-green-500/60" : ""} ${(isLoading.deleting && isLoading.removingRow) ? "!bg-red-500/70 animate-pulse !block" : ""}  remove-hover w-full h-full hidden peer-hover/removeBtn:block bg-red-400/20 -translate-x-3 top-0 right-0 absolute`}></div>
         </div>
       </td>
     </tr>

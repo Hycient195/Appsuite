@@ -12,7 +12,7 @@ import { MenuItem, Select } from "@mui/material";
 import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
 
 
-export default function BalanceSheetFiles() {
+export default function ReceiptTrackerFiles() {
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const [ hasDeleted, sethasDeleted ] = useState<boolean>(false);
@@ -21,8 +21,6 @@ export default function BalanceSheetFiles() {
   useEffect(() => {
     getFiles({ folderName: "RECEIPT_TRACKER", primaryFileMimeType: "text/csv" });
   }, [ getFiles, hasDeleted ]);
-
-  console.log(data)
 
   return (
     <main className="h-full relative">

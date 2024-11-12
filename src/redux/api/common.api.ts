@@ -165,7 +165,7 @@ const api = createApi({
 
     deleteFolderAllFilesInFolder: builder.mutation<any, string>({
       query: (folderId: string) => ({
-        url: `api/google-drive/file?folderId=${folderId}`,
+        url: `api/google-drive/folder?folderId=${folderId}`,
         method: "DELETE",
       }),
       invalidatesTags: () => [{ type: "files" }]

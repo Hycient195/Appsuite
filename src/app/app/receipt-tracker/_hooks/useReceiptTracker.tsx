@@ -367,9 +367,9 @@ export const useReceiptTracker = (fileName?: string) => {
 
   const generateCSVData = (page: IReceiptTrackerPage) => {
     const rowsCSV = page.rows
-      .map(row => `"${row.date}","${row.receiptName}","${row.amount}","${row.receipt}","${row.subTotal}"`)
+      .map(row => `"${row.date}","${row.receiptName}","${row.amount}","${row.subTotal}","${row.receipt}"`)
       .join('\n');
-    const totalCSV = `${page.imageUrl??""},"TOTAL","${page.totalAmount}","${page.receipt}","${page.totalSubTotal}" `
+    const totalCSV = `${page.imageUrl??""},"TOTAL","${page.totalAmount}","${page.totalSubTotal}","${page.receipt}"`
     return `"${page.title}",,,,\n"${page.subTitle}",,,,\n"Date","Name","Amount","Sub Total","Receipt"\n${rowsCSV}\n${totalCSV}`;
   };
 
