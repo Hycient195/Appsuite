@@ -58,7 +58,7 @@ export const useReceiptTracker = (fileName?: string) => {
     setPages(pageCopy);
     updatePages(pageCopy)
   }
-
+ 
   const updatePageSubtitle = (value: string, pageNumber: number): void => {
     const pageCopy = [ ...pages ]
     pageCopy[pageNumber].subTitle = value;
@@ -70,7 +70,8 @@ export const useReceiptTracker = (fileName?: string) => {
     const newPage = {
       ...defaultPage,
       // rows: [{ ...defaultRow, receiptName: "BALANCE BROUGHT FORWARD" }]
-      rows: [{ ...defaultRow }]
+      rows: [{ ...defaultRow }],
+      imageUrl: pages[afterPageIndex]?.imageUrl||""
     };
     const updatedPages = [...pages];
     updatedPages.splice(afterPageIndex + 1, 0, newPage);
