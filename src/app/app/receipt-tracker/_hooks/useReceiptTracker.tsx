@@ -69,7 +69,8 @@ export const useReceiptTracker = (fileName?: string) => {
   const addPage = (afterPageIndex: number) => {
     const newPage = {
       ...defaultPage,
-      rows: [{ ...defaultRow, receiptName: "BALANCE BROUGHT FORWARD" }]
+      // rows: [{ ...defaultRow, receiptName: "BALANCE BROUGHT FORWARD" }]
+      rows: [{ ...defaultRow }]
     };
     const updatedPages = [...pages];
     updatedPages.splice(afterPageIndex + 1, 0, newPage);
