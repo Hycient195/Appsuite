@@ -27,7 +27,7 @@ export type TMimeTypes = "text/csv"
 
 export interface IUploadFileRequest {
   fileId: string;
-  content: Blob|File
+  content: Blob|File|any
 }
 
 export interface IRenameFolderAndPrimaryFileRequest { folderId: string, primaryFileMimeType: TMimeTypes, newFileName: string}

@@ -8,7 +8,7 @@ interface IProps {
   }>
 }
 
-export default async function BalanceSheetServerPage({ params }: IProps) {
+export default async function ReceiptTrackerServerPage({ params }: IProps) {
   const appCookies = (await cookies());
   const isLoggedIn = !!appCookies.get("asAccessToken")?.value;
 

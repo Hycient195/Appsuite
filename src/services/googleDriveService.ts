@@ -206,7 +206,7 @@ export async function saveFileInFileFolder({ fileId, content }: IUploadFileReque
     // Upload the new file to the identified parent folder
     const fileResponse = await driveService.files.create({
       requestBody: {
-        name: `Uploaded File - ${Date.now()}`,  // Customize file name as needed
+        name: `${content?.name?.split(".")[0]??"Uploaded File"} - ${Date.now()}`,  // Customize file name as needed
         parents: [parentFolderId],
       },
       media: {
