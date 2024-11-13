@@ -182,6 +182,8 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
           </LoadingButton> */}
           <LoadingButton
             loading={isLoading}
+            success={isSuccess}
+            successText="Deleted"
             className="px-4 !py-2 bg-red-600 text-white rounded"
             onClick={(e) => { e.stopPropagation(); deleteDocument(file?.folderId as string)}}
           >

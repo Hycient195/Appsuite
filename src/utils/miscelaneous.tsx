@@ -1,4 +1,4 @@
-import { IPage } from "@/app/app/finance-tracker/_types/types";
+import { IBalanceSheetPage } from "@/app/app/finance-tracker/_types/types";
 import { SelectChangeEvent } from "@mui/material";
 import { ChangeEvent, LegacyRef } from "react";
 
@@ -261,3 +261,48 @@ export function parseCSV(data: string): string[][] {
 
   return result;
 }
+
+export const convertImageUrlToBlob = async (imageUrl: string): Promise<Blob> => {
+  const response = await fetch(imageUrl);
+  if (!response.ok) {
+    throw new Error("Failed to fetch image");
+  }
+  const blob = await response.blob();
+  return blob;
+};
+
+export const replaceJSX = (subject: any, find: any, replace: any, keyPrefix = '') => {
+  let result: any[] = [];
+  
+  if (Array.isArray(subject)) {
+    for (let i = 0; i < subject.length; i++) {
+      result = [...result, replaceJSX(subject[i], find, replace, `${keyPrefix}-${i}`)];
+    }
+    return result;
+  } else if (typeof subject !== 'string') {
+    return subject;
+  }
+  
+  let parts = subject.split(find);
+  
+  for (let i = 0; i < parts.length; i++) {
+    result.push(<span key={`${keyPrefix}-${i}`}>{parts[i]}</span>);
+    
+    if (i + 1 !== parts.length) {
+      result.push(<span key={`${keyPrefix}-replace-${i}`}>{replace}</span>);
+    }
+  }
+
+  return result;
+};
+
+export const replaceJSXRecursive = (subject: any, replacements: any) => {
+  let keyIndex = 0;
+  
+  for (let key in replacements) {
+    subject = replaceJSX(subject, key, replacements[key], `replace-${keyIndex}`);
+    keyIndex++;
+  }
+  
+  return subject;
+};

@@ -16,7 +16,7 @@ export default function CreateBalanceSheet() {
 
   const { generateCSVData } = useBalanceSheet();
 
-  const [ createFile, { isLoading, isSuccess, isError, data }] = api.commonApis.useCreateFileMutation();
+  const [ createFile, { isLoading, isSuccess, isError, data }] = api.commonApis.useCreateFileInFolderMutation();
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const handleCreateFile = async () => {

@@ -10,16 +10,17 @@ import TableEmpty from "@/sharedComponents/emptyState/TableEmpty";
 import Link from "next/link";
 import { parseCookies } from "nookies";
 import { MenuItem, Select } from "@mui/material";
+import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
 
 
 export default function BalanceSheetFiles() {
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const [ hasDeleted, sethasDeleted ] = useState<boolean>(false);
-  const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFilesQuery();
+  const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFoldersWithPrimaryFileQuery();
 
   useEffect(() => {
-    getFiles("FINANCE_TRACKER");
+    getFiles({ folderName: "FINANCE_TRACKER", primaryFileMimeType: "text/csv" });
   }, [ getFiles, hasDeleted ])
 
   return (
@@ -74,19 +75,19 @@ export default function BalanceSheetFiles() {
 }
 
 interface ITableRowProps {
-  file: IBalanceSheetFile;
+  file: Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0];
   hasDeleted: boolean;
   sethasDeleted: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
   const router = useRouter();
-  const [ fileName, setFileName ] = useState<string>(file?.name?.replace(".csv", ""))
+  const [ fileName, setFileName ] = useState<string>(file?.folderName?.replace(".csv", "") as string)
   const [ isEditing, setIsEditing ] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement|null>(null);
 
-  const [ deleteDocument, { isLoading, isSuccess }] = api.commonApis.useDeleteFileMutation();
-  const [ updateFileName, { isLoading: isUpdatingFile, isSuccess: fileNameUpdateSuccess }] = api.commonApis.useUpdateFileNameMutation();
+  const [ deleteDocument, { isLoading, isSuccess }] = api.commonApis.useDeleteFolderAllFilesInFolderMutation();
+  const [ updateFileName, { isLoading: isUpdatingFile, isSuccess: fileNameUpdateSuccess }] = api.commonApis.useRenameFolderAndPrimaryFileMutation();
   const [ getFileVersions, { data: fileVersions, isLoading: isGettingFileVersions, isError: fileVersionsIsError }] = api.commonApis.useLazyGetFileVersionsQuery();
   const [ restoreFileVersion, { isLoading: isRestoringFileVersion, isError: fileRestoreIsError, isSuccess: fileRestoreIsSuccess }] = api.commonApis.useRestoreFileVersionMutation();
 
@@ -98,7 +99,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
 
   useEffect(() => {
     if (fileRestoreIsSuccess) {
-      router.push(file?.id);
+      router.push(file?.primaryFile?.fileId as string);
     }
   }, [ fileRestoreIsSuccess ])
 
@@ -109,7 +110,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
       setIsEditing(true);
     } else {
       setIsEditing(false)
-      updateFileName({ fileId: file.id, fileName: `${fileName}.csv` });
+      updateFileName({ folderId: file.folderId as string, primaryFileMimeType: "text/csv", newFileName: `${fileName}.csv` });
     }
   };
 
@@ -123,7 +124,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
   console.log(fileVersions)
 
   return (
-    <tr onClick={() => router.push(file?.id)} className="border-b border-dashed cursor-pointer odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
+    <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
       <td>
         <div className="">
           <input
@@ -138,7 +139,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
           />
         </div>
       </td>
-      <td>{file?.size} Kb</td>
+      <td>{file?.primaryFile?.size} Kb</td>
       <td>
         <div className="flex flex-row items-center gap-2">
           <LoadingButton
@@ -186,7 +187,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
           <LoadingButton
             loading={isLoading}
             className="px-4 !py-2 bg-red-600 text-white rounded"
-            onClick={(e) => { e.stopPropagation(); deleteDocument(file?.id)}}
+            onClick={(e) => { e.stopPropagation(); deleteDocument(file?.folderId as string)}}
           >
             Delete
           </LoadingButton>

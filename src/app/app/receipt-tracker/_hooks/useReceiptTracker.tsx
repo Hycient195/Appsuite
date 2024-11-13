@@ -17,7 +17,7 @@ export const defaultPage: IReceiptTrackerPage = {
   rows: [{ ...defaultRow }], // Create a fresh copy for each default page
   totalAmount: "0",
   totalSubTotal: "0",
-  receipt: "0",
+  receipt: "",
   
   rowsToAdd: 1,
   imageUrl: ""
@@ -140,11 +140,11 @@ export const useReceiptTracker = (fileName?: string) => {
         previousBalance = String((pages[pageIndex - 1]?.totalSubTotal || "0"));
         row.subTotal = previousBalance;
         row.amount = "0";
-        row.receipt = ""
+        // row.receipt = ""
       } else {
         // Calculate subTotal based on amount and receipt
         row.subTotal = String(
-          ((!isNaN(parseFloat(previousBalance)) ? parseFloat(previousBalance) : 0) +(!isNaN(parseFloat(row.amount)) ? parseFloat(row.amount?.replace(/,/ig,"")) : 0) - (!isNaN(parseFloat(row.receipt)) ? parseFloat(row.receipt.replace(/,/ig,"")) : 0))?.toFixed(2)
+          ((!isNaN(parseFloat(previousBalance)) ? parseFloat(previousBalance) : 0) +(!isNaN(parseFloat(row.amount)) ? parseFloat(row.amount?.replace(/,/ig,"")) : 0))?.toFixed(2)
         );
         previousBalance = row.subTotal;
       }
@@ -268,7 +268,7 @@ export const useReceiptTracker = (fileName?: string) => {
       });
 
       const totalAmount = (parseFloat(totalLine[2]) || 0)?.toFixed(2);
-      const receipt = (parseFloat(totalLine[3]) || 0)?.toFixed(2);
+      const receipt = totalLine[3] || ""
       const totalSubTotal = (parseFloat(totalLine[4]) || 0)?.toFixed(2);
 
       const importedPage: IReceiptTrackerPage = {
@@ -295,7 +295,6 @@ export const useReceiptTracker = (fileName?: string) => {
       // updatePages(pagesCopy)
     } else {
       const pagesData = convertToPages(csvData);
-      // console.log(pagesData)
       setPages(pagesData);
       // updatePages(pagesData)
     }   
@@ -304,7 +303,7 @@ export const useReceiptTracker = (fileName?: string) => {
   function convertToPages(data: string[][]) {
     const pages = [];
     // let currentPage: { title: string, subTitle: string, rows: IReceiptTrackerTableRow[], totalAmount: number, receipt: number, totalSubTotal: number} = { title: '', subTitle: '', rows: [], totalAmount: 0, receipt: 0, totalSubTotal: 0 };
-    let currentPage: IReceiptTrackerPage = { title: '', subTitle: '', rows: [], totalAmount: "0", receipt: "0", totalSubTotal: "0", rowsToAdd: 1 };
+    let currentPage: IReceiptTrackerPage = { title: '', subTitle: '', rows: [], totalAmount: "0", receipt: "", totalSubTotal: "0", rowsToAdd: 1 };
   
     for (let i = 0; i < data.length; i++) {
       const row = data[i];
@@ -313,7 +312,7 @@ export const useReceiptTracker = (fileName?: string) => {
       if (row.length === 5 && row.every(cell => cell === '') && i < data.length - 1 && data[i + 1].every(cell => cell === '')) {
         // Push current page to pages and reset for a new page
         pages.push(currentPage);
-        currentPage = { title: '', subTitle: '', rows: [], totalAmount: "0", receipt: "0", totalSubTotal: "0", rowsToAdd: 1 };
+        currentPage = { title: '', subTitle: '', rows: [], totalAmount: "0", receipt: "", totalSubTotal: "0", rowsToAdd: 1 };
         i++; // Skip the second separator row
         continue;
       }
@@ -327,19 +326,19 @@ export const useReceiptTracker = (fileName?: string) => {
         // Parse total row
         currentPage.imageUrl = row[0];
         currentPage.totalAmount = (parseFloat(row[2] || "0"))?.toFixed(2);
-        currentPage.receipt = (parseFloat(row[3] || "0"))?.toFixed(2);
-        currentPage.totalSubTotal = (parseFloat(row[4] || "0"))?.toFixed(2);
+        currentPage.receipt = row[4]||"";
+        currentPage.totalSubTotal = (parseFloat(row[3] || "0"))?.toFixed(2);
         currentPage.rowsToAdd = 1
       } else if (row[0] !== 'Date') { // Skip header row
         // Parse row data
-        const [date, receiptName, amount, receipt, subTotal] = row;
+        const [date, receiptName, amount, subTotal, receipt] = row;
 
         currentPage.rows.push({
           date: date || '',
           receiptName: receiptName || '',
           amount: String( amount || "0"),
-          receipt: String(receipt || "0"),
-          subTotal: String(subTotal || "0")
+          subTotal: String(subTotal || "0"),
+          receipt: receipt || "",
         });
         
       }

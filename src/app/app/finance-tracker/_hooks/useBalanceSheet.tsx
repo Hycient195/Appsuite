@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Papa from "papaparse";
-import { IPage, IRow } from '../_types/types';
+import { IBalanceSheetPage, IRow } from '../_types/types';
 import { useCancelableDebounce } from '@/sharedHooks/useCancellableDebounce';
 
 const defaultRow: IRow = {
@@ -11,7 +11,7 @@ const defaultRow: IRow = {
   balance: "",
 };
 
-export const defaultPage: IPage = {
+export const defaultPage: IBalanceSheetPage = {
   title: "",
   subTitle: "",
   rows: [{ ...defaultRow }], // Create a fresh copy for each default page
@@ -23,11 +23,11 @@ export const defaultPage: IPage = {
 };
 
 export const useBalanceSheet = (fileName?: string) => {
-  const [pages, setPages] = useState<IPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
-  const [history, setHistory] = useState<IPage[][]>([]);
-  const [future, setFuture] = useState<IPage[][]>([]);
+  const [pages, setPages] = useState<IBalanceSheetPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
+  const [history, setHistory] = useState<IBalanceSheetPage[][]>([]);
+  const [future, setFuture] = useState<IBalanceSheetPage[][]>([]);
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
-  const [ tempHistoryStack, setTempHistoryStack ] = useState<IPage[]|null>(null);
+  const [ tempHistoryStack, setTempHistoryStack ] = useState<IBalanceSheetPage[]|null>(null);
 
 
   const prevPagesRef = useRef(pages);
@@ -66,9 +66,11 @@ export const useBalanceSheet = (fileName?: string) => {
   }
 
   const addPage = (afterPageIndex: number) => {
+    console.log(afterPageIndex)
     const newPage = {
       ...defaultPage,
-      rows: [{ ...defaultRow, narration: "BALANCE BROUGHT FORWARD" }]
+      rows: [{ ...defaultRow, narration: "BALANCE BROUGHT FORWARD" }],
+      imageUrl: pages[afterPageIndex]?.imageUrl||""
     };
     const updatedPages = [...pages];
     updatedPages.splice(afterPageIndex + 1, 0, newPage);
@@ -129,7 +131,7 @@ export const useBalanceSheet = (fileName?: string) => {
     updatePages(updatedPages);
   };
 
-  const calculatePageBalances = useCallback((page: IPage, pageIndex: number) => {
+  const calculatePageBalances = useCallback((page: IBalanceSheetPage, pageIndex: number) => {
     let previousBalance = "0";
 
     // Loop through each row to calculate balances
@@ -164,7 +166,7 @@ export const useBalanceSheet = (fileName?: string) => {
   },[ pages ]);
 
   // Calculate total credit, debit, and final balance for a page
-  const calculatePageTotals = (page: IPage) => {
+  const calculatePageTotals = (page: IBalanceSheetPage) => {
     let totalCredit = 0;
     let totalDebit = 0;
     let finalBalance = 0;
@@ -180,13 +182,13 @@ export const useBalanceSheet = (fileName?: string) => {
     page.finalBalance = String(finalBalance?.toFixed(2));
   };
 
-  const updatePages = (updatedPages: IPage[]) => {
+  const updatePages = (updatedPages: IBalanceSheetPage[]) => {
     setPages(updatedPages);
     setHistory([...history, pages]); // Save the current state to history
     setFuture([]); // Clear future stack on new action
   };
 
-  // const updatePages = (updatedPages: IPage[]) => {
+  // const updatePages = (updatedPages: IBalanceSheetPage[]) => {
   //   setPages(updatedPages);
   //   if (!tempHistoryStack) setTempHistoryStack(pages);
 
@@ -242,7 +244,7 @@ export const useBalanceSheet = (fileName?: string) => {
 
   const importCSV = async (file: File) => {
     const text = await file.text();
-    const importedPages: IPage[] = [];
+    const importedPages: IBalanceSheetPage[] = [];
     
     const sections = text.split('\n,,,,\n,,,,\n'); // Split pages by the separator in 'downloadAllPagesCSV'
     
@@ -270,7 +272,7 @@ export const useBalanceSheet = (fileName?: string) => {
       const totalDebit = (parseFloat(totalLine[3]) || 0)?.toFixed(2);
       const finalBalance = (parseFloat(totalLine[4]) || 0)?.toFixed(2);
 
-      const importedPage: IPage = {
+      const importedPage: IBalanceSheetPage = {
         title,
         subTitle,
         rows,
@@ -303,7 +305,7 @@ export const useBalanceSheet = (fileName?: string) => {
   function convertToPages(data: string[][]) {
     const pages = [];
     // let currentPage: { title: string, subTitle: string, rows: IRow[], totalCredit: number, totalDebit: number, finalBalance: number} = { title: '', subTitle: '', rows: [], totalCredit: 0, totalDebit: 0, finalBalance: 0 };
-    let currentPage: IPage = { title: '', subTitle: '', rows: [], totalCredit: "0", totalDebit: "0", finalBalance: "0", rowsToAdd: 1 };
+    let currentPage: IBalanceSheetPage = { title: '', subTitle: '', rows: [], totalCredit: "0", totalDebit: "0", finalBalance: "0", rowsToAdd: 1, imageUrl: "" };
   
     for (let i = 0; i < data.length; i++) {
       const row = data[i];
@@ -312,7 +314,7 @@ export const useBalanceSheet = (fileName?: string) => {
       if (row.length === 5 && row.every(cell => cell === '') && i < data.length - 1 && data[i + 1].every(cell => cell === '')) {
         // Push current page to pages and reset for a new page
         pages.push(currentPage);
-        currentPage = { title: '', subTitle: '', rows: [], totalCredit: "0", totalDebit: "0", finalBalance: "0", rowsToAdd: 1 };
+        currentPage = { title: '', subTitle: '', rows: [], totalCredit: "0", totalDebit: "0", finalBalance: "0", rowsToAdd: 1, imageUrl: "" };
         i++; // Skip the second separator row
         continue;
       }
@@ -324,7 +326,7 @@ export const useBalanceSheet = (fileName?: string) => {
       } else if (row[1] === 'TOTAL') {
         console.log(row[i])
         // Parse total row
-        currentPage.imageUrl = row[0];
+        currentPage.imageUrl = row[0]||"";
         currentPage.totalCredit = (parseFloat(row[2] || "0"))?.toFixed(2);
         currentPage.totalDebit = (parseFloat(row[3] || "0"))?.toFixed(2);
         currentPage.finalBalance = (parseFloat(row[4] || "0"))?.toFixed(2);
@@ -364,7 +366,7 @@ export const useBalanceSheet = (fileName?: string) => {
     downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
   };
 
-  const generateCSVData = (page: IPage) => {
+  const generateCSVData = (page: IBalanceSheetPage) => {
     const rowsCSV = page.rows
       .map(row => `"${row.date}","${row.narration}","${row.credit}","${row.debit}","${row.balance}"`)
       .join('\n');

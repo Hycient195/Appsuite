@@ -2,7 +2,6 @@
 
 import { google } from 'googleapis';
 import { cookies } from 'next/headers';
-import { Readable } from "stream"
 import { ICreateFileRequest, IRenameFolderAndPrimaryFileRequest, IUploadFileRequest, TMimeTypes } from '@/types/shared.types';
 
 
@@ -177,6 +176,7 @@ export async function createFileInFolder({ appName, fileName, content, mimeType 
   });
 }
 
+import { Readable } from "stream"
 
 
 /**
@@ -186,10 +186,10 @@ export async function createFileInFolder({ appName, fileName, content, mimeType 
  * @returns The URL of the uploaded file with view permissions for everyone.
  */
 export async function saveFileInFileFolder({ fileId, content }: IUploadFileRequest): Promise<{ id: string|null, url: string|null}> {
-  console.log(fileId)
   const driveService = await getDriveService();
   
   try {
+    if (!fileId || !content) throw new Error("No file id or content");
     // Retrieve file metadata to find its direct parent folder
     const fileMetadata = await driveService.files.get({
       fileId,
@@ -201,7 +201,7 @@ export async function saveFileInFileFolder({ fileId, content }: IUploadFileReque
       throw new Error(`Parent folder for file ID ${fileId} not found`);
     }
 
-    const fileBuffer = content.stream();
+    const fileBuffer = content?.stream();
 
     // Upload the new file to the identified parent folder
     const fileResponse = await driveService.files.create({
@@ -234,7 +234,8 @@ export async function saveFileInFileFolder({ fileId, content }: IUploadFileReque
     return { id: fileResponse.data.id || null,  url: fileResponse.data.webViewLink || null };
   } catch (error) {
     console.error("Error saving file in file folder:", error);
-    return { id: null, url: null };
+    throw new Error(`Unble to create file: ${error}`)
+    // return { id: null, url: null };
   }
 }
 
@@ -334,13 +335,13 @@ export async function getFoldersWithPrimaryFile(folderName: string, primaryFileM
           folderId: subfolder.id,
           folderName: subfolder.name,
           primaryFile: primaryFile
-            ? {
-                fileId: primaryFile.id,
-                fileName: primaryFile.name,
-                mimeType: primaryFile.mimeType,
-                size: primaryFile.size,
-              }
-            : null,
+          ? {
+              fileId: primaryFile.id,
+              fileName: primaryFile.name,
+              mimeType: primaryFile.mimeType,
+              size: primaryFile.size,
+            }
+          : null,
         };
       })
     );

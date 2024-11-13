@@ -6,7 +6,7 @@ export interface IRow {
   balance: string;
 }
 
-export interface IPage {
+export interface IBalanceSheetPage {
   title: string;
   subTitle: string;
   rows: IRow[];

@@ -3,7 +3,7 @@
 import React, { ChangeEvent, LegacyRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { defaultPage, useReceiptTracker } from '../_hooks/useReceiptTracker';
 import ResizableTable from '@/sharedComponents/ResizableTable';
-import { formatDateInput, splitInThousand, splitInThousandForTextInput } from '@/utils/miscelaneous';
+import { formatDateInput, replaceJSXRecursive, splitInThousand, splitInThousandForTextInput } from '@/utils/miscelaneous';
 import useGeneratePDF from '@/sharedHooks/useGeneratePDF';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -160,9 +160,9 @@ const ReceiptTracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSu
               <div key={pageIndex} ref={(el: HTMLDivElement) => {((singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el)}} className="mb-8 w-full  max-w-[1080px] md:rounded mx-auto bg-white px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300">
                 {/* { page?.imageUrl && <Image height={90} width={90} src={page.imageUrl as string} alt='alternative' className='object-contain ml-4' /> } */}
                 <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
-                  <div className="relative h-max">
-                    <p style={{ fontFamily: "sans-serif"}} className="invisib py-1 text-3xl border- border-white outline-none font-bold w-ful text-center">{page.title}<span className="invisible">.</span></p>
-                    <textarea style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ TITLE HERE... ]' autoFocus className="noExport text-3xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border- border-zinc-300/80 font-bold w-ma w-ful mx-auto text-center" />
+                  <div className="relative !h-max max-w-[800px] mx-auto ">
+                    <p style={{ fontFamily: "sans-serif"}} className="invisib max-w-[800px] mx-auto py-1 text-3xl border- border-white outline-none font-bold w-ful text-center">{replaceJSXRecursive(page.title, { "\n": <br />})}<span className="invisible">.</span></p>
+                    <textarea style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ TITLE HERE... ]' autoFocus className="noExport max-w-[800px] mx-auto text-3xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
                   </div>
                   <div className="mb-2 noExport" />
                   <div className="relative mb-1">
@@ -326,21 +326,22 @@ function TableRow({ row, pageIndex, rowIndex, inputRefs, handleInputChange, inse
     setIsLoading({ ...isLoading, uploading: true });
     const imageFile = file;
     const data = new FormData();
-    data.append("content", imageFile);
     data.append("fileId", params?.fileId);
+    data.append("content", imageFile);
 
     axios.put<{ id: string, url: string }>("/api/google-drive/file-in-folder", data)
       .then((res) => {
         const pagesCopy = [ ...pages ]
         pagesCopy[pageIndex].rows[rowIndex].receipt = `${res.data?.id}<||>${res.data?.url}`;
         setPages(pagesCopy);
-        setIsLoading({ ...isLoading, uploading: false })
+        setIsLoading({ ...isLoading, uploading: false });
       })
       .catch((err) => {
-        setIsLoading({ ...isLoading, uploading: false })
+        setIsLoading({ ...isLoading, uploading: false });
         console.log(err)
       })
   };
+
 
   const handleDeleteReceipt = async (fileId: string, action?: any) => {
     setIsLoading({ ...isLoading, deleting: true, removingRow: action ? true : false });
@@ -359,7 +360,7 @@ function TableRow({ row, pageIndex, rowIndex, inputRefs, handleInputChange, inse
   }
 
   const handleRemoveRow = async (pageIndex: number, rowIndex: number, row: IReceiptTrackerTableRow) => {
-    if (row?.receipt && row?.receipt !== "0") {
+    if (row?.receipt) {
       await handleDeleteReceipt(
         row?.receipt?.split("<||>")[0], () => {
           removeRow(pageIndex, rowIndex)
@@ -454,8 +455,9 @@ function TableRow({ row, pageIndex, rowIndex, inputRefs, handleInputChange, inse
         className={`flex items-center ${!isLoading ? "cursor-not-allowed" : ""}`}
       >
         <div className="bg-transparen bg-transparent peer/test flex flex-row gap-2 items-center relative bg-tes w-[calc(100%+10px)] -right-3 !border-none z-[-1 absolute bg-green-30 bottom- cursor-pointer h-full">
+          {/* {row.receipt} */}
           {
-            (row?.receipt && row?.receipt !== "0") ? (
+            (row?.receipt) ? (
               !isLoading.deleting
               ? (
                 <>
@@ -475,7 +477,7 @@ function TableRow({ row, pageIndex, rowIndex, inputRefs, handleInputChange, inse
               ? (
                 <label htmlFor={`file-input-${pageIndex}-${rowIndex}`} className='noExport' title='You can drag and drop in the column cell to upload a receipt'>
                   <p className="text-purple-600 underline">Upload</p>
-                  <input disabled={!isLoggedIn} type="file" id={`file-input-${pageIndex}-${rowIndex}`} className='hidden' onChange={(e) => handleUploadReceipt(e, pageIndex, rowIndex)} />
+                  <input disabled={!isLoggedIn} type="file" accept="image/jpeg, image/jpg, image/png, image/svg, application/pdf" id={`file-input-${pageIndex}-${rowIndex}`} className='hidden' onChange={(e) => handleUploadReceipt(e.target.files![0], pageIndex, rowIndex)} />
                 </label>
               ) : (
                 tableRowSpinner

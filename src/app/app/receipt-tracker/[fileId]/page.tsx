@@ -19,7 +19,7 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
     csvString = (await readFile((await params).fileId)) as string;
     loadedSucessfully = true;
   } catch (error) {
-    console.log(`Error fetching balance sheet`, error);
+    console.log(`Error fetching receipt tracker sheet`, error);
     csvString = "";
   }
 
