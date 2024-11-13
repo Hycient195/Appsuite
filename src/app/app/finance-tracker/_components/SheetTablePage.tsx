@@ -74,7 +74,6 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
 
       <div key={pageIndex} ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el}} className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full  max-w-[1080px] md:rounded mx-auto px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300`}>
         
-        
         <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
           <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
             {
