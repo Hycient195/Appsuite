@@ -7,7 +7,6 @@ import { replaceJSXRecursive, splitInThousand } from "@/utils/miscelaneous";
 import useHandlePageLogoActions from "@/sharedHooks/useHandlePageLogoActions";
 import { SaveLoadingSpinner } from "@/sharedComponents/CustomIcons";
 import Image from "next/image";
-import LoadingButton from "@/sharedComponents/LoadingButton";
 
 interface IProps {
   pageIndex: number;
@@ -93,17 +92,17 @@ export default function SheetTablePage({
     handleReceiptDragOver, handleReceiptDragEnter,
     handleReceiptDragLeave, handleReceiptDrop,
     handleUploadLogo, hasLogoOrSpinner
-  } = useHandlePageLogoActions<IReceiptTrackerPage>({ isLoggedIn: isLoggedIn, page: page, pageIndex: pageIndex, pages: pages, params: params, removePage: removePage, setPages: setPages })
+  } = useHandlePageLogoActions<IReceiptTrackerPage>({ isLoggedIn, page, pageIndex, pages, params, removePage, setPages });
 
   return (
     <DraggablePage pageIndex={pageIndex} movePage={movePage}>
       <div key={pageIndex} ref={(el: HTMLDivElement) => {((singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el)}} className="mb-8 w-full  max-w-[1080px] md:rounded mx-auto bg-white px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300">
 
         <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
-        <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
+          <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
             {
               (isLoading.uploading || isLoading.deleting || isLoading.removingPage || page?.imageUrl)
-              ? <div className={`${isDragging ? "bg-green-500/40" : ""} relative !overflow-hidde z-[2] !w-[80px] !h-[80px] -translate-y-2 `} onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop}>
+              ? <div className={`${isDragging ? "bg-green-500/40" : ""} relative !overflow-hidde z-[2] !w-[80px] !h-[80px] -translate-y-1 `} onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop}>
                 {
                   (isLoading.uploading || isLoading.removingPage || isLoading.deleting)
                   ? (
@@ -188,22 +187,6 @@ export default function SheetTablePage({
               Load CSV
               <input id={`csv-import-${pageIndex}`} type="file" accept=".csv" className='hidden' name={`${pageIndex}`} onChange={(e) => handleCSVImport(e, pageIndex)} />
             </label>
-            {/* {
-              !imageSrc
-              ? (
-                <label htmlFor={`add-logo-${pageIndex}`}  className="px-4 py-2 cursor-pointer text-center bg-violet-500 text-white rounded" >
-                  Add Logo
-                  <input id={`add-logo-${pageIndex}`} type="file" accept="image/jpeg, image/jpg, image/png" className='hidden' name={`${pageIndex}`} onChange={(e) => handleUploadLogo(e.target.files![0], pageIndex)} />
-                </label>
-              ) : (
-                <LoadingButton loading={isLoading.deleting || isLoading.removingPage} className="!px-4 !py-2 bg-violet-500 text-white !rounded" onClick={() => handleRemoveLogo(page?.imageUrl?.split("<||>")[0] as string)} >
-                  Remove Logo
-                </LoadingButton>
-              )
-            } */}
-            {/* <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => handleAddImageURL(pageIndex, "sdf")}>
-              Add Logo
-            </button> */}
             <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => downloadPageCSV(pageIndex)}>
               Download CSV
             </button>

@@ -141,6 +141,7 @@ const DashboardNav = memo(() => {
           >
             {/* <MenuItem className="!p-0 !hidden" value={0}>{loggedInUser?.fullName}</MenuItem> */}
             <MenuItem onClick={() => router.push("/settings/user-profile")} className="font-semibold text-zinc-600">Settings</MenuItem>
+            <MenuItem className="font-semibold text-zinc-600 !p-0"><a href="mailto:onyeukwuhycient@gmail.com" className="!px-4 !py-2 w-full">Contact Support</a></MenuItem>
             <MenuItem onClick={handleSignOut} className="font-semibold text-zinc-600">Sign Out</MenuItem>
           </Select>
         </li>

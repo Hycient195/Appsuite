@@ -1,10 +1,8 @@
 import { SaveLoadingSpinner } from "@/sharedComponents/CustomIcons";
 import DraggablePage from "@/sharedComponents/DraggablePage";
-import LoadingButton from "@/sharedComponents/LoadingButton";
 import ResizableTable from "@/sharedComponents/ResizableTable";
 import { formatDateInput, replaceJSXRecursive, splitInThousand, splitInThousandForTextInput } from "@/utils/miscelaneous";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
 import { IBalanceSheetPage } from "../_types/types";
 import useHandlePageLogoActions from "@/sharedHooks/useHandlePageLogoActions";
 
@@ -67,7 +65,6 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
     handleReceiptDragLeave, handleReceiptDrop,
     handleUploadLogo, hasLogoOrSpinner
   } = useHandlePageLogoActions<IBalanceSheetPage>({ isLoggedIn: isLoggedIn, page: page, pageIndex: pageIndex, pages: pages, params: params, removePage: removePage, setPages: setPages })
-
 
   return (
     <DraggablePage pageIndex={pageIndex} movePage={movePage}>   
