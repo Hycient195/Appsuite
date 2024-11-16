@@ -183,7 +183,7 @@ export default function SheetTableRow({ row, pageIndex, rowIndex, inputRefs, han
               !isLoading.uploading
               ? (
                 <label htmlFor={`file-input-${pageIndex}-${rowIndex}`} className='noExport' title='You can drag and drop in the column cell to upload a receipt'>
-                  <p className="text-purple-600 underline">Upload</p>
+                  <p className="text-purple-600 underline">Upload or Drop</p>
                   <input disabled={!isLoggedIn} type="file" accept="image/jpeg, image/jpg, image/png, image/svg, application/pdf" id={`file-input-${pageIndex}-${rowIndex}`} className='hidden' onChange={(e) => handleUploadReceipt(e.target.files![0], pageIndex, rowIndex)} />
                 </label>
               ) : (

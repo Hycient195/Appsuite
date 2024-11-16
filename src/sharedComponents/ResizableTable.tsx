@@ -9,9 +9,10 @@ type TableProps = {
   headers: string[];
   minCellWidth: number;
   tableContent: React.ReactNode;
+  tableClassName?: string;
 };
 
-const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableContent }) => {
+const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableContent, tableClassName }) => {
   const [tableHeight, setTableHeight] = useState<string>("auto");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const tableElement = useRef<HTMLTableElement>(null);
@@ -91,10 +92,10 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
   return (
     <div className="containe max-w-screen-lg mx-auto">
       <div className="table-wrapper grid bg-green-5">
-        <table className="relative resizeable-table w-full [&_th]:relative
+        <table className={`relative resizeable-table w-full [&_th]:relative
           [&_td]:border-t [&_td:not(:last-of-type)]:border-r [&_th]:border-t [&_th:not(:last-of-type)]:border-r [&]:border-zinc-500 [&_*]:border-zinc-500 border-x border-b
           [&_thead]:!contents [&_tbody]:!contents [&_tr]:!contents
-          grid grid-cols-[11.5%_48%_13.5%_13.5%_13.5%]"
+          grid grid-cols-[11.5%_48%_13.5%_13.5%_13.5%] ${tableClassName}`}
           ref={tableElement}>
           <thead className="w-full">
             <tr style={{ fontFamily: "sans-serif"}} className=" select-none  w-full">

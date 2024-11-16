@@ -32,6 +32,13 @@ export interface IUploadFileRequest {
 
 export interface IRenameFolderAndPrimaryFileRequest { folderId: string, primaryFileMimeType: TMimeTypes, newFileName: string}
 
+export interface IModuleFile {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string
+}
+
 // type TModules = [ "FINANCE_TRACKER", "INVOICE_GENERATOR" ]
 // export type TModules =  ("FINANCE_TRACKER"|"INVOICE_GENERATOR" )
 

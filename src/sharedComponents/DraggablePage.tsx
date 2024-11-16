@@ -40,7 +40,7 @@ const DraggablePage: React.FC<IProps> = ({ pageIndex, movePage, children }) => {
     <div
       ref={containerRef}
       style={{ opacity: isDragging ? 0.5 : 1 }}
-      className="relative mb-8 w-full max-w-[1080px] mx-auto"
+      className="relative w-full max-w-[1080px] mx-auto"
     >
       {children}
       
