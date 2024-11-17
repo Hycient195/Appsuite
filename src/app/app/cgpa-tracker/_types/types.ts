@@ -16,9 +16,13 @@ export interface ICGPATrackerPage {
   totalGradePoint: string
   gradePointAverage: string;
   cummulativeGradePointAverage: string
-  // gpaScale: TGradeScales
   rowsToAdd: number;
+  cgpaScale?: TGradeScales
   imageUrl?: string;
+}
+
+export interface ICGPATrackerConfig {
+  cgpaScale: TGradeScales
 }
 
 export type TGradeTypes = "A"|"B"|"C"|"D"|"E"|"F";

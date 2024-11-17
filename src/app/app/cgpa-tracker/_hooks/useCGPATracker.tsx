@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Papa from "papaparse";
-import { ICGPATrackerPage, ICGPATrackerRow, TGradeScales, TGradeTypes } from '../_types/types';
+import { ICGPATrackerConfig, ICGPATrackerPage, ICGPATrackerRow, TGradeScales, TGradeTypes } from '../_types/types';
 import { gradeValueMap } from '../_constants/gradeValue';
 
 const defaultRow: ICGPATrackerRow = {
@@ -19,11 +19,13 @@ export const defaultPage: ICGPATrackerPage = {
   totalGradePoint: "0",
   gradePointAverage: "0",
   cummulativeGradePointAverage: "0",
+  cgpaScale: "OVER5",
   rowsToAdd: 1,
   imageUrl: ""
 };
 
-export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
+export const useCGPATracker = (fileName?: string) => {
+  // const [ config, setConfig ] = useState<ICGPATrackerConfig>({ cgpaScale: gradeScale });
   const [pages, setPages] = useState<ICGPATrackerPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
   const [history, setHistory] = useState<ICGPATrackerPage[][]>([]);
   const [future, setFuture] = useState<ICGPATrackerPage[][]>([]);
@@ -40,7 +42,12 @@ export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
     updatePages(pageCopy);
   };
 
-
+  const updateCGPAScale = (scale: TGradeScales): void => {
+    const pageCopy = [...pages];
+    pageCopy[0].cgpaScale = scale;
+    setPages(pageCopy);
+    updatePages(pageCopy);
+  }
 
   const updateRowsToAdd = (pageNumber: number, action: ("increament"|"decreament"|null), defaltValue?: number): void => {
     const pageCopy = [ ...pages ]
@@ -135,7 +142,7 @@ export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
   const calculatePageBalances = useCallback((page: ICGPATrackerPage, pageIndex: number) => {
 
     page.rows.forEach((row) => {
-      row.gradePoint = String((Number(row.unitLoad) * gradeValueMap[gradeScale][row.grade]));
+      row.gradePoint = String((Number(row.unitLoad) * gradeValueMap[pages[0].cgpaScale as TGradeScales][row.grade]));
     });
   
     // Recalculate totals and final gradePoint for the current page
@@ -363,8 +370,9 @@ export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
         // Parse total row
         currentPage.imageUrl = row[0]||"";
         currentPage.totalUnitLoad = (parseFloat(row[2] || "0"))?.toFixed(2);
-        currentPage.totalGradePoint = (parseFloat(row[3] || "0"))?.toFixed(2);
-        currentPage.gradePointAverage = (parseFloat(row[4] || "0"))?.toFixed(2);
+        currentPage.cgpaScale = row[3] as TGradeScales;
+        currentPage.totalGradePoint = (parseFloat(row[4] || "0"))?.toFixed(2);
+        // currentPage.gradePointAverage = (parseFloat(row[4] || "0"))?.toFixed(2);
         currentPage.rowsToAdd = 1
       } else if ((row[0] !== 'Course Code')) { // Skip header row
         // Parse row data
@@ -404,7 +412,7 @@ export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
     const rowsCSV = page.rows
       .map(row => `"${row.courseCode}","${row.courseTitle}","${row.unitLoad}","${row.grade}","${row.gradePoint}"`)
       .join('\n');
-    const totalCSV = `${page.imageUrl??""},"TOTAL","${page.totalUnitLoad}",,"${page.totalGradePoint}"`
+    const totalCSV = `${page.imageUrl??""},"TOTAL","${page.totalUnitLoad}",${page.cgpaScale},"${page.totalGradePoint}"`
     const gpaCSV = `,"GRADE POINT AVERAGE (GPA)",,,"${page.gradePointAverage}"`
     const cgpaCSV = `,"CUMMULATIVE GRADE POINT AVERAGE (CGPA)",,,${page.cummulativeGradePointAverage}`
     return `"${page.title}",,,,\n"${page.subTitle}",,,,\n"Course Code","Course Title","Unit Load","Grade","Grade Point"\n${rowsCSV}\n${totalCSV}\n${gpaCSV}\n${cgpaCSV}`;
@@ -524,5 +532,6 @@ export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
     handleKeyDown,
     inputRefs,
     movePage,
+    updateCGPAScale,
   };
 };

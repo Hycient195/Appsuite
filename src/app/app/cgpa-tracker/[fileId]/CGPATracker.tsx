@@ -18,6 +18,7 @@ import Image from 'next/image';
 import axios from 'axios';
 import LoadingButton from '@/sharedComponents/LoadingButton';
 import CGPATrackerPage from '../_components/SheetTablePage';
+import { FormSelect } from '@/sharedComponents/FormInputs';
 
 const CGPATracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
 
@@ -77,8 +78,9 @@ const CGPATracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuces
     handleNumericInputBlur,
     handleKeyDown,
     inputRefs,
-    movePage
-  } = useCGPATracker("OVER5");
+    movePage,
+    updateCGPAScale
+  } = useCGPATracker();
 
   /* Loading CSV file fetched from the server using SSR */
   useEffect(() => {
@@ -190,9 +192,16 @@ const CGPATracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuces
           <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
         </button>
       </Teleport>
-      <main className=" w-full border-zinc-200 ">
-     
-        <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
+      <main className=" w-full border-zinc-200 -mt-4 relative">
+        <div className="max-w-[1080px] mx-auto">
+          <div className="!h-[20px] sticky !top-16 !bg-zinc-100 z-[2] noExport" />
+          <div className="bg-white border-zinc-300 rounded-lg border p-4 sticky !top-[83px] z-[3]">
+            <FormSelect labelText="CGPA Scale" value={pages[0].cgpaScale} onChange={(e) => updateCGPAScale(e.target.value)} options={[ { text: "5 Point Scale", value: "OVER5" }, { text: "4 Point Scale", value: "OVER4"} ]} />
+          </div>
+          <div className="!h-[25px] sticky !top-[175px] !bg-zinc-100 z-[2] noExport" /> {/** Margin for preview */}
+        </div>
+      
+        <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] bg-zinc-100 mx-auto">
           {(pages).map((page, pageIndex) => (
             <CGPATrackerPage
               key={`page-${pageIndex}`}
