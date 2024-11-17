@@ -116,6 +116,7 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
           <ResizableTable
             headers={["DATE", "NARRATION", "DEBIT", "CREDIT", "BALANCE"]}
             minCellWidth={100}
+            columnsPercentageWidth={[11.5,48,13.5,13.5,13.5]}
             tableContent={
               <tbody ref={tbodyRef} className=''>
                 <>

@@ -143,6 +143,7 @@ export default function SheetTablePage({
           <ResizableTable
             headers={["DATE", "NAME", "AMOUNT", "SUB TOTAL", "RECEIPT"]}
             minCellWidth={100}
+            columnsPercentageWidth={[11.5,48,13.5,13.5,13.5]}
             tableContent={
               <tbody className=''>
                 <>

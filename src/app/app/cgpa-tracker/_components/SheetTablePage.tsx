@@ -116,7 +116,8 @@ export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, 
           <ResizableTable
             headers={["S/N", "COURSE CODE", "COURSE TITLE", "UNIT LOAD", "GRADE", "GRADE POINT"]}
             minCellWidth={100}
-            tableClassName="grid-cols-[7.5%_14%_38%_13.5%_13.5%_13.5%]"
+            tableClassName="grid-cols-[7.5%_15%_40%_13.5%_10.5%_13.5%]"
+            columnsPercentageWidth={[7.5,15,40,13.5,10.5,13.5]}
             tableContent={
               <tbody ref={tbodyRef} className=''>
                 <>

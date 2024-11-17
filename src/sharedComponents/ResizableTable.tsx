@@ -9,10 +9,11 @@ type TableProps = {
   headers: string[];
   minCellWidth: number;
   tableContent: React.ReactNode;
+  columnsPercentageWidth: number[];
   tableClassName?: string;
 };
 
-const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableContent, tableClassName }) => {
+const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableContent, columnsPercentageWidth, tableClassName }) => {
   const [tableHeight, setTableHeight] = useState<string>("auto");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const tableElement = useRef<HTMLTableElement>(null);
@@ -34,7 +35,8 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
     setActiveIndex(index);
   };
 
-  const fractions = useRef<number[]>([11.5,48,13.5,13.5,13.5]);
+  const fractions = useRef<number[]>(columnsPercentageWidth);
+  // const fractions = useRef<number[]>([11.5,48,13.5,13.5,13.5]);
 
   const mouseMove = useCallback(
     (e: MouseEvent) => {
