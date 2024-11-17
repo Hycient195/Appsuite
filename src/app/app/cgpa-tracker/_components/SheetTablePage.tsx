@@ -73,7 +73,7 @@ export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, 
         <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
         <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
           <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
-            {
+            {/* {
               (isLoading.uploading || isLoading.deleting || isLoading.removingPage || page?.imageUrl)
               ? <div className={`${isDragging ? "bg-green-500/40" : ""} relative !overflow-hidde z-[2] !w-[80px] !h-[80px] -translate-y-2 `} onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop}>
                 {
@@ -98,7 +98,7 @@ export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, 
                   <input id={`add-logo-${pageIndex}`} type="file" accept="image/jpeg, image/jpg, image/png" className='hidden' name={`${pageIndex}`} onChange={(e) => handleUploadLogo(e.target.files![0], pageIndex)} />
                 </label>
               )
-            }
+            } */}
             <div className="titles grid !max-w-[800px] w-full mx-auto">
               <div className="relative h-max !max-w-[800px] w-full mx-auto bg-ts">
                 <p style={{ fontFamily: "sans-serif"}} className="invisib !max-w-[800px] text-black w-full mx-auto py-1 text-2xl border- border-white outline-none font-bold w-ful text-center">{replaceJSXRecursive(page.title, { "\n": <br />})}<span className="invisible">.</span></p>
@@ -127,14 +127,6 @@ export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, 
                           <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="bg-green-500 hidden duration-300 group-hover/line:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-2 items-center justify-center font-semibold">+</button>
                         </div>
                         <div className="h-full flex items-center justify-center my-auto">{rowIndex + 1}</div>
-                        {/* <input
-                          ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-courseCode`, el)}}
-                          type="text"
-                          value={row.courseCode}
-                          className='w-full h-full px-1 text-right focus:outline focus:outline-2 focus:outline-zinc-400 font-medium'
-                          onChange={e => { handleInputChange(pageIndex, rowIndex, 'courseCode', formatDateInput(e.target.value)), cursorPositionRef.current = e.target.selectionStart, resetCursorPosition(e) }}
-                          onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "courseCode")}
-                        /> */}
                       </td>
                       <td className="items-center" >
                         <input
@@ -146,7 +138,7 @@ export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, 
                         />
                       </td>
                       <td className="  items-center relative">
-                        <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{row.courseTitle}</p> {/* Placeholder to hold textarea height autoresize */}
+                        <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{replaceJSXRecursive(row.courseTitle, { '\n': <br /> })}</p> {/* Placeholder to hold textarea height autoresize */}
                         <textarea
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-courseTitle`, el)}}
                           value={row.courseTitle}

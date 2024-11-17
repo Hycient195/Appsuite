@@ -129,7 +129,7 @@ const CGPATracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuces
     if (isUploadingImageSuccess) {
       
     }
-  }, [ isUploadingImageSuccess ])
+  }, [ isUploadingImageSuccess ]);
 
   const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>, pageIndex: number) => {
     const newUrl = e.target.value;

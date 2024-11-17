@@ -133,26 +133,9 @@ export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
   };
 
   const calculatePageBalances = useCallback((page: ICGPATrackerPage, pageIndex: number) => {
-    let previousBalance = "0";
-    // page.rows = page.rows.map((x) => { return { ...x, gradePoint: (Number(x.unitLoad) * gradeValueMap[gradeScale][x.grade]) }})
 
-    // Loop through each row to calculate balances
-    page.rows.forEach((row, rowIndex) => {
-      // if (rowIndex === 0 && row.courseTitle === 'BALANCE BROUGHT FORWARD') {
-      //   // Set gradePoint based on the previous page's final gradePoint if it exists
-      //   previousBalance = String((pages[pageIndex - 1]?.gradePointAverage || "0"));
-      //   row.gradePoint = previousBalance;
-      //   row.unitLoad = "0";
-      //   row.grade = "0"
-      // } else {
-
-        // Calculate gradePoint based on unitLoad and grade
-        row.gradePoint = String(
-          // ((!isNaN(parseFloat(previousBalance)) ? parseFloat(previousBalance) : 0) +(!isNaN(parseFloat(row.unitLoad)) ? parseFloat(row.unitLoad?.replace(/,/ig,"")) : 0) - (!isNaN(parseFloat(row.grade)) ? parseFloat(row.grade.replace(/,/ig,"")) : 0))?.toFixed(2)
-         (Number(row.unitLoad) * gradeValueMap[gradeScale][row.grade])
-        );
-        previousBalance = row.gradePoint;
-      // }
+    page.rows.forEach((row) => {
+      row.gradePoint = String((Number(row.unitLoad) * gradeValueMap[gradeScale][row.grade]));
     });
   
     // Recalculate totals and final gradePoint for the current page
@@ -366,6 +349,10 @@ export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
         i++; // Skip the second separator row
         continue;
       }
+
+      if (["GRADE POINT AVERAGE (GPA)","CUMMULATIVE GRADE POINT AVERAGE (CGPA)"].includes(row[1])) {
+        continue;
+      }
   
       if (currentPage.title === '') {
         currentPage.title = row[0]; // First row is the title
@@ -379,8 +366,7 @@ export const useCGPATracker = (gradeScale: TGradeScales, fileName?: string) => {
         currentPage.totalGradePoint = (parseFloat(row[3] || "0"))?.toFixed(2);
         currentPage.gradePointAverage = (parseFloat(row[4] || "0"))?.toFixed(2);
         currentPage.rowsToAdd = 1
-      } else if ((row[0] !== 'Course Code' || !["GRADE POINT AVERAGE (GPA)","CUMMULATIVE GRADE POINT AVERAGE (CGPA)"].includes(row[1]))) { // Skip header row
-      // } else if ((row[1] !== 'GRADE POINT AVERAGE (GPA)') || row[1] !== "CUMMULATIVE GRADE POINT AVERAGE (CGPA)") { // Skip header row
+      } else if ((row[0] !== 'Course Code')) { // Skip header row
         // Parse row data
         const [courseCode, courseTitle, unitLoad, grade, gradePoint] = row;
 
