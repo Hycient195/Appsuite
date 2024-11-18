@@ -23,7 +23,7 @@ export interface IFileVersions {
   modifiedTime: string;
 }
 
-export type TMimeTypes = "text/csv"
+export type TMimeTypes = "text/csv"|"application/json"
 
 export interface IUploadFileRequest {
   fileId: string;

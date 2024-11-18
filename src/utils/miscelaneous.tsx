@@ -10,12 +10,13 @@ export const currencyMap = {
 export function handleInputChange<T>(
   e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement  | any> | SelectChangeEvent<number|string>,
   formData: T,
-  setFormData: React.Dispatch<React.SetStateAction<T>>
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  numericValue?: boolean
 ): void {
   const { name, type, checked, value } = e.target;
 
   // Determine the value based on the input type (checkboxes use `checked`, others use `value`)
-  const inputValue = (type === 'checkbox') ? checked : value;
+  const inputValue = (type === 'checkbox') ? checked : numericValue ? value?.replace(/[^0-9.]/g, "") : value;
 
   // Helper function to set nested value
   const setNestedValue = (obj: any, path: string[], value: any): any => {
