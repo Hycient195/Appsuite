@@ -121,6 +121,8 @@ export const comprehensiveInvoice: IGlobalInvoice = {
 };
 
 export const defaultGlobalInvoice: IGlobalInvoice = {
+  fileName: "",
+  templateName: "",
   metadata: {
     invoiceId: "",
     invoiceType: "Standard",

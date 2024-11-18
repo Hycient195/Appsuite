@@ -1,4 +1,4 @@
-import { handleInputChange } from "@/utils/miscelaneous";
+import { handleInputChange, replaceJSXRecursive } from "@/utils/miscelaneous";
 import { MenuItem, Select } from "@mui/material";
 import { Country, State } from "country-state-city";
 import Image from "next/image";
@@ -66,8 +66,8 @@ export const FormRegionSelect: FC<IProps & {countryCode: string}> = (props) => {
 export const FormText = ({ labelText, ref, value, onChange, footerText, name, id, placeholder, type = "text", wrapperClassName, labelClassName, inputClassName, isLoading = false, disabled = false, icon, iconPosition = "left", required }: IProps) => {
   return (
     <label htmlFor={id} className={`${wrapperClassName}`}>
-      { labelText && <p className={`${isLoading ? "text-zinc-400" : "text-zinc-700"} duration-700 text-sm ${labelClassName}`}>{labelText}</p> }
-      <div className="relative mt-1.5">
+      { labelText && <p className={`${isLoading ? "text-zinc-400" : "text-zinc-700"} duration-700 text-sm mb-1.5 ${labelClassName}`}>{labelText}</p> }
+      <div className="relative">
         <input value={value} ref={ref as LegacyRef<HTMLInputElement>} onChange={(e: ChangeEvent<HTMLInputElement>) => onChange && onChange(e)} name={name} id={id} placeholder={!isLoading ? placeholder : ""} type={type} disabled={isLoading||disabled} required={required} className={`${isLoading ? "bg-gray-300/70 animate-pulse" : "bg-white"} ${icon && (iconPosition === "left" ? "!pl-9" : "!pr-9")} px-3 lg:px-3.5 py-2.5 w-full text-zinc-500 font-light rounded-md border border-zinc-300 outline-none focus:ring-1 focus:ring-slate-300 ${inputClassName}`} />
         { icon && <span className={`absolute top-0 bottom-0 h-max my-auto flex items-center ${iconPosition === "left" ? "left-3" : "right-3"}`}>{icon}</span> }
       </div>
@@ -136,5 +136,18 @@ export const FormTextArea = ({ labelText, ref, value, onChange, footerText, name
       </span>
       { footerText && <p className={`${isLoading ? "text-zinc-300" : "text-zinc-400"} font-light text-xs mt-1.5`}>{footerText}</p> }
     </label>
+  )
+}
+
+interface IResponsiveProps {
+  className?: string;
+}
+
+export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
+  return (
+    <div className="relative">
+      <div className={` min-w-[100px] h-5 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })} </div>
+      <textarea className={`absolute min-w-[50px] left-0 top-0 h-full w-full ${className}`} { ...props} />
+    </div>
   )
 }

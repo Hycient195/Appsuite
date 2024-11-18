@@ -130,6 +130,8 @@ export type AdditionalNotes = {
 };
 
 export interface IGlobalInvoice {
+  fileName?: string;
+  templateName?: string;
   metadata: InvoiceMetadata;
   sender: ContactInfo;
   recipient: ContactInfo;

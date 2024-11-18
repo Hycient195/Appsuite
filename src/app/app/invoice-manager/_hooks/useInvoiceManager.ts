@@ -90,7 +90,7 @@ const useInvoiceManager = (
     }
   };
 
-  const handleNumericInputBlur = (field: string, event: ChangeEvent<HTMLInputElement>): void => {
+  const handleNumericInputBlur = (field: string, event: ChangeEvent<HTMLInputElement|HTMLTextAreaElement>): void => {
     const value = event.target.value?.replace(/,/ig,"");
     // Parse the value to a number to ensure it's valid, then format with two decimal places.
     if (!isNaN(Number(value))) {

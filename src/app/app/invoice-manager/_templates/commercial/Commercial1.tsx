@@ -1,15 +1,19 @@
 import React, { ChangeEvent } from "react";
 import { IGlobalInvoice } from "../../_types/types";
-import { handleInputChange, splitInThousand } from "@/utils/miscelaneous";
+import { handleInputChange, replaceJSXRecursive, splitInThousand } from "@/utils/miscelaneous";
 import useInvoiceManager from "../../_hooks/useInvoiceManager";
+import PageImage from "@/sharedComponents/PageImage";
+import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
 
 interface IProps {
   stateObject: IGlobalInvoice;
   setStateObject: React.Dispatch<React.SetStateAction<IGlobalInvoice>>;
-  controls: ReturnType<typeof useInvoiceManager>
+  controls?: ReturnType<typeof useInvoiceManager>;
+  isLoggedIn?: boolean;
+  fileId? : string
 }
 
-const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls }) => {
+const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, isLoggedIn = false, fileId }) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => handleInputChange(e, stateObject, setStateObject);
 
   return (
@@ -19,22 +23,25 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls }
         <div className="flex flex-col gap-2 w-full">
           <div className="flex flex-row items-start justify-between gap-3 w-full">
 
-            <figure className="h-[70px] aspect-square w-[70px] bg-zinc-100 rounded-lg"></figure>
+            {/* <figure className="h-[70px] aspect-square w-[70px] bg-zinc-100 rounded-lg"></figure> */}
+            <div className="">
+              <PageImage fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
+            </div>
             
-            <div className="text-right">
-              <h2 className="text-xl font-semibold">
-                <input
-                  name="sender.companyName"
-                  value={stateObject?.sender?.companyName || ""}
-                  onChange={handleChange}
-                  className="focus:outline-none border-none text-right"
-                  type="text"
-                />
-              </h2>
+            <div className="text-right flex flex-col gap-2">
+              <input
+                name="sender.companyName"
+                value={stateObject?.sender?.companyName || ""}
+                onChange={handleChange}
+                placeholder="[ company name ]"
+                className="focus:outline-none border-none text-2xl font-semibold text-right"
+                type="text"
+              />
               <input
                 name="sender.address"
                 value={stateObject?.sender?.address || ""}
                 onChange={handleChange}
+                 placeholder="[ company address ]"
                 className="focus:outline-none border-none text-sm text-right"
                 type="text"
               />
@@ -53,7 +60,8 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls }
               name="metadata.airwayBillNo"
               value={stateObject?.metadata?.airwayBillNo || ""}
               onChange={handleChange}
-              className="focus:outline-none border-none font-semibold"
+              placeholder="[ airway bill number ]"
+              className="focus:outline-none border-none w-full font-semibold"
               type="text"
             />
           </div>
@@ -63,7 +71,8 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls }
               name="metadata.invoiceId"
               value={stateObject?.metadata?.invoiceId || ""}
               onChange={handleChange}
-              className="focus:outline-none border-none font-semibold"
+              placeholder="[ invoice no ]"
+              className="focus:outline-none border-none w-full font-semibold"
               type="text"
             />
           </div>
@@ -73,7 +82,10 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls }
               name="metadata.invoiceDate"
               value={stateObject?.metadata?.invoiceDate || ""}
               onChange={handleChange}
-              className="focus:outline-none border-none font-semibold"
+              placeholder="[ invoice date ]"
+              onFocus={(e) => e.target.type = "date"}
+              onBlur={(e) => e.target.type = "text"}
+              className="focus:outline-none border-none w-full font-semibold"
               type="date"
             />
           </div>
@@ -83,8 +95,11 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls }
               name="metadata.exportDate"
               value={stateObject?.metadata?.exportDate || ""}
               onChange={handleChange}
-              className="focus:outline-none border-none font-semibold "
-              type="date"
+              placeholder="[ date of export ]"
+              onFocus={(e) => e.target.type = "date"}
+              onBlur={(e) => e.target.type = "text"}
+              className="focus:outline-none border-none w-full font-semibold "
+              // type="date"
             />
           </div>
         </div>
@@ -171,6 +186,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls }
         </table>
       </div>
 
+      <section className="w-ful  grid">
       <table cellPadding={10} className="w-full text-left border-collapse mb-8">
         <thead className="bg-yellow-500/20">
           <tr className="border-b">
@@ -184,60 +200,77 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls }
           {stateObject?.lineItems.map((product, index) => (
             <tr key={index} className="border-b">
               <td className="py-3.5 font-semibold">
-                <input className="" placeholder="[ product name ]" value={product.description} name={`lineItems.${index}.description`} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} type="text" />
+                <div className="relative">
+                  <div className=" min-w-[100px]">{replaceJSXRecursive(product?.description, { "\n": <br /> })} <span className="invisible">.</span> </div>
+                  <textarea className="absolute min-w-[100px] left-0 top-0 h-full w-full " placeholder="[ product name ]" value={product?.description} name={`lineItems.${index}.description`} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} />
+                </div>
               </td>
               <td className="py-3.5 text-center">
-                <input className="!w-full text-center" name={`lineItems.${index}.quantity`} value={product.quantity} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
+                <div className="relative">
+                  <div className=" min-w-[100px] min-h-6 text-center">{replaceJSXRecursive(product?.quantity, { "\n": <br /> })}</div>
+                  <textarea className="absolute min-w-[100px] left-0 top-0 h-full w-full  text-center" name={`lineItems.${index}.quantity`} value={product.quantity} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
+                </div>
               </td>
               <td className="py-3.5 text-center">
-                <input className="!w-full text-right" name={`lineItems.${index}.unitPrice`} value={splitInThousand(product.unitPrice)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} onBlur={(e) => controls.handleNumericInputBlur(`lineItems.${index}.unitPrice`, e)} />
+                <div className="relative">
+                  <div className=" min-w-[100px] min-h-6 text-right">{replaceJSXRecursive(splitInThousand(product?.unitPrice), { "\n": <br /> })}</div>
+                  <textarea className="absolute min-w-[100px] left-0 top-0 h-full w-full  text-right" name={`lineItems.${index}.unitPrice`} value={splitInThousand(product.unitPrice)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} onBlur={(e) => controls?.handleNumericInputBlur(`lineItems.${index}.unitPrice`, e)} />
+                </div>
               </td>
               {/* <td className="py-3.5 text-right">${product.unitPrice.toFixed(2)}</td> */}
               {/* <td className="py-3.5 text-right">{stateObject?.lineItems[index]?.total?.toFixed(2)}</td> */}
-              <td className="py-3.5 text-right font-semibold relative">
-                <span className="">${splitInThousand(product.total?.toFixed(2))}</span>
-                <div className="absolute h-full w-12 right-0 top-0 translate-x-12 flex gap-1 items-center noExport">
-                  <button onClick={() => controls.removeLineItemAtIndex(index)} className="h-5 w-5 rounded-full bg-red-100 hover:bg-red-500 duration-300 flex items-center justify-center">-</button>
-                  <button onClick={() => controls.insertLineItemAtIndex(index+1)} className="h-5 w-5 absolute bottom-0 translate-y-2.5 rounded-full bg-green-100 hover:bg-green-500 duration-300 flex items-center justify-center">+</button>
+              <td className="py-3.5 text-right font-semibold relative ">
+                <div className=" text-right">
+                  <span className="w-max text-right">${splitInThousand(product.total?.toFixed(2))}</span>
+                  <div className="absolute h-full w-12 right-0 top-0 translate-x-12 flex gap-1 items-center noExport">
+                    <button onClick={() => controls?.removeLineItemAtIndex(index)} className="h-5 w-5 rounded-full bg-red-100 hover:bg-red-500 duration-300 flex items-center justify-center">-</button>
+                    <button onClick={() => controls?.insertLineItemAtIndex(index+1)} className="h-5 w-5 absolute bottom-0 translate-y-2.5 rounded-full bg-green-100 hover:bg-green-500 duration-300 flex items-center justify-center">+</button>
+                  </div>
                 </div>
+                
               </td>
             </tr>
           ))}
           <tr className="">
-            <td colSpan={2} className=""></td>
-            <td className="py-2.5 text-zinc-500 text-right">Sub Total:</td>
-            <td className="py-2.5 font-bold text-right">${stateObject?.subtotal?.toFixed(2)}</td>
+            <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Sub Total:</td>
+            <td className="py-2.5 font-bold text-right">${splitInThousand(stateObject?.subtotal)}</td>
           </tr>
           <tr className="">
-            <td colSpan={2} className=""></td>
-            <td className="py-2.5 text-zinc-500 text-right">Discount:</td>
-            <td className="py-2.5 font-bold text-right">${stateObject?.totalDiscount.toFixed(2)}</td>
+            <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Discount:</td>
+            <td className="py-2.5 font-bold text-right">${splitInThousand(stateObject?.totalDiscount)}</td>
           </tr>
           <tr className="border-b-2 border-b-black">
-            <td colSpan={2} className=""></td>
-            <td className="py-2.5 text-zinc-500 text-right">Tax:</td>
-            <td className="py-2.5 font-bold text-right">${stateObject?.totalTax.toFixed(2)}</td>
+            <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Tax:</td>
+            <td className="py-2.5 font-bold text-right">${splitInThousand(stateObject?.totalTax)}</td>
           </tr>
           <tr className="">
-            <td colSpan={2} className=""></td>
-            <td className="py-3.5 text-zinc-700 text-right">Total Value:</td>
-            <td className="py-3.5 font-semibold text-right text-3xl">${splitInThousand(stateObject?.grandTotal?.toFixed(2))}</td>
+            <td colSpan={3} className="py-3.5 text-zinc-700 text-right">Total Value:</td>
+            <td className="py-3.5 font-semibold text-right text-2xl">${splitInThousand(stateObject?.grandTotal?.toFixed(2))}</td>
           </tr>
         </tbody>
       </table>
+      </section>
 
       {/* Summary */}
       <div className="flex justify-between gap-4 mb-6">
         <div className="flex flex-col gap-4">
-          <div><p className="f bg-yellow-500/20 px-2.5 py-2">Total Weight</p> <p className="px-2.5 py-2 font-semibold">{stateObject?.totalWeight?.amount}{stateObject?.totalWeight?.unit}</p></div>
-          <div><p className="f bg-yellow-500/20 px-2.5 py-2">Shipment Terms</p> <p className="px-2.5 py-2 font-semibold">{stateObject?.shipmentTerms}</p></div>
+          <div className="">
+            <p className="f bg-yellow-500/20 px-2.5 py-2">Total Weight</p>
+            <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ weight ]" name="totalWeight.amount" value={splitInThousand(stateObject?.totalWeight?.amount as number)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />{stateObject?.totalWeight?.unit}</div>
+          </div>
+          <div>
+            <p className="f bg-yellow-500/20 px-2.5 py-2">Shipment Terms</p>
+            {/* <p className="px-2.5 py-2 font-semibold">{stateObject?.shipmentTerms}</p> */}
+            <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ shipment terms ]" name="shipmentTerms" value={stateObject?.shipmentTerms} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} /></div>
+          </div>
           {/* <div><p className="font-semibold">Shipment Terms:</p> {additionalInfo.shipmentTerms}</div> */}
         </div>
         <div className="text-right">
-          <p>Authorized Signature</p>
-          <figure className="bg-zinc-100 h-[100px] aspect-[2/1]">
+          <p className="mb-2">Authorized Signature</p>
+          {/* <figure className="bg-zinc-100 h-[100px] aspect-[2/1]">
 
-          </figure>
+          </figure> */}
+          <PageImage height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
         </div>
       </div>
 

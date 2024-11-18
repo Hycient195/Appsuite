@@ -9,6 +9,7 @@ import { IUpdateFileRequest } from "@/types/shared.types"
 import { useParams } from "next/navigation"
 import Teleport from "@/utils/Teleport"
 import StatusIcon from "@/sharedComponents/CustomIcons"
+import PageLogo from "@/sharedComponents/PageImage"
 
 interface IProps {
   loadedSucessfully: boolean;
@@ -71,7 +72,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
           <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
         </button>
       </Teleport>
-      <Commercial1 setStateObject={setGlobalState} stateObject={globalState} controls={controls} />
+      <Commercial1 setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId} />
     </main>
   )
 }
