@@ -10,6 +10,7 @@ import Link from "next/link";
 import { parseCookies } from "nookies";
 import { MenuItem, Select } from "@mui/material";
 import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
+import { splitInThousand } from "@/utils/miscelaneous";
 
 
 export default function BalanceSheetFiles() {
@@ -138,7 +139,7 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
           />
         </div>
       </td>
-      <td>{file?.primaryFile?.size} Kb</td>
+      <td>{splitInThousand(file?.primaryFile?.size as string)} Kb</td>
       <td>
         <div className="flex flex-row items-center gap-2">
           <LoadingButton

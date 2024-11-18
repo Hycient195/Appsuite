@@ -47,7 +47,6 @@ const useInvoiceManager = (
       }
 
       if (JSON.stringify(dataToSet) !== JSON.stringify(invoice)) {
-        console.log("This is running")
         setInvoice((prevInvoice) => ({
           ...prevInvoice,
           subtotal,
@@ -57,7 +56,6 @@ const useInvoiceManager = (
           lineItems
         }));
       }
-      
     };
 
     recomputeValues();

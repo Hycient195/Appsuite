@@ -16,11 +16,11 @@ export default function useInvoiceTemplates() {
         templateMarkup: <Commercial1 setStateObject={setStateObject} stateObject={stateObject} />
       },
       {
-        templateName: "COMMERCIAL_2",
+        templateName: "COMMERCIAL_3",
         templateMarkup: <Commercial1 setStateObject={setStateObject} stateObject={stateObject} />
       },
       {
-        templateName: "COMMERCIAL_2",
+        templateName: "COMMERCIAL_4",
         templateMarkup: <Commercial1 setStateObject={setStateObject} stateObject={stateObject} />
       },
     ],

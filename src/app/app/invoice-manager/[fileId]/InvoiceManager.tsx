@@ -9,7 +9,7 @@ import { IUpdateFileRequest } from "@/types/shared.types"
 import { useParams } from "next/navigation"
 import Teleport from "@/utils/Teleport"
 import StatusIcon from "@/sharedComponents/CustomIcons"
-import PageLogo from "@/sharedComponents/PageImage"
+import useGeneratePDF from "@/sharedHooks/useGeneratePDF"
 
 interface IProps {
   loadedSucessfully: boolean;
@@ -27,6 +27,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
   const controls = useInvoiceManager(globalState, setGlobalState);
 
   const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
+  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `${jsonData?.fileName}.pdf`})
 
 
   const handleSaveFile = (saveType: IUpdateFileRequest["updateType"]) => {
@@ -67,12 +68,20 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
 
   return (
     <main className="">
-      <Teleport rootId='saveIconPosition'>
-        <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
-          <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
-        </button>
+      <Teleport rootId='dashboardNavPortal'>
+        <li className="-order-2">
+          <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
+            <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
+          </button>
+        </li>
+        <li className="-order-1">
+          <button onClick={createPdf} className="btn !py-2.5 bg-primary/90 text-white">Download</button>
+        </li>
       </Teleport>
-      <Commercial1 setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId} />
+
+      <div ref={elementRef as any} className="">
+        <Commercial1 setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId} />
+      </div>
     </main>
   )
 }

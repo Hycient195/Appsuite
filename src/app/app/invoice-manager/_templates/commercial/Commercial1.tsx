@@ -29,20 +29,20 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
             </div>
             
             <div className="text-right flex flex-col gap-2">
-              <input
+              <ResponsiveTextInput
                 name="sender.companyName"
                 value={stateObject?.sender?.companyName || ""}
                 onChange={handleChange}
                 placeholder="[ company name ]"
-                className="focus:outline-none border-none text-2xl font-semibold text-right"
+                className="focus:outline-none border-none max-w-[400px] text-2xl font-semibold text-right"
                 type="text"
               />
-              <input
+              <ResponsiveTextInput
                 name="sender.address"
                 value={stateObject?.sender?.address || ""}
                 onChange={handleChange}
-                 placeholder="[ company address ]"
-                className="focus:outline-none border-none text-sm text-right"
+                placeholder="[ company address ]"
+                className="focus:outline-none border-none max-w-[400px] text-sm text-right"
                 type="text"
               />
             </div>
@@ -86,7 +86,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
               onFocus={(e) => e.target.type = "date"}
               onBlur={(e) => e.target.type = "text"}
               className="focus:outline-none border-none w-full font-semibold"
-              type="date"
+              // type="date"
             />
           </div>
           <div>
@@ -119,7 +119,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
               </td>
             </tr>
           </thead>
-          <tbody className="[&>*>*]:py-3 grid grid-cols-[1fr_1.3fr] mt-3 gap-4">
+          <tbody className="[&>*>*]:py- grid grid-cols-[1fr_1.3fr] mt-3 gap-4">
             {[
               { label: "COMPANY NAME:", field: "sender.companyName" },
               { label: "ADDRESS:", field: "sender.address" },
@@ -131,13 +131,14 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
               <React.Fragment key={field}>
                 <td className="text-zinc-500 pl-3">{label}</td>
                 <td>
-                  <input
+                  <ResponsiveTextInput
                     name={field}
                     // @ts-ignore
                     value={stateObject?.[field.split(".")[0] as keyof IGlobalInvoice]?.[field.split(".")[1] as any] || ""}
                     onChange={handleChange}
                     placeholder={`[ ${label?.toLowerCase()} ]`}
-                    className="focus:outline-none border-none w-full !min-h-2 !h-3"
+                    // className="focus:outline-none border-none w-full !min-h-2 !h-full bg-test"
+                    className=""
                     type="text"
                   />
                 </td>
@@ -158,7 +159,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
               </td>
             </tr>
           </thead>
-          <tbody className="[&>*>*]:py-3 grid grid-cols-[1fr_1.3fr] mt-3 gap-4">
+          <tbody className="grid grid-cols-[1fr_1.3fr] mt-3 gap-4">
             {[
               { label: "COMPANY NAME:", field: "recipient.companyName" },
               { label: "ADDRESS:", field: "recipient.address" },
@@ -170,13 +171,14 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
               <React.Fragment key={field}>
                 <td className="text-zinc-500 pl-3">{label}</td>
                 <td>
-                  <input
+                  <ResponsiveTextInput
                     name={field}
                     // @ts-ignore
                     value={stateObject?.[field.split(".")[0]]?.[field.split(".")[1]] || ""}
                     onChange={handleChange}
                     placeholder={`[ ${label?.toLowerCase()} ]`}
-                    className="focus:outline-none border-none !min-h-2 !h-3 w-full"
+                    // className="focus:outline-none border-none !min-h-2 !h-3 w-full"
+                    className=""
                     type="text"
                   />
                 </td>
@@ -200,25 +202,16 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
           {stateObject?.lineItems.map((product, index) => (
             <tr key={index} className="border-b">
               <td className="py-3.5 font-semibold">
-                <div className="relative">
-                  <div className=" min-w-[100px]">{replaceJSXRecursive(product?.description, { "\n": <br /> })} <span className="invisible">.</span> </div>
-                  <textarea className="absolute min-w-[100px] left-0 top-0 h-full w-full " placeholder="[ product name ]" value={product?.description} name={`lineItems.${index}.description`} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} />
+                <div className="relativ">
+                  <ResponsiveTextInput placeholder="[ product name ]" value={product?.description} name={`lineItems.${index}.description`} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} />
                 </div>
               </td>
               <td className="py-3.5 text-center">
-                <div className="relative">
-                  <div className=" min-w-[100px] min-h-6 text-center">{replaceJSXRecursive(product?.quantity, { "\n": <br /> })}</div>
-                  <textarea className="absolute min-w-[100px] left-0 top-0 h-full w-full  text-center" name={`lineItems.${index}.quantity`} value={product.quantity} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
-                </div>
+                <ResponsiveTextInput className="text-center" name={`lineItems.${index}.quantity`} value={product.quantity} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
               </td>
               <td className="py-3.5 text-center">
-                <div className="relative">
-                  <div className=" min-w-[100px] min-h-6 text-right">{replaceJSXRecursive(splitInThousand(product?.unitPrice), { "\n": <br /> })}</div>
-                  <textarea className="absolute min-w-[100px] left-0 top-0 h-full w-full  text-right" name={`lineItems.${index}.unitPrice`} value={splitInThousand(product.unitPrice)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} onBlur={(e) => controls?.handleNumericInputBlur(`lineItems.${index}.unitPrice`, e)} />
-                </div>
+                <ResponsiveTextInput className="text-right" name={`lineItems.${index}.unitPrice`} value={splitInThousand(product.unitPrice)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} onBlur={(e) => controls?.handleNumericInputBlur(`lineItems.${index}.unitPrice`, e)} />
               </td>
-              {/* <td className="py-3.5 text-right">${product.unitPrice.toFixed(2)}</td> */}
-              {/* <td className="py-3.5 text-right">{stateObject?.lineItems[index]?.total?.toFixed(2)}</td> */}
               <td className="py-3.5 text-right font-semibold relative ">
                 <div className=" text-right">
                   <span className="w-max text-right">${splitInThousand(product.total?.toFixed(2))}</span>
@@ -227,7 +220,6 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
                     <button onClick={() => controls?.insertLineItemAtIndex(index+1)} className="h-5 w-5 absolute bottom-0 translate-y-2.5 rounded-full bg-green-100 hover:bg-green-500 duration-300 flex items-center justify-center">+</button>
                   </div>
                 </div>
-                
               </td>
             </tr>
           ))}
@@ -237,11 +229,22 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
           </tr>
           <tr className="">
             <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Discount:</td>
-            <td className="py-2.5 font-bold text-right">${splitInThousand(stateObject?.totalDiscount)}</td>
+            <td className="py-2.5 font-bold text-right">
+              <div className="flex flex-row justify-end">
+                $
+                <ResponsiveTextInput className="min-w-0" name="totalDiscount" value={splitInThousand(stateObject?.totalDiscount)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
+              </div>
+            </td>
           </tr>
           <tr className="border-b-2 border-b-black">
             <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Tax:</td>
-            <td className="py-2.5 font-bold text-right">${splitInThousand(stateObject?.totalTax)}</td>
+            <td className="py-2.5 font-bold text-right">
+              <div className="flex flex-row justify-end">
+                $
+                {/* {splitInThousand(stateObject?.totalTax)} */}
+                <ResponsiveTextInput className="min-w-0" name="totalTax" value={splitInThousand(stateObject?.totalTax)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
+              </div>
+            </td>
           </tr>
           <tr className="">
             <td colSpan={3} className="py-3.5 text-zinc-700 text-right">Total Value:</td>
@@ -253,7 +256,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
 
       {/* Summary */}
       <div className="flex justify-between gap-4 mb-6">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 max-w-[300px]">
           <div className="">
             <p className="f bg-yellow-500/20 px-2.5 py-2">Total Weight</p>
             <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ weight ]" name="totalWeight.amount" value={splitInThousand(stateObject?.totalWeight?.amount as number)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />{stateObject?.totalWeight?.unit}</div>
@@ -261,7 +264,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
           <div>
             <p className="f bg-yellow-500/20 px-2.5 py-2">Shipment Terms</p>
             {/* <p className="px-2.5 py-2 font-semibold">{stateObject?.shipmentTerms}</p> */}
-            <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ shipment terms ]" name="shipmentTerms" value={stateObject?.shipmentTerms} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} /></div>
+            <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ shipment terms ]" className="w-full max-w-[300px] " name="shipmentTerms" value={stateObject?.shipmentTerms} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} /></div>
           </div>
           {/* <div><p className="font-semibold">Shipment Terms:</p> {additionalInfo.shipmentTerms}</div> */}
         </div>

@@ -116,7 +116,7 @@ const DashboardNav = memo(() => {
       
       
 
-      <ul className="flex flex-row gap-2 order- items-center w-max ml-auto my-2">
+      <ul id="dashboardNavPortal" className=" flex flex-row gap-2 order- items-center w-max ml-auto my-2">
         <li id="saveIconPosition" className="">
           {/* Save Icon is inserted using react portal teleportation */}
         </li>

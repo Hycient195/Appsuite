@@ -146,8 +146,8 @@ interface IResponsiveProps {
 export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
   return (
     <div className="relative">
-      <div className={` min-w-[100px] h-5 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })} </div>
-      <textarea className={`absolute min-w-[50px] left-0 top-0 h-full w-full ${className}`} { ...props} />
+      <div className={` min-w-[100px] min-h-6 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })} </div>
+      <textarea className={`absolute min-w-[50px] min-h-6 no-scrollbar left-0 top-0 h-full w-full ${className}`} { ...props} />
     </div>
   )
 }
