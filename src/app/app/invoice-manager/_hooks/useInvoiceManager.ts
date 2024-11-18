@@ -11,28 +11,28 @@ const useInvoiceManager = (
     // Recompute all dependent properties
     const recomputeValues = () => {
       // Compute the subtotal (sum of all line items' totals)
-      const subtotal = invoice.lineItems.reduce((sum, item) => {
+      const subtotal = parseFloat(invoice.lineItems.reduce((sum, item) => {
         const quantityTotal = item.quantity * item.unitPrice;
         const discount = item.discountRate
           ? (item.discountRate / 100) * quantityTotal
           : 0;
         const total = quantityTotal - discount;
         return sum + total;
-      }, 0);
+      }, 0).toFixed(2));
 
       // Compute total tax
-      const totalTax = invoice.taxes
-        ? invoice.taxes.reduce((sum, tax) => sum + tax.amount, 0)
-        : 0;
+      const totalTax = (invoice.taxes && invoice?.taxes[0]?.rate)
+        ? invoice.taxes.reduce((sum, tax) => sum + parseFloat(String(tax.amount)), 0)
+        : parseFloat(String(invoice.totalTax));
 
       // Compute total discount
-      const totalDiscount = invoice.discounts
-        ? invoice.discounts.reduce((sum, discount) => sum + discount.amount, 0)
-        : 0;
+      const totalDiscount = (invoice.discounts && invoice.discounts?.[0]?.rate)
+        ? invoice.discounts.reduce((sum, discount) => sum + parseFloat(String(discount.amount)), 0)
+        : parseFloat(String(invoice.totalDiscount));
 
       // Compute grand total
       const grandTotal =
-        subtotal + totalTax - totalDiscount + (invoice.adjustments || 0);
+        ((subtotal + totalTax) - totalDiscount + (invoice.adjustments || 0));
 
       const lineItems = invoice.lineItems.map((x) => { return { ...x, total: parseFloat((x.quantity * x.unitPrice)?.toFixed(2))} })
 

@@ -13,9 +13,10 @@ interface IProps<T> {
   isLoggedIn: boolean;
   height?: number;
   width?: number;
+  placeholder?: string;
 }
 
-export default function PageImage<T>({ isLoggedIn,  imageProperty, fileId, formData, setFormData, propertyKey, height = 70, width = 70 }: IProps<T>) {
+export default function PageImage<T>({ isLoggedIn,  imageProperty, fileId, formData, setFormData, propertyKey, height = 70, width = 70, placeholder }: IProps<T>) {
   const [ isLoading, setIsLoading ] = useState({ uploading: false, deleting: false, removingPage: false });
   const [ isDragging, setIsDragging ] = useState<boolean>(false);
 
@@ -135,7 +136,7 @@ export default function PageImage<T>({ isLoggedIn,  imageProperty, fileId, formD
         </div>
         : (
           <label style={{ height: `${height}px`, width: `${width}px`}} htmlFor={`add-logo`} className={`${isDragging ? "bg-green-500/20" : "bg-zinc-100"}  absolut cursor-pointer z-[1] flex items-center p-2 justify-center text-center rounded  -top-1  noExport`} onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop}>
-            <span className="text-xs text-zinc-400">Add/drop Image</span>
+            <span className="text-xs text-zinc-400">{placeholder??"Add/drop Image"}</span>
             <input id={`add-logo`} type="file" accept="image/jpeg, image/jpg, image/png" className='hidden' onChange={(e) => handleUploadLogo(e.target.files![0])} />
           </label>
         )

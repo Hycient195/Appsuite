@@ -7,6 +7,19 @@ export const currencyMap = {
   USD: "$"
 };
 
+export const currencyObject = {
+  USD: {
+    code: "USD",
+    symbol: "$",
+    name: "United States Dollar",
+  },
+  NGN: {
+    code: "NGN",
+    symbol: "#",
+    name: "Nigerian Naira",
+  }
+}
+
 export function handleInputChange<T>(
   e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement  | any> | SelectChangeEvent<number|string>,
   formData: T,

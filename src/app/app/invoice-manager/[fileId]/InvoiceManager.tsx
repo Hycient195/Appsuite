@@ -10,6 +10,8 @@ import { useParams } from "next/navigation"
 import Teleport from "@/utils/Teleport"
 import StatusIcon from "@/sharedComponents/CustomIcons"
 import useGeneratePDF from "@/sharedHooks/useGeneratePDF"
+import { FormSelect } from "@/sharedComponents/FormInputs"
+import { currencyObject, handleInputChange, handleUpdateStateProperty } from "@/utils/miscelaneous"
 
 interface IProps {
   loadedSucessfully: boolean;
@@ -27,7 +29,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
   const controls = useInvoiceManager(globalState, setGlobalState);
 
   const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
-  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `${jsonData?.fileName}.pdf`})
+  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "B3", fileName: `${jsonData?.fileName}.pdf`})
 
 
   const handleSaveFile = (saveType: IUpdateFileRequest["updateType"]) => {
@@ -73,6 +75,13 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
           <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
             <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
           </button>
+        </li>
+        <li className="-order-1">
+          <FormSelect options={[ { text: "USD", value: "USD" }, { text: "NGN", value: "NGN" } ]}
+            inputClassName=""
+            value={globalState.metadata.currency.code}
+            onChange={(e) => handleUpdateStateProperty(globalState, setGlobalState, currencyObject[e.target.value as keyof typeof currencyObject], "metadata.currency" )}
+          />
         </li>
         <li className="-order-1">
           <button onClick={createPdf} className="btn !py-2.5 bg-primary/90 text-white">Download</button>

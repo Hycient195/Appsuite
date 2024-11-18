@@ -10,7 +10,8 @@ interface IProps {
   labelText?: string;
   value?: (string|number);
   defaultValue?: (string|number|boolean);
-  options?: { value: (string|number), text: (string|JSX.Element|React.ReactNode) }[];
+  // options?: { value: (string|number), text: (string|JSX.Element|React.ReactNode) }[];
+  options?: { value: any, text: (string|JSX.Element|React.ReactNode) }[];
   onChange?: (arg?: { target: { value: string }} | any) => void;  // onChange?: ((e: ChangeEvent<HTMLTextAreaElement>) => void | ((e: ChangeEvent<HTMLInputElement>) => void) | ((e: ChangeEvent<HTMLSelectElement>) => void) | ((e: SelectChangeEvent<string|number>) => void));
   footerText?: string;
   name?: string;
@@ -34,8 +35,8 @@ interface IProps {
 export const FormSelect = ({ labelText, ref, value, defaultValue, options, onChange, footerText, name, id, wrapperClassName, labelClassName, inputClassName, isLoading = false, disabled = false, icon, required }: IProps) => {
   return (
     <label htmlFor={id} className={`${wrapperClassName}`}>
-      { labelText && <p className={`${isLoading ? "text-zinc-400" : "text-zinc-700"} duration-700 text-sm ${labelClassName}`}>{labelText}</p> }
-      <div className="relative mt-1.5">
+      { labelText && <p className={`${isLoading ? "text-zinc-400" : "text-zinc-700"} duration-700 text-sm  mb-1.5 ${labelClassName}`}>{labelText}</p> }
+      <div className="relative">
         <Select ref={ref as RefObject<unknown>} defaultValue={defaultValue} onChange={(e) => onChange && onChange(e)} name={name} value={value} id={id} displayEmpty disabled={isLoading||disabled} required={required} className={`${isLoading ? "!bg-gray-300/70 !animate-pulse" : "!bg-white"} ${icon && "[&>*]:!pl-9"} w-full !border !font-lexend !font-light !rounded-md !border-zinc-300 [&>*]:!border-none [&>*]:!py-2.5 [&>*]:!text-zinc-500 focus:[&>*]:!rounded-md focus:[&>*]:!ring-2 focus:[&>*]:!ring-zinc-300 ${inputClassName}`}>
           { !isLoading && <MenuItem value="" className={``}>{defaultValue}</MenuItem> }
           {
@@ -146,8 +147,9 @@ interface IResponsiveProps {
 export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
   return (
     <div className="relative">
-      <div className={` min-w-[100px] min-h-6 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })} </div>
-      <textarea className={`absolute min-w-[50px] min-h-6 no-scrollbar left-0 top-0 h-full w-full ${className}`} { ...props} />
+      <div className="min-w-[80px] noExport"></div>
+      <div className={`min-h-6 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })} </div>
+      <textarea className={`absolute resize-none noExport min-w-[50px] min-h-6 no-scrollbar left-0 top-0 h-full w-full ${className}`} { ...props} />
     </div>
   )
 }

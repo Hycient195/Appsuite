@@ -1,9 +1,10 @@
 import React, { ChangeEvent } from "react";
 import { IGlobalInvoice } from "../../_types/types";
-import { handleInputChange, replaceJSXRecursive, splitInThousand } from "@/utils/miscelaneous";
+import { currencyMap, handleInputChange, replaceJSXRecursive, splitInThousand } from "@/utils/miscelaneous";
 import useInvoiceManager from "../../_hooks/useInvoiceManager";
 import PageImage from "@/sharedComponents/PageImage";
-import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
+import { FormSelect, ResponsiveTextInput } from "@/sharedComponents/FormInputs";
+import { Select } from "@mui/material";
 
 interface IProps {
   stateObject: IGlobalInvoice;
@@ -25,7 +26,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
 
             {/* <figure className="h-[70px] aspect-square w-[70px] bg-zinc-100 rounded-lg"></figure> */}
             <div className="">
-              <PageImage fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
+              <PageImage width={80} placeholder="Add/drop Logo" fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
             </div>
             
             <div className="text-right flex flex-col gap-2">
@@ -34,7 +35,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
                 value={stateObject?.sender?.companyName || ""}
                 onChange={handleChange}
                 placeholder="[ company name ]"
-                className="focus:outline-none border-none max-w-[400px] text-2xl font-semibold text-right"
+                className="focus:outline-none border-none max-w-[400px] min-h-[30px] min-w-[300px] text-2xl font-semibold text-right"
                 type="text"
               />
               <ResponsiveTextInput
@@ -53,7 +54,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
 
       {/* Invoice Details */}
       <div className="gap-4 mb-10 w-full">
-        <div className="flex flex-row justify-between w-full [&>*]:flex [&>*]:flex-col text-sm">
+        <div className="flex flex-row [&>*]:basis-1/4 justify-between w-full [&>*]:flex [&>*]:flex-col text-sm">
           <div>
             <span className="text-zinc-500">AIRWAY BILL NO.</span>{" "}
             <input
@@ -85,7 +86,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
               placeholder="[ invoice date ]"
               onFocus={(e) => e.target.type = "date"}
               onBlur={(e) => e.target.type = "text"}
-              className="focus:outline-none border-none w-full font-semibold"
+              className="focus:outline-none border-none w-full font-semibold min-h-6"
               // type="date"
             />
           </div>
@@ -214,7 +215,10 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
               </td>
               <td className="py-3.5 text-right font-semibold relative ">
                 <div className=" text-right">
-                  <span className="w-max text-right">${splitInThousand(product.total?.toFixed(2))}</span>
+                  <span className="w-max text-right">
+                    {currencyMap[stateObject.metadata?.currency?.code as keyof typeof currencyMap]}
+                    {splitInThousand(product.total?.toFixed(2))}
+                  </span>
                   <div className="absolute h-full w-12 right-0 top-0 translate-x-12 flex gap-1 items-center noExport">
                     <button onClick={() => controls?.removeLineItemAtIndex(index)} className="h-5 w-5 rounded-full bg-red-100 hover:bg-red-500 duration-300 flex items-center justify-center">-</button>
                     <button onClick={() => controls?.insertLineItemAtIndex(index+1)} className="h-5 w-5 absolute bottom-0 translate-y-2.5 rounded-full bg-green-100 hover:bg-green-500 duration-300 flex items-center justify-center">+</button>
@@ -225,14 +229,17 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
           ))}
           <tr className="">
             <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Sub Total:</td>
-            <td className="py-2.5 font-bold text-right">${splitInThousand(stateObject?.subtotal)}</td>
+            <td className="py-2.5 font-bold text-right">
+              {currencyMap[stateObject.metadata?.currency?.code as keyof typeof currencyMap]}
+              {splitInThousand(stateObject?.subtotal)}
+            </td>
           </tr>
           <tr className="">
             <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Discount:</td>
             <td className="py-2.5 font-bold text-right">
               <div className="flex flex-row justify-end">
-                $
-                <ResponsiveTextInput className="min-w-0" name="totalDiscount" value={splitInThousand(stateObject?.totalDiscount)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
+                {currencyMap[stateObject.metadata?.currency?.code as keyof typeof currencyMap]}
+                <ResponsiveTextInput className="!min-w-0 text-right" name="totalDiscount" value={splitInThousand(stateObject?.totalDiscount)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
               </div>
             </td>
           </tr>
@@ -240,15 +247,17 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
             <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Tax:</td>
             <td className="py-2.5 font-bold text-right">
               <div className="flex flex-row justify-end">
-                $
-                {/* {splitInThousand(stateObject?.totalTax)} */}
-                <ResponsiveTextInput className="min-w-0" name="totalTax" value={splitInThousand(stateObject?.totalTax)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
+                {currencyMap[stateObject.metadata?.currency?.code as keyof typeof currencyMap]}
+                <ResponsiveTextInput className="!min-w-0 text-right" name="totalTax" value={splitInThousand(stateObject?.totalTax)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
               </div>
             </td>
           </tr>
           <tr className="">
             <td colSpan={3} className="py-3.5 text-zinc-700 text-right">Total Value:</td>
-            <td className="py-3.5 font-semibold text-right text-2xl">${splitInThousand(stateObject?.grandTotal?.toFixed(2))}</td>
+            <td className="py-3.5 font-semibold text-right text-2xl">
+              {currencyMap[stateObject.metadata?.currency?.code as keyof typeof currencyMap]}
+              {splitInThousand(stateObject?.grandTotal?.toFixed(2))}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -259,12 +268,15 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
         <div className="flex flex-col gap-4 max-w-[300px]">
           <div className="">
             <p className="f bg-yellow-500/20 px-2.5 py-2">Total Weight</p>
-            <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ weight ]" name="totalWeight.amount" value={splitInThousand(stateObject?.totalWeight?.amount as number)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />{stateObject?.totalWeight?.unit}</div>
+            <div className="px-2.5 py-2 font-semibold flex flex-row items-center">
+              <ResponsiveTextInput placeholder="[ weight ]" name="totalWeight.amount" value={splitInThousand(stateObject?.totalWeight?.amount as number)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
+              <FormSelect name="totalWeight.unit" inputClassName="[&_*]:!font-bold &_*]:!ring-none !bg-transparent !border-none [&>*>*]:!hidden [&_*]:!text-black !ring-none !outline-none [&_*]:!outline-none [&_*]:m-0 [&_*]:!p-0 [&]:blur:!border-none [&_*]:!border-none" value={stateObject?.totalWeight?.unit} options={[ { text: "KG", value: "KG" }, { text: "LBS", value: "LBS" } ]} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} />
+            </div>
           </div>
           <div>
             <p className="f bg-yellow-500/20 px-2.5 py-2">Shipment Terms</p>
             {/* <p className="px-2.5 py-2 font-semibold">{stateObject?.shipmentTerms}</p> */}
-            <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ shipment terms ]" className="w-full max-w-[300px] " name="shipmentTerms" value={stateObject?.shipmentTerms} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} /></div>
+            <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ shipment terms ]" className="w-full min-w-[160px] max-w-[300px] " name="shipmentTerms" value={stateObject?.shipmentTerms} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} /></div>
           </div>
           {/* <div><p className="font-semibold">Shipment Terms:</p> {additionalInfo.shipmentTerms}</div> */}
         </div>
@@ -273,7 +285,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
           {/* <figure className="bg-zinc-100 h-[100px] aspect-[2/1]">
 
           </figure> */}
-          <PageImage height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
+          <PageImage placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
         </div>
       </div>
 
