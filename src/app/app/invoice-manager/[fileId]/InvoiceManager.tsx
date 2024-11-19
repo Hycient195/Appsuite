@@ -67,7 +67,6 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
     };
   }, [ globalState ]);
 
-
   return (
     <main className="">
       <Teleport rootId='dashboardNavPortal'>
@@ -89,7 +88,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
       </Teleport>
 
       <div ref={elementRef as any} className="">
-        <Commercial1 setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId} />
+        <Commercial1 templateId="COMMERCIAL_1" setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId} />
       </div>
     </main>
   )

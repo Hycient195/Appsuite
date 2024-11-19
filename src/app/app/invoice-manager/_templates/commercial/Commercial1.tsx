@@ -1,24 +1,57 @@
-import React, { ChangeEvent } from "react";
-import { IGlobalInvoice } from "../../_types/types";
-import { currencyMap, handleInputChange, replaceJSXRecursive, splitInThousand } from "@/utils/miscelaneous";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { IGlobalInvoice, ITemplateThemeColor } from "../../_types/types";
+import { currencyMap, handleInputChange, handleUpdateStateProperty, splitInThousand } from "@/utils/miscelaneous";
 import useInvoiceManager from "../../_hooks/useInvoiceManager";
 import PageImage from "@/sharedComponents/PageImage";
 import { FormSelect, ResponsiveTextInput } from "@/sharedComponents/FormInputs";
-import { Select } from "@mui/material";
+import { useThemeContext } from "../../_contexts/themeContext";
 
 interface IProps {
+  templateId: string;
   stateObject: IGlobalInvoice;
   setStateObject: React.Dispatch<React.SetStateAction<IGlobalInvoice>>;
   controls?: ReturnType<typeof useInvoiceManager>;
   isLoggedIn?: boolean;
   fileId? : string
+  themeColorPicker?: React.ReactElement
+  isPreview?: boolean
+  handleThemeColor?: (themeColors: ITemplateThemeColor, setThemeColor: React.Dispatch<React.SetStateAction<ITemplateThemeColor>>) => void
 }
 
-const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, isLoggedIn = false, fileId }) => {
+const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject, controls, isLoggedIn = false, fileId, themeColorPicker, isPreview }) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => handleInputChange(e, stateObject, setStateObject);
 
+  const themes = [
+    {
+      display: "rgb(234 179 8 / 0.2)",
+      primary: {
+        base: "rgb(234 179 8 / 0.2)"
+      }
+    },
+    {
+      display: "rgb(234 179 180 / 0.2)",
+      primary: {
+        base: "rgb(234 179 180 / 0.2)"
+      }
+    },
+    {
+      display: "rgb(110 231 183 / 0.4)",
+      primary: {
+        base: "rgb(110 231 183 / 0.4)"
+      }
+    },
+  ]
+
+  const { registerTemplate, getSelectedTheme } = useThemeContext();
+
+  useEffect(() => {
+    registerTemplate(templateId, themes);
+  }, [templateId, themes]);
+
+  const templateThemeColor = isPreview ? getSelectedTheme(templateId) : stateObject?.branding?.themeColor;
+
   return (
-    <div className="max-w-screen-lg mx-auto p-[clamp(16px,6%,80px)] bg-white shadow-md">
+    <div className="max-w-screen-lg relative mx-auto p-[clamp(16px,6%,80px)] bg-white shadow-md">
       {/* Header */}
       <div className="flex justify-between items-end border-b pb-4 mb-6">
         <div className="flex flex-col gap-2 w-full">
@@ -113,8 +146,9 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
           <thead>
             <tr>
               <td
+                style={{ backgroundColor: templateThemeColor?.primary?.base}}
                 colSpan={2}
-                className="bg-yellow-500/20 py-2.5 px-3 font-semibold tracking-wide"
+                className=" py-2.5 px-3 font-semibold tracking-wide"
               >
                 EXPORTER / SHIPPER
               </td>
@@ -153,8 +187,9 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
           <thead>
             <tr>
               <td
+                style={{ backgroundColor: templateThemeColor?.primary?.base}}
                 colSpan={2}
-                className="bg-yellow-500/20 py-2.5 px-3 font-semibold tracking-wide"
+                className="py-2.5 px-3 font-semibold tracking-wide"
               >
                 SHIP TO / CONSIGNEE
               </td>
@@ -191,7 +226,7 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
 
       <section className="w-ful  grid">
       <table cellPadding={10} className="w-full text-left border-collapse mb-8">
-        <thead className="bg-yellow-500/20">
+        <thead style={{ backgroundColor: templateThemeColor?.primary?.base}} className="">
           <tr className="border-b">
             <th className="py-3.5">Product</th>
             <th className="py-3.5 text-center">Qty</th>
@@ -267,14 +302,14 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
       <div className="flex justify-between gap-4 mb-6">
         <div className="flex flex-col gap-4 max-w-[300px]">
           <div className="">
-            <p className="f bg-yellow-500/20 px-2.5 py-2">Total Weight</p>
+            <p className=" px-2.5 py-2" style={{ backgroundColor: templateThemeColor?.primary?.base}}>Total Weight</p>
             <div className="px-2.5 py-2 font-semibold flex flex-row items-center">
               <ResponsiveTextInput placeholder="[ weight ]" name="totalWeight.amount" value={splitInThousand(stateObject?.totalWeight?.amount as number)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
               <FormSelect name="totalWeight.unit" inputClassName="[&_*]:!font-bold &_*]:!ring-none !bg-transparent !border-none [&>*>*]:!hidden [&_*]:!text-black !ring-none !outline-none [&_*]:!outline-none [&_*]:m-0 [&_*]:!p-0 [&]:blur:!border-none [&_*]:!border-none" value={stateObject?.totalWeight?.unit} options={[ { text: "KG", value: "KG" }, { text: "LBS", value: "LBS" } ]} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} />
             </div>
           </div>
           <div>
-            <p className="f bg-yellow-500/20 px-2.5 py-2">Shipment Terms</p>
+            <p  className="px-2.5 py-2" style={{ backgroundColor: templateThemeColor?.primary?.base}}>Shipment Terms</p>
             {/* <p className="px-2.5 py-2 font-semibold">{stateObject?.shipmentTerms}</p> */}
             <div className="px-2.5 py-2 font-semibold flex flex-row"><ResponsiveTextInput placeholder="[ shipment terms ]" className="w-full min-w-[160px] max-w-[300px] " name="shipmentTerms" value={stateObject?.shipmentTerms} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} /></div>
           </div>
@@ -288,7 +323,6 @@ const Commercial1: React.FC<IProps> = ({ setStateObject, stateObject, controls, 
           <PageImage placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
         </div>
       </div>
-
     </div>
   );
 };

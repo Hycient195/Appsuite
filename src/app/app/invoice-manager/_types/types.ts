@@ -113,8 +113,31 @@ export type InvoiceMetadata = {
 
 export type Branding = {
   logoUrl?: string; // URL of the company logo
-  themeColor?: string; // Primary theme color
-  secondaryColor?: string; // Optional secondary color
+  themeColor?: {
+    display: string;
+    primary?: {
+      darkest?: string,
+      darker?: string,
+      base?: string,
+      lighter?: string
+      lightest?: string
+    };
+    secondary?: {
+      darkest?: string,
+      darker?: string,
+      base?: string,
+      lighter?: string
+      lightest?: string
+    };
+    tertiary?: {
+      darkest?: string,
+      darker?: string,
+      base?: string,
+      lighter?: string
+      lightest?: string
+    };
+  }; // Primary theme color
+  // secondaryColor?: string; // Optional secondary color
   fontFamily?: string; // Font family for styling
   backgroundImageUrl?: string; // Optional background for invoice
   watermarkText?: string; // Optional watermark text
@@ -153,3 +176,28 @@ export interface IGlobalInvoice {
   branding?: Branding;
   notes?: AdditionalNotes;
 };
+
+export interface ITemplateThemeColor {
+  display?: string;
+  primary?: {
+    darkest?: string,
+    darker?: string,
+    base?: string,
+    lighter?: string
+    lightest?: string
+  };
+  secondary?: {
+    darkest?: string,
+    darker?: string,
+    base?: string,
+    lighter?: string
+    lightest?: string
+  };
+  tertiary?: {
+    darkest?: string,
+    darker?: string,
+    base?: string,
+    lighter?: string
+    lightest?: string
+  };
+}

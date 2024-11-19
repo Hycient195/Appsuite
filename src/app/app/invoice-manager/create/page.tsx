@@ -9,8 +9,8 @@ import api from "@/redux/api";
 import { useRouter } from "next/navigation";
 import { parseCookies } from "nookies";
 import Commercial1 from "../_templates/commercial/Commercial1";
-import { defaultGlobalInvoice } from "../_templates/globalDummyData";
-import useInvoiceTemplates from "../_templates";
+import { comprehensiveInvoice, defaultGlobalInvoice } from "../_templates/globalDummyData";
+// import useInvoiceTemplates from "../_templates";
 
 export default function CreateBalanceSheet() {
   const router = useRouter();
@@ -20,11 +20,18 @@ export default function CreateBalanceSheet() {
     templateName: ""
   })
 
+  const [ theme, setTheme ] = useState({ 
+    themeColor: {}
+  })
+
+
+  const [ stateObject, setStateObject ] = useState(comprehensiveInvoice)
+
   const [ createFile, { isLoading, isSuccess, isError, data }] = api.commonApis.useCreateFileInFolderMutation();
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const handleCreateFile = async () => {
-    createFile({ appName: "INVOICE_MANAGER", fileName: `${formData.fileName}.json`, content: JSON.stringify({ ...defaultGlobalInvoice, fileName: formData.fileName, templateName: formData.templateName }), mimeType: "application/json"});
+    createFile({ appName: "INVOICE_MANAGER", fileName: `${formData.fileName}.json`, content: JSON.stringify({ ...defaultGlobalInvoice, fileName: formData.fileName, templateName: formData.templateName, branding: { ...defaultGlobalInvoice.branding, themeColor: stateObject.branding?.themeColor } }), mimeType: "application/json"});
   };
 
   useEffect(() => {
@@ -36,10 +43,10 @@ export default function CreateBalanceSheet() {
     }
   }, [ isSuccess, data?.data?.id, router ]);
 
-  const invoiceTemplates = useInvoiceTemplates();
+  // const invoiceTemplates = useInvoiceTemplates();
 
   return (
-    <main className="h-full">
+    <main className="h-full max-md:p-3">
       <div className="bg-whit borde border-zinc-200 rounded-md min-h-full flex flex-col ">
         {/* <h2>Invoice Samples</h2> */}
         
@@ -61,16 +68,31 @@ export default function CreateBalanceSheet() {
               Object.entries(invoiceTemplates)?.map((templateCategory, categoryIndex) => (
                 <div key={`template-category-${categoryIndex}`} className="grid">
                   <h3 className="capitalize font-semibold text-3xl">{templateCategory[0]?.toLowerCase()}</h3>
-                  <div className="overflow-x-auto h-[550px] overflow-y-visible h- grid">
-                    <div className="flex flex-row px-1 items-center min-w-max gap-2">
+                  <div className="overflow-x-auto h-[650px] overflow-y-visible h- grid">
+
+                    <div className="flex flex-row px-1 items-center  min-w-max gap-2">
                       {
-                        templateCategory[1]?.map((template, templateIndex) => (
-                          <ScaledWrapper onClick={() => setFormData({ ...formData, templateName: template.templateName })} scale={0.4} key={`category-${categoryIndex}-template-${templateIndex}`} className={`outline-2 outline ${template.templateName === formData.templateName ? "outline-green-500" : "outline-transparent"} cursor-pointer`}>
-                            {template.templateMarkup}
-                          </ScaledWrapper>
-                        ))
+                        Object.entries(templateCategory[1])?.map((template, templateIndex) => {
+                          const TheTemplate = template[1].templateMarkup
+
+                          return (
+                            (
+                              <div key={`category-${categoryIndex}-template-${templateIndex}`} onClick={() => setFormData({ ...formData, templateName: template[0] })} className="relative">
+                                
+                                <ThemePicker templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} />
+                                <ScaledWrapper  scale={0.4}  className={`outline-2 outline ${template[0] === formData.templateName ? "outline-green-500" : "outline-transparent"} cursor-pointer`}>
+                                  {<TheTemplate templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} isPreview={true} />}
+                                  {/* <div className="bg-transparent absolute h-full w-full z-[2]" /> */}
+                                  {/* {React.cloneElement(template.templateMarkup, { isPreview: true, themeColorPicker: <ThemePicker newTemplateTheme={theme} setNewTemplateTheme={setTheme} /> })} */}
+                                </ScaledWrapper>
+                                
+                              </div>
+                            )
+                          )
+                        })
                       }
                     </div>
+
                   </div>
                 </div>
               ))
@@ -83,9 +105,48 @@ export default function CreateBalanceSheet() {
   )
 }
 
+interface IThemePickerProps {
+  // themeColors: ITemplateThemeColor[]
+  templateId: string;
+  stateObject: IGlobalInvoice;
+  setStateObject: React.Dispatch<React.SetStateAction<IGlobalInvoice>>;
+  // localThemeColor: ITemplateThemeColor;
+  // setLocalTheme: React.Dispatch<React.SetStateAction<ITemplateThemeColor>>
+  // newTemplateTheme: { themeColor: ITemplateThemeColor }
+  // setNewTemplateTheme: React.Dispatch<React.SetStateAction<{ themeColor: ITemplateThemeColor }>>
+}
+
+const ThemePicker = ({ templateId, stateObject, setStateObject }: IThemePickerProps) => {
+  const { getThemes, setTheme } = useThemeContext();
+  const themes = getThemes(templateId);
+
+  const updateState = (theme: ITemplateThemeColor) => {
+    setTheme(templateId, theme);
+    handleUpdateStateProperty(stateObject, setStateObject, theme, "branding.themeColor");
+    // setNewTemplateTheme({ ...newTemplateTheme, themeColor: theme });
+  }
+
+  return (
+    <div className=" !z-[1]   bg-tes  left-0  right-0 w-ma left- mx-auto my-auto mb-2 ">
+      {/* <h3 className="text-">Theme Colors</h3> */}
+      <div className="overflow-x-auto bg-tes w-full">
+        <div className="flex flex-row items-center gap-1">
+          {
+            themes?.map((theme, index) => (
+              <button onClick={() => updateState(theme)} key={`theme-picker-${index}`} style={{ backgroundColor: theme.display}} className="h-10 w-10 rounded-ful border border-slate-400"></button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  )
+}
+
 import React, { ReactNode } from "react";
-
-
+import { IGlobalInvoice, ITemplateThemeColor } from "../_types/types";
+import { handleUpdateStateProperty } from "@/utils/miscelaneous";
+import { useThemeContext } from "../_contexts/themeContext";
+import { invoiceTemplates } from "../_templates";
 
 interface ScaledWrapperProps {
   children: ReactNode;
