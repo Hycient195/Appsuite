@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { IGlobalInvoice, ITemplateThemeColor } from "../../_types/types";
-import { currencyMap, handleInputChange, handleUpdateStateProperty, splitInThousand } from "@/utils/miscelaneous";
+import { currencyMap, handleInputChange, splitInThousand } from "@/utils/miscelaneous";
 import useInvoiceManager from "../../_hooks/useInvoiceManager";
 import PageImage from "@/sharedComponents/PageImage";
 import { FormSelect, ResponsiveTextInput } from "@/sharedComponents/FormInputs";
@@ -18,7 +18,7 @@ interface IProps {
   handleThemeColor?: (themeColors: ITemplateThemeColor, setThemeColor: React.Dispatch<React.SetStateAction<ITemplateThemeColor>>) => void
 }
 
-const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject, controls, isLoggedIn = false, fileId, themeColorPicker, isPreview }) => {
+const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject, controls, isLoggedIn = false, fileId, isPreview }) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => handleInputChange(e, stateObject, setStateObject);
 
   const themes = [
@@ -243,7 +243,7 @@ const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject
                 </div>
               </td>
               <td className="py-3.5 text-center">
-                <ResponsiveTextInput className="text-center" name={`lineItems.${index}.quantity`} value={product.quantity} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
+                <ResponsiveTextInput className="text-center" name={`lineItems.${index}.quantity`} value={splitInThousand(product.quantity)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
               </td>
               <td className="py-3.5 text-center">
                 <ResponsiveTextInput className="text-right" name={`lineItems.${index}.unitPrice`} value={splitInThousand(product.unitPrice)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} onBlur={(e) => controls?.handleNumericInputBlur(`lineItems.${index}.unitPrice`, e)} />

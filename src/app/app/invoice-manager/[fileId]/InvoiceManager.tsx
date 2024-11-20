@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import Commercial1 from "../_templates/commercial/Commercial1"
 import { IGlobalInvoice } from "../_types/types"
 import useInvoiceManager from "../_hooks/useInvoiceManager"
 import api from "@/redux/api"
@@ -11,7 +10,8 @@ import Teleport from "@/utils/Teleport"
 import StatusIcon from "@/sharedComponents/CustomIcons"
 import useGeneratePDF from "@/sharedHooks/useGeneratePDF"
 import { FormSelect } from "@/sharedComponents/FormInputs"
-import { currencyObject, handleInputChange, handleUpdateStateProperty } from "@/utils/miscelaneous"
+import { currencyObject, handleUpdateStateProperty } from "@/utils/miscelaneous"
+import { invoiceTemplates } from "../_templates"
 
 interface IProps {
   loadedSucessfully: boolean;
@@ -67,6 +67,40 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
     };
   }, [ globalState ]);
 
+
+  const flattenTemplates = (
+    obj: Record<string, any>,
+    templateId: string
+  ): any | null => {
+    let result: any | null = null;
+  
+    const traverse = (currentObj: Record<string, any>) => {
+      for (const key in currentObj) {
+        if (key === templateId) {
+          result = currentObj[key]; // Match found, assign the object value
+          return;
+        }
+        if (
+          typeof currentObj[key] === "object" &&
+          !Array.isArray(currentObj[key])
+        ) {
+          traverse(currentObj[key]); // Recursively traverse deeper
+          if (result) return; // Stop further traversal once a match is found
+        }
+      }
+    };
+  
+    // Start traversal from the root object
+    traverse(obj);
+    return result;
+  };
+
+  const SelectedTemplate = flattenTemplates(invoiceTemplates, globalState.templateId as string)?.templateMarkup;
+
+  // console.log(OldflattenTemplates(invoiceTemplates))
+  // console.log(SelectedTemplate)
+  // console.log(globalState.templateId)
+
   return (
     <main className="">
       <Teleport rootId='dashboardNavPortal'>
@@ -88,7 +122,11 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
       </Teleport>
 
       <div ref={elementRef as any} className="">
-        <Commercial1 templateId="COMMERCIAL_1" setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId} />
+        <SelectedTemplate setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId} />
+        {
+          // Object.entries(invoiceTemplates)?.map((template, templetIndex) => Object.values(template[1]))
+        }
+        {/* <Commercial1 templateId="COMMERCIAL_1" setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId} /> */}
       </div>
     </main>
   )

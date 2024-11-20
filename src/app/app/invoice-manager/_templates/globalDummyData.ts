@@ -2,6 +2,7 @@ import { IGlobalInvoice } from "../_types/types";
 
 export const comprehensiveInvoice: IGlobalInvoice = {
   metadata: {
+    title: "",
     invoiceId: "INV-2024-00123",
     invoiceType: "Commercial",
     invoiceDate: "2024-11-03",
@@ -52,6 +53,7 @@ export const comprehensiveInvoice: IGlobalInvoice = {
   lineItems: [
     {
       id: "item1",
+      title: "",
       description: "Custom Hardware Development",
       quantity: 10,
       unitPrice: 1500,
@@ -61,6 +63,7 @@ export const comprehensiveInvoice: IGlobalInvoice = {
     },
     {
       id: "item2",
+      title: "",
       description: "Annual Maintenance Contract",
       quantity: 1,
       unitPrice: 2000,
@@ -127,17 +130,18 @@ export const comprehensiveInvoice: IGlobalInvoice = {
 
 export const defaultGlobalInvoice: IGlobalInvoice = {
   fileName: "",
-  templateName: "",
+  templateId: "",
   metadata: {
+    title: "",
     invoiceId: "",
     invoiceType: "Standard",
     invoiceDate: "",
     exportDate: "",
     status: "Draft",
     currency: {
-      code: "",
-      symbol: "",
-      name: "",
+      code: "USD",
+      symbol: "$",
+      name: "United States Dollar",
     },
     language: "",
     purchaseOrderNumber: "",

@@ -17,7 +17,7 @@ export default function CreateBalanceSheet() {
 
   const [ formData, setFormData ] = useState({
     fileName: "",
-    templateName: ""
+    templateId: ""
   })
 
   const [ theme, setTheme ] = useState({ 
@@ -31,7 +31,7 @@ export default function CreateBalanceSheet() {
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const handleCreateFile = async () => {
-    createFile({ appName: "INVOICE_MANAGER", fileName: `${formData.fileName}.json`, content: JSON.stringify({ ...defaultGlobalInvoice, fileName: formData.fileName, templateName: formData.templateName, branding: { ...defaultGlobalInvoice.branding, themeColor: stateObject.branding?.themeColor } }), mimeType: "application/json"});
+    createFile({ appName: "INVOICE_MANAGER", fileName: `${formData.fileName}.json`, content: JSON.stringify({ ...defaultGlobalInvoice, fileName: formData.fileName, templateId: formData.templateId, branding: { ...defaultGlobalInvoice.branding, themeColor: stateObject.branding?.themeColor } }), mimeType: "application/json"});
   };
 
   useEffect(() => {
@@ -44,6 +44,16 @@ export default function CreateBalanceSheet() {
   }, [ isSuccess, data?.data?.id, router ]);
 
   // const invoiceTemplates = useInvoiceTemplates();
+
+  const { getThemes } = useThemeContext();
+
+
+  const selectTemplate = (templateId: string) => {
+    setFormData({ ...formData, templateId: templateId, })
+    const selectedTemplateTheme = getThemes(templateId)
+    handleUpdateStateProperty(stateObject, setStateObject, selectedTemplateTheme![0], "branding.themeColor")
+    // { ...defaultGlobalInvoice.branding, themeColor: stateObject.branding?.themeColor }
+  }
 
   return (
     <main className="h-full max-md:p-3">
@@ -68,7 +78,7 @@ export default function CreateBalanceSheet() {
               Object.entries(invoiceTemplates)?.map((templateCategory, categoryIndex) => (
                 <div key={`template-category-${categoryIndex}`} className="grid">
                   <h3 className="capitalize font-semibold text-3xl">{templateCategory[0]?.toLowerCase()}</h3>
-                  <div className="overflow-x-auto h-[650px] overflow-y-visible h- grid">
+                  <div className="overflow-x-auto h-[600px] overflow-y-visible h- grid">
 
                     <div className="flex flex-row px-1 items-center  min-w-max gap-2">
                       {
@@ -77,10 +87,10 @@ export default function CreateBalanceSheet() {
 
                           return (
                             (
-                              <div key={`category-${categoryIndex}-template-${templateIndex}`} onClick={() => setFormData({ ...formData, templateName: template[0] })} className="relative">
+                              <div key={`category-${categoryIndex}-template-${templateIndex}`} onClick={() => selectTemplate(template[0])} className="relative">
                                 
                                 <ThemePicker templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} />
-                                <ScaledWrapper  scale={0.4}  className={`outline-2 outline ${template[0] === formData.templateName ? "outline-green-500" : "outline-transparent"} cursor-pointer`}>
+                                <ScaledWrapper  scale={0.4}  className={`outline-2 outline ${template[0] === formData.templateId ? "outline-green-500" : "outline-transparent"} cursor-pointer`}>
                                   {<TheTemplate templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} isPreview={true} />}
                                   {/* <div className="bg-transparent absolute h-full w-full z-[2]" /> */}
                                   {/* {React.cloneElement(template.templateMarkup, { isPreview: true, themeColorPicker: <ThemePicker newTemplateTheme={theme} setNewTemplateTheme={setTheme} /> })} */}
@@ -117,14 +127,15 @@ interface IThemePickerProps {
 }
 
 const ThemePicker = ({ templateId, stateObject, setStateObject }: IThemePickerProps) => {
-  const { getThemes, setTheme } = useThemeContext();
+  const { getThemes, setTheme, getSelectedTheme } = useThemeContext();
   const themes = getThemes(templateId);
 
   const updateState = (theme: ITemplateThemeColor) => {
     setTheme(templateId, theme);
     handleUpdateStateProperty(stateObject, setStateObject, theme, "branding.themeColor");
-    // setNewTemplateTheme({ ...newTemplateTheme, themeColor: theme });
   }
+
+  const selectedTheme = getSelectedTheme(templateId);
 
   return (
     <div className=" !z-[1]   bg-tes  left-0  right-0 w-ma left- mx-auto my-auto mb-2 ">
@@ -133,7 +144,7 @@ const ThemePicker = ({ templateId, stateObject, setStateObject }: IThemePickerPr
         <div className="flex flex-row items-center gap-1">
           {
             themes?.map((theme, index) => (
-              <button onClick={() => updateState(theme)} key={`theme-picker-${index}`} style={{ backgroundColor: theme.display}} className="h-10 w-10 rounded-ful border border-slate-400"></button>
+              <button onClick={() => updateState(theme)} key={`theme-picker-${index}`} style={{ backgroundColor: theme.display}} className={`h-10 w-10 rounded-ful border  ${JSON.stringify(theme) === JSON.stringify(selectedTheme) ? "border-2 border-slate-600" : "border-slate-400"}`}></button>
             ))
           }
         </div>

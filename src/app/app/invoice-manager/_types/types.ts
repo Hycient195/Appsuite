@@ -1,3 +1,28 @@
+export interface ITemplateThemeColor {
+  display?: string;
+  primary?: {
+    darkest?: string,
+    darker?: string,
+    base?: string,
+    lighter?: string
+    lightest?: string
+  };
+  secondary?: {
+    darkest?: string,
+    darker?: string,
+    base?: string,
+    lighter?: string
+    lightest?: string
+  };
+  tertiary?: {
+    darkest?: string,
+    darker?: string,
+    base?: string,
+    lighter?: string
+    lightest?: string
+  };
+}
+
 export type Currency = {
   code: string; // Currency code (e.g., "USD", "EUR")
   symbol: string; // Currency symbol (e.g., "$", "€")
@@ -27,6 +52,7 @@ export type ContactInfo = {
 
 export type LineItem = {
   id: string; // Unique identifier for tracking
+  title?: string;
   description: string; // Product or service description
   quantity: number; // Quantity sold/provided
   unitPrice: number; // Price per unit
@@ -79,6 +105,7 @@ export type RecurrenceDetails = {
 };
 
 export type InvoiceMetadata = {
+  title?: string;
   invoiceId: string; // Unique invoice identifier
   invoiceType:
     | "Standard"
@@ -154,7 +181,7 @@ export type AdditionalNotes = {
 
 export interface IGlobalInvoice {
   fileName?: string;
-  templateName?: string;
+  templateId?: string;
   metadata: InvoiceMetadata;
   sender: ContactInfo;
   recipient: ContactInfo;
@@ -177,27 +204,3 @@ export interface IGlobalInvoice {
   notes?: AdditionalNotes;
 };
 
-export interface ITemplateThemeColor {
-  display?: string;
-  primary?: {
-    darkest?: string,
-    darker?: string,
-    base?: string,
-    lighter?: string
-    lightest?: string
-  };
-  secondary?: {
-    darkest?: string,
-    darker?: string,
-    base?: string,
-    lighter?: string
-    lightest?: string
-  };
-  tertiary?: {
-    darkest?: string,
-    darker?: string,
-    base?: string,
-    lighter?: string
-    lightest?: string
-  };
-}
