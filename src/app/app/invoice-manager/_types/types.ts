@@ -187,9 +187,17 @@ export interface IGlobalInvoice {
   recipient: ContactInfo;
   lineItems: LineItem[];
   taxes?: TaxDetail[];
-  discounts?: DiscountDetail[];
+  discounts: DiscountDetail[];
   subtotal: number; // Total amount before taxes and discounts
   totalTax: number; // Computed total tax amount
+  valueAddedTax: {
+    rate: number;
+    amount: number;
+  }
+  appliedDiscount: {
+    rate: number;
+    amount: number;
+  }
   totalWeight?: {
     amount: number;
     unit: "KG"|"LBS"

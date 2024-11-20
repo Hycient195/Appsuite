@@ -30,7 +30,7 @@ import { ITemplateThemeColor } from '../_types/types';
 
 interface ThemeContextType {
   getThemes: (templateId: string) => ITemplateThemeColor[] | undefined;
-  setTheme: (templateId: string, theme: ITemplateThemeColor) => void;
+  setTheme: (templateId: string, theme: ITemplateThemeColor, callback?: any) => void;
   registerTemplate: (templateId: string, themes: ITemplateThemeColor[]) => void;
   getSelectedTheme: (templateId: string) => ITemplateThemeColor | undefined;
 }

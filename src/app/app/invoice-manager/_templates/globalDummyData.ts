@@ -86,6 +86,14 @@ export const comprehensiveInvoice: IGlobalInvoice = {
   ],
   subtotal: 16250, // Computed
   totalTax: 1237.5, // Computed
+  valueAddedTax: {
+    rate: 0,
+    amount: 0
+  },
+  appliedDiscount: {
+    rate: 0,
+    amount: 0
+  },
   totalDiscount: 712.5, // Computed
   adjustments: 50, // Additional fee
   grandTotal: 16775, // Computed
@@ -185,9 +193,23 @@ export const defaultGlobalInvoice: IGlobalInvoice = {
     },
   ],
   taxes: [],
-  discounts: [],
+  discounts: [
+    {
+      description: "",
+      rate: 0,
+      amount: 0, // Computed
+    },
+  ],
   subtotal: 0,
   totalTax: 0,
+  valueAddedTax: {
+    rate: 0,
+    amount: 0
+  },
+  appliedDiscount: {
+    rate: 0,
+    amount: 0
+  },
   totalWeight: {
     amount: 0,
     unit: "KG",

@@ -12,7 +12,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const getThemes = (templateId: string) => templates[templateId]?.themes;
 
-  const setTheme = (templateId: string, theme: ITemplateThemeColor) => {
+  const setTheme = (templateId: string, theme: ITemplateThemeColor, callback?: any) => {
     setTemplates((prev) => ({
       ...prev,
       [templateId]: {
@@ -20,6 +20,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         selectedTheme: theme,
       },
     }));
+    if (callback) callback()
   };
 
   const registerTemplate = (templateId: string, themes: ITemplateThemeColor[]) => {

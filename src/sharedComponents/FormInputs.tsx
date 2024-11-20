@@ -145,11 +145,14 @@ interface IResponsiveProps {
 }
 
 export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
+
   return (
-    <div className="relative">
-      <div className="min-w-[80px] noExport"></div>
-      <div className={`min-h-6 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })} </div>
-      <textarea className={`absolute resize-none noExport min-w-[50px] min-h-6 no-scrollbar left-0 top-0 h-full w-full ${className}`} { ...props} />
+    <div className="relative my-1 ">
+      <div className={`${className} w-full min-w-[20px]`}>
+        {replaceJSXRecursive(props.value, { "\n": <br /> })}
+        <span className={`${(props.value || props.value === 0) && "!hidden"} flex min-w-max flex-row items-center px-1 noExport invisibl`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</span>
+      </div>
+      <textarea className={`absolute z-[2] bg-white resize-none noExport no-scrollbar left-0 top-0 h-full w-full ${className}`} { ...props} />
     </div>
   )
 }

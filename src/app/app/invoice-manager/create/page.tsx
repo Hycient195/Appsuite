@@ -10,6 +10,12 @@ import { useRouter } from "next/navigation";
 import { parseCookies } from "nookies";
 import Commercial1 from "../_templates/commercial/Commercial1";
 import { comprehensiveInvoice, defaultGlobalInvoice } from "../_templates/globalDummyData";
+import TemplateThemeColorPicker from "@/sharedComponents/TemplateThemeColorPicker";
+import TemplatePreviewScaledWrapper from "@/sharedComponents/TemplateScaledWrapper";
+import { invoiceTemplates } from "../_templates";
+import { handleUpdateStateProperty } from "@/utils/miscelaneous";
+import { useThemeContext } from "../_contexts/themeContext";
+import DocumentPage from "../_components/DocumentPage";
 // import useInvoiceTemplates from "../_templates";
 
 export default function CreateBalanceSheet() {
@@ -84,18 +90,13 @@ export default function CreateBalanceSheet() {
                       {
                         Object.entries(templateCategory[1])?.map((template, templateIndex) => {
                           const TheTemplate = template[1].templateMarkup
-
                           return (
                             (
                               <div key={`category-${categoryIndex}-template-${templateIndex}`} onClick={() => selectTemplate(template[0])} className="relative">
-                                
-                                <ThemePicker templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} />
-                                <ScaledWrapper  scale={0.4}  className={`outline-2 outline ${template[0] === formData.templateId ? "outline-green-500" : "outline-transparent"} cursor-pointer`}>
-                                  {<TheTemplate templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} isPreview={true} />}
-                                  {/* <div className="bg-transparent absolute h-full w-full z-[2]" /> */}
-                                  {/* {React.cloneElement(template.templateMarkup, { isPreview: true, themeColorPicker: <ThemePicker newTemplateTheme={theme} setNewTemplateTheme={setTheme} /> })} */}
-                                </ScaledWrapper>
-                                
+                                <TemplateThemeColorPicker templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} />
+                                <TemplatePreviewScaledWrapper  scale={0.4}  className={`outline-2 outline ${template[0] === formData.templateId ? "outline-green-500" : "outline-transparent"} cursor-pointer`}>
+                                  <DocumentPage><TheTemplate templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} isPreview={true} /></DocumentPage>
+                                </TemplatePreviewScaledWrapper>
                               </div>
                             )
                           )
@@ -115,85 +116,7 @@ export default function CreateBalanceSheet() {
   )
 }
 
-interface IThemePickerProps {
-  // themeColors: ITemplateThemeColor[]
-  templateId: string;
-  stateObject: IGlobalInvoice;
-  setStateObject: React.Dispatch<React.SetStateAction<IGlobalInvoice>>;
-  // localThemeColor: ITemplateThemeColor;
-  // setLocalTheme: React.Dispatch<React.SetStateAction<ITemplateThemeColor>>
-  // newTemplateTheme: { themeColor: ITemplateThemeColor }
-  // setNewTemplateTheme: React.Dispatch<React.SetStateAction<{ themeColor: ITemplateThemeColor }>>
-}
 
-const ThemePicker = ({ templateId, stateObject, setStateObject }: IThemePickerProps) => {
-  const { getThemes, setTheme, getSelectedTheme } = useThemeContext();
-  const themes = getThemes(templateId);
-
-  const updateState = (theme: ITemplateThemeColor) => {
-    setTheme(templateId, theme);
-    handleUpdateStateProperty(stateObject, setStateObject, theme, "branding.themeColor");
-  }
-
-  const selectedTheme = getSelectedTheme(templateId);
-
-  return (
-    <div className=" !z-[1]   bg-tes  left-0  right-0 w-ma left- mx-auto my-auto mb-2 ">
-      {/* <h3 className="text-">Theme Colors</h3> */}
-      <div className="overflow-x-auto bg-tes w-full">
-        <div className="flex flex-row items-center gap-1">
-          {
-            themes?.map((theme, index) => (
-              <button onClick={() => updateState(theme)} key={`theme-picker-${index}`} style={{ backgroundColor: theme.display}} className={`h-10 w-10 rounded-ful border  ${JSON.stringify(theme) === JSON.stringify(selectedTheme) ? "border-2 border-slate-600" : "border-slate-400"}`}></button>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-  )
-}
-
-import React, { ReactNode } from "react";
-import { IGlobalInvoice, ITemplateThemeColor } from "../_types/types";
-import { handleUpdateStateProperty } from "@/utils/miscelaneous";
-import { useThemeContext } from "../_contexts/themeContext";
-import { invoiceTemplates } from "../_templates";
-
-interface ScaledWrapperProps {
-  children: ReactNode;
-  scale: number; // Scale factor (e.g., 0.3 for 30%)
-  className?: string; // Optional additional classes
-  onClick?: any
-}
-
-const ScaledWrapper: React.FC<ScaledWrapperProps> = ({
-  children,
-  scale,
-  className = "",
-  onClick
-}) => {
-  return (
-    <div
-      onClick={onClick}
-      className={`inline-block relative h-[520px] w-[370px] ${className}`}
-      style={{
-        // transform: `scale(${scale})`,
-        transformOrigin: "top left",
-        // width: `calc(100% * ${scale})`,
-        // height: `calc(100% * ${scale})`,
-      }}
-    >
-      <div
-        style={{
-          // transform: `scale(${scale})`,
-          transformOrigin: "top left",
-          // width: `calc(100% * ${scale})`,
-          // height: `calc(100% * ${scale})`,
-        }}
-        className="absolute w-[900px] z-[1] top-0 left-0 scale-[0.41]">{children}</div>
-    </div>
-  );
-};
 
 // interface ScaledContainerProps {
 //   children: ReactNode;

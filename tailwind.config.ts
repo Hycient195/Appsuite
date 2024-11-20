@@ -14,6 +14,7 @@ const config: Config = {
     extend: {
       animation: {
         "slide-in-right": "slide-in-right 500ms ease-in-out",
+        "slide-in-left": "slide-in-left 500ms ease-in-out",
         "screen-slide-in-right": "screen-slide-in-right 1s ease-in-out",
         "screen-slide-out-right": "screen-slide-out-right 1s ease-in-out",
         "screen-slide-in-left": "screen-slide-in-left 1s ease-in-out",
@@ -47,6 +48,14 @@ const config: Config = {
         "slide-in-right": {
           from: {
             transform: "translateX(-100%)"
+          },
+          to: {
+            transform: "translateX(0)"
+          }
+        },
+        "slide-in-left": {
+          from: {
+            transform: "translateX(100%)"
           },
           to: {
             transform: "translateX(0)"

@@ -49,9 +49,10 @@ const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject
   }, [templateId, themes]);
 
   const templateThemeColor = isPreview ? getSelectedTheme(templateId) : stateObject?.branding?.themeColor;
+  // const templateThemeColor = getSelectedTheme(templateId);
 
   return (
-    <div className="max-w-screen-lg relative mx-auto p-[clamp(16px,6%,80px)] bg-white shadow-md">
+    <div className="">
       {/* Header */}
       <div className="flex justify-between items-end border-b pb-4 mb-6">
         <div className="flex flex-col gap-2 w-full">
@@ -239,7 +240,7 @@ const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject
             <tr key={index} className="border-b">
               <td className="py-3.5 font-semibold">
                 <div className="relativ">
-                  <ResponsiveTextInput placeholder="[ product name ]" value={product?.description} name={`lineItems.${index}.description`} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} />
+                  <ResponsiveTextInput placeholder="[ product name ]" value={product?.title} name={`lineItems.${index}.title`} onChange={(e) => handleInputChange(e, stateObject, setStateObject)} />
                 </div>
               </td>
               <td className="py-3.5 text-center">
