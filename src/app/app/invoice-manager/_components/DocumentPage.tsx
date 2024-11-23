@@ -22,7 +22,9 @@ const DocumentPage: React.FC<DocumentPageProps> = ({ pageType = "B3", children, 
         // // boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)", // Light shadow for page effect
         // backgroundColor: "#fff", // White background for the page
       }}
-      ref={ref} className={`max-w-screen-lg mx-auto bg-white shadow-lg  ${className}`}
+      
+      ref={ref}
+      className={`max-w-screen-lg min-w-[800px] mx-auto bg-white shadow-lg  ${className}`}
     >
       <div
         style={{

@@ -24,7 +24,7 @@ export default function Commercial2({ templateId, setStateObject, stateObject, c
       display: "#141414",
       primary: {
         darkest: "#141414",
-        lightest: "rgb(244 244 245 / 0.2)"
+        lightest: "rgb(244 244 245 / 0.3)"
       }
     },
     {

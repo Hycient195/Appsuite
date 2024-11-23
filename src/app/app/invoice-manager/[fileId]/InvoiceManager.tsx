@@ -192,7 +192,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
                   Object.entries(invoiceTemplates)?.map((templateCategory, categoryIndex) => (
                     <div key={`template-category-${categoryIndex}`} className="grid p-3 xl:p-4">
                       <h3 className="capitalize font-semibold text-3xl">{templateCategory[0]?.toLowerCase()}</h3>
-                      <div className="overflow-x-auto h-[620px] border max-w-md overflow-y-visible h- grid">
+                      <div className="overflow-x-auto h-[600px] border max-w-md overflow-y-visible h- grid">
 
                         <div className="flex flex-row px-1 items-center  min-w-max gap-2">
                           {

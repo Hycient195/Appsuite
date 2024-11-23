@@ -15,23 +15,15 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
   const appCookies = (await cookies());
   const isLoggedIn = !!appCookies.get("asAccessToken")?.value;
 
-  let csvString: IGlobalInvoice = defaultGlobalInvoice;
+  let invoiceData: IGlobalInvoice = defaultGlobalInvoice;
   let loadedSucessfully = false;
 
   try {
-    // if (!isLoggedIn) {
-    //   const refreshToken = appCookies.get("asRefreshToken")?.value;
-    //   if (refreshToken && refreshToken !== "DUMMY_PREVIEW_REFRESH_TOKEN") {
-    //     const tokenResponse = (await getNewAccessToken(refreshToken as string));
-    //     appCookies.set("asAccessToken", tokenResponse?.access_token as string, { maxAge: (60*60)})
-    //   }
-    // }
-    csvString = (await readFile((await params).fileId)) as IGlobalInvoice;
+    invoiceData = (await readFile((await params).fileId)) as IGlobalInvoice;
     loadedSucessfully = true;
   } catch (error) {
     console.log(`Error fetching balance sheet`, error);
-    // csvString = "";
   }
 
-  return <InvoiceManager jsonData={csvString} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
+  return <InvoiceManager jsonData={invoiceData} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
 }
