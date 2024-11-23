@@ -7,6 +7,7 @@ export const comprehensiveInvoice: IGlobalInvoice = {
     invoiceType: "Commercial",
     invoiceDate: "2024-11-03",
     exportDate: "2024-12-15",
+    customerId: "CUSTP234",
     status: "Sent",
     currency: {
       code: "USD",
@@ -20,14 +21,16 @@ export const comprehensiveInvoice: IGlobalInvoice = {
   },
   sender: {
     fullName: "Global Trade Co.",
+    position: "Director",
     companyName: "Global Trade Co. Ltd.",
-    // address: {
-    //   street: "123 Export Avenue",
-    //   city: "New York",
-    //   state: "NY",
-    //   postalCode: "10001",
-    //   country: "USA",
-    // },
+    companyBusinessType: "Innovations",
+    addressDetails: {
+      street: "123 Export Avenue",
+      city: "New York",
+      state: "NY",
+      postalCode: "10001",
+      country: "USA",
+    },
     address: "New way drive Orleans",
     country: "United States of America",
     email: "contact@globaltrade.com",
@@ -37,14 +40,15 @@ export const comprehensiveInvoice: IGlobalInvoice = {
   },
   recipient: {
     fullName: "Tech Innovators Inc.",
+    position: "Director",
     companyName: "Tech Innovators Inc.",
-    // address: {
-    //   street: "456 Silicon Way",
-    //   city: "San Francisco",
-    //   state: "CA",
-    //   postalCode: "94103",
-    //   country: "USA",
-    // },
+    addressDetails: {
+      street: "456 Silicon Way",
+      city: "San Francisco",
+      state: "CA",
+      postalCode: "94103",
+      country: "USA",
+    },
     address: "Safari Broadway drive",
     country: "Nigeria",
     email: "billing@techinnovators.com",
@@ -60,6 +64,7 @@ export const comprehensiveInvoice: IGlobalInvoice = {
       taxRate: 7.5,
       discountRate: 5,
       total: 14250, // Computed
+      billedPer: "HOUR"
     },
     {
       id: "item2",
@@ -109,6 +114,9 @@ export const comprehensiveInvoice: IGlobalInvoice = {
       accountNumber: "987654321",
       bankName: "International Bank",
       swiftCode: "INTL12345",
+      IFSCCode: "IFSC989NIK",
+      gstin: "088786JNKJB",
+      upi: "078787@icici",
     },
     dueDate: "2024-11-10",
   },
@@ -119,6 +127,7 @@ export const comprehensiveInvoice: IGlobalInvoice = {
   },
   branding: {
     logoUrl: "",
+    qrCodeUrl: "",
     themeColor: {
       display: "#004080",
       primary: {
@@ -145,6 +154,7 @@ export const defaultGlobalInvoice: IGlobalInvoice = {
     invoiceType: "Standard",
     invoiceDate: "",
     exportDate: "",
+    customerId: "",
     status: "Draft",
     currency: {
       code: "USD",
@@ -159,8 +169,17 @@ export const defaultGlobalInvoice: IGlobalInvoice = {
   },
   sender: {
     fullName: "",
+    position: "",
     companyName: "",
+    companyBusinessType: "",
     address: "",
+    addressDetails: {
+      street: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "",
+    },
     email: "",
     country: "",
     phone: "",
@@ -172,6 +191,13 @@ export const defaultGlobalInvoice: IGlobalInvoice = {
     fullName: "",
     companyName: "",
     address: "",
+    addressDetails: {
+      street: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "",
+    },
     email: "",
     country: "",
     phone: "",
@@ -190,9 +216,16 @@ export const defaultGlobalInvoice: IGlobalInvoice = {
       hoursBilled: 0,
       ratePerHour: 0,
       total: 0,
+      billedPer: "",
     },
   ],
-  taxes: [],
+  taxes: [
+    {
+      name: "",
+      rate: 0,
+      amount: 0, // Computed
+    },
+  ],
   discounts: [
     {
       description: "",
@@ -226,6 +259,9 @@ export const defaultGlobalInvoice: IGlobalInvoice = {
       bankName: "",
       swiftCode: "",
       IBAN: "",
+      IFSCCode: "",
+      gstin: "",
+      upi: "",
     },
     transactionId: "",
     paidDate: "",
@@ -241,6 +277,7 @@ export const defaultGlobalInvoice: IGlobalInvoice = {
   },
   branding: {
     logoUrl: "",
+    qrCodeUrl: "",
     themeColor: {
       display: "#004080",
       primary: {

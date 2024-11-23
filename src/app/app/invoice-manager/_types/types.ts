@@ -39,8 +39,10 @@ export type Address = {
 
 export type ContactInfo = {
   fullName: string;
+  position?: string;
   companyName?: string; // Optional for individuals
-  // address: Address;
+  companyBusinessType?: string;
+  addressDetails: Address;
   address: string;
   email: string;
   country?: string;
@@ -60,6 +62,7 @@ export type LineItem = {
   discountRate?: number; // Optional discount rate
   hoursBilled?: number; // For timesheet invoices
   ratePerHour?: number; // Hourly rate for timesheet invoices
+  billedPer?: string; // Per hour or per day
   total: number; // Computed total for this line item
 };
 
@@ -89,6 +92,9 @@ export type PaymentDetails = {
     bankName: string;
     swiftCode?: string; // Optional
     IBAN?: string; // Optional
+    IFSCCode?: string;
+    gstin?: string;
+    upi?: string;
   };
   transactionId?: string; // Optional for online payments
   paidDate?: string; // ISO 8601 format (if applicable)
@@ -107,6 +113,7 @@ export type RecurrenceDetails = {
 export type InvoiceMetadata = {
   title?: string;
   invoiceId: string; // Unique invoice identifier
+  customerId: string;
   invoiceType:
     | "Standard"
     | "Commercial"
@@ -140,6 +147,7 @@ export type InvoiceMetadata = {
 
 export type Branding = {
   logoUrl?: string; // URL of the company logo
+  qrCodeUrl?: string;
   themeColor?: {
     display: string;
     primary?: {
@@ -186,7 +194,7 @@ export interface IGlobalInvoice {
   sender: ContactInfo;
   recipient: ContactInfo;
   lineItems: LineItem[];
-  taxes?: TaxDetail[];
+  taxes: TaxDetail[];
   discounts: DiscountDetail[];
   subtotal: number; // Total amount before taxes and discounts
   totalTax: number; // Computed total tax amount

@@ -142,17 +142,22 @@ export const FormTextArea = ({ labelText, ref, value, onChange, footerText, name
 
 interface IResponsiveProps {
   className?: string;
+  href?: string;
+  target?: string;
+  rel?: string;
 }
 
 export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
 
   return (
     <div className="relative my-1 ">
-      <div className={`${className} w-full min-w-[20px]`}>
-        {replaceJSXRecursive(props.value, { "\n": <br /> })}
-        <span className={`${(props.value || props.value === 0) && "!hidden"} flex min-w-max flex-row items-center px-1 noExport invisibl`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</span>
+      <div className={`${className} w-full min-w-[20px] `}>
+        {!!props.href && <a rel={props.rel} target={props.target} href={props.href} className={`absolute w-full h-full top-0 left-0 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })}</a>}
+        <span className="text-transparent">{replaceJSXRecursive(props.value, { "\n": <br /> })}</span>
+        <span className={`${(props.value || props.value === 0) && "!hidden"} text-transparent flex min-w-max flex-row items-center px-1 noExport`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</span>
       </div>
-      <textarea className={`absolute z-[2] bg-white resize-none noExport no-scrollbar left-0 top-0 h-full w-full ${className}`} { ...props} />
+      <textarea className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props.value} />
     </div>
   )
 }
+

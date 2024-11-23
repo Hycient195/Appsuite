@@ -52,7 +52,7 @@ const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject
   // const templateThemeColor = getSelectedTheme(templateId);
 
   return (
-    <div className="">
+    <div className={`p-[clamp(16px,5%,100px)]`}>
       {/* Header */}
       <div className="flex justify-between items-end border-b pb-4 mb-6">
         <div className="flex flex-col gap-2 w-full">
@@ -273,7 +273,7 @@ const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject
           <tr className="">
             <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Discount:</td>
             <td className="py-2.5 font-bold text-right">
-              <div className="flex flex-row justify-end">
+              <div className="flex flex-row justify-end items-center">
                 {currencyMap[stateObject.metadata?.currency?.code as keyof typeof currencyMap]}
                 <ResponsiveTextInput className="!min-w-0 text-right" name="totalDiscount" value={splitInThousand(stateObject?.totalDiscount)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
               </div>
@@ -282,7 +282,7 @@ const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject
           <tr className="border-b-2 border-b-black">
             <td colSpan={3} className="py-2.5 text-zinc-500 text-right">Tax:</td>
             <td className="py-2.5 font-bold text-right">
-              <div className="flex flex-row justify-end">
+              <div className="flex flex-row justify-end items-center">
                 {currencyMap[stateObject.metadata?.currency?.code as keyof typeof currencyMap]}
                 <ResponsiveTextInput className="!min-w-0 text-right" name="totalTax" value={splitInThousand(stateObject?.totalTax)} onChange={(e) => handleInputChange(e, stateObject, setStateObject, true)} />
               </div>

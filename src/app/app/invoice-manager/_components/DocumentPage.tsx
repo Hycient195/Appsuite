@@ -15,14 +15,14 @@ const DocumentPage: React.FC<DocumentPageProps> = ({ pageType = "B3", children, 
     <div
       onClick={onClick}
       style={{
-        padding: `${pageStyles.containerYAxisPadding} ${pageStyles.containerXAxisPadding}`,
+        // padding: `${pageStyles.containerYAxisPadding} ${pageStyles.containerXAxisPadding}`,
         // maxWidth: pageStyles.containerMaxWidth,
         // minWidth: pageStyles.containerMinWidth,
         // margin: "0 auto", // Center the page horizontally
         // // boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)", // Light shadow for page effect
         // backgroundColor: "#fff", // White background for the page
       }}
-      ref={ref} className={`p-[clamp(16px,4%,80px) max-w-screen-lg  mx-auto bg-white shadow-lg  ${className}`}
+      ref={ref} className={`max-w-screen-lg mx-auto bg-white shadow-lg  ${className}`}
     >
       <div
         style={{

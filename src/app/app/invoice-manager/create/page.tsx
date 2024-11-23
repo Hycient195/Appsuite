@@ -95,7 +95,9 @@ export default function CreateBalanceSheet() {
                               <div key={`category-${categoryIndex}-template-${templateIndex}`} onClick={() => selectTemplate(template[0])} className="relative">
                                 <TemplateThemeColorPicker templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} />
                                 <TemplatePreviewScaledWrapper  scale={0.4}  className={`outline-2 outline ${template[0] === formData.templateId ? "outline-green-500" : "outline-transparent"} cursor-pointer`}>
-                                  <DocumentPage><TheTemplate templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} isPreview={true} /></DocumentPage>
+                                  <DocumentPage className="h-[1265px] overflow-hidden no-scrollbar">
+                                    <TheTemplate templateId={template[0]} stateObject={stateObject} setStateObject={setStateObject} isPreview={true} />
+                                  </DocumentPage>
                                 </TemplatePreviewScaledWrapper>
                               </div>
                             )

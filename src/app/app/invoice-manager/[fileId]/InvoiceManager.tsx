@@ -16,7 +16,7 @@ import DocumentPage from "../_components/DocumentPage"
 import TemplateThemeColorPicker from "@/sharedComponents/TemplateThemeColorPicker"
 import TemplatePreviewScaledWrapper from "@/sharedComponents/TemplateScaledWrapper"
 import { useThemeContext } from "../_contexts/themeContext"
-import { comprehensiveInvoice } from "../_templates/globalDummyData"
+import { comprehensiveInvoice, defaultGlobalInvoice } from "../_templates/globalDummyData"
 
 interface IProps {
   loadedSucessfully: boolean;
@@ -27,6 +27,8 @@ interface IProps {
 export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData }: IProps) {
   const params = useParams<any>();
   const isFirstRender = useRef(true);
+
+  const { setTheme } = useThemeContext();
 
   const [ SelectedTemplate, SetSelectedTemplate ] = useState<any>();
   const [ globalState, setGlobalState ] = useState<IGlobalInvoice>(jsonData);
@@ -79,6 +81,26 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
   }, [ globalState ]);
 
 
+  /** Reset discount fields to default on invoice template change */
+  useEffect(() => {
+    setGlobalState({ 
+      ...globalState,
+      valueAddedTax: defaultGlobalInvoice.valueAddedTax,
+      appliedDiscount: defaultGlobalInvoice.appliedDiscount,
+      taxes: defaultGlobalInvoice.taxes,
+      discounts: defaultGlobalInvoice.discounts,
+      totalTax: 0,
+      totalDiscount: 0
+    })
+  }, [ globalState?.templateId ]);
+
+  /** Loading last set theme when a new template is mounted */
+  // useEffect(() => {
+  //   if (jsonData.templateId && jsonData?.branding?.themeColor) {
+  //     // setTheme(jsonData.templateId, jsonData?.branding?.themeColor)
+  //   }
+  // }, [ ]);
+  // // }, [ globalState.branding?.themeColor, globalState.templateId ]);
   
 
   useEffect(() => {
@@ -153,7 +175,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
         </li>
       </Teleport>
 
-      <DocumentPage onClick={() => isTemplatePaneOpen && setIsTemplatePaneOpen(false)} pageType="B3" ref={elementRef as any} className={`${isTemplatePaneOpen ? "basis-3/4" : "w-full"}`}>
+      <DocumentPage onClick={() => isTemplatePaneOpen && setIsTemplatePaneOpen(false)} pageType="B3" ref={elementRef as any} className={`${isTemplatePaneOpen ? "basis-3/4" : "w-full"} h-max`}>
         { TheTemplate &&  <TheTemplate templateId={globalState?.templateId} setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId}  /> }
        
       </DocumentPage>
@@ -182,7 +204,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
                                   <div key={`category-${categoryIndex}-template-${templateIndex}`}  className="relative">
                                     <TemplateThemeColorPicker templateId={template[0]} stateObject={globalState} setStateObject={setGlobalState} callback={() => selectTemplate(template[0])} />
                                     <TemplatePreviewScaledWrapper  scale={0.4} onClick={() => selectTemplate(template[0])}  className={`outline-2 outline ${template[0] === formData.templateId ? "outline-green-500" : "outline-transparent"} bg-white cursor-pointer`}>
-                                      <DocumentPage>
+                                      <DocumentPage className="h-[1265px] overflow-hidden">
                                         {<TheTemplate templateId={template[0]} stateObject={comprehensiveInvoice} setStateObject={setGlobalState} isPreview={true} />}
                                       </DocumentPage>
                                     </TemplatePreviewScaledWrapper>

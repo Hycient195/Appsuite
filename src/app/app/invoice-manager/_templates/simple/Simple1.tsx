@@ -21,18 +21,6 @@ interface InvoiceProps {
 const Simple1: React.FC<InvoiceProps> = ({ templateId, setStateObject, stateObject, controls, isLoggedIn = false, fileId, isPreview }) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => handleInputChange(e, stateObject, setStateObject);
 
-  const {
-    metadata,
-    sender,
-    recipient,
-    lineItems,
-    subtotal,
-    totalTax,
-    grandTotal,
-    paymentDetails,
-    notes,
-  } = comprehensiveInvoice;
-
   const themes = [
     {
       display: "rgb(228 228 231)",
@@ -60,7 +48,7 @@ const Simple1: React.FC<InvoiceProps> = ({ templateId, setStateObject, stateObje
 
   return (
     
-    <div className="bg-white">
+    <div className="p-[clamp(16px,4%,80px)] bg-white">
     {/* Header */}
     <header className="flex justify-between items-start mb-8">
       <div className="">
@@ -138,7 +126,7 @@ const Simple1: React.FC<InvoiceProps> = ({ templateId, setStateObject, stateObje
             <ResponsiveTextInput
               onChange={handleChange}
               name="metadata.invoiceId"
-              placeholder="[  ]"
+              placeholder="[ IN***** ]"
               value={stateObject.metadata.invoiceId}
             />
           </p>
@@ -147,7 +135,7 @@ const Simple1: React.FC<InvoiceProps> = ({ templateId, setStateObject, stateObje
     </section>
 
     {/* Line Items Table */}
-    <table className="w-full   table-auto border-collapse  border-gray-300 mb-8">
+    <table className="w-full table-auto border-collapse  border-gray-300 mb-8">
       <thead className="">
         <tr style={{ backgroundColor: templateThemeColor?.primary?.base}} className="bg-gray-100">
           <th className=" border-gray-300 px-4 py-5 text-left">Item Descriptions</th>
@@ -252,7 +240,7 @@ const Simple1: React.FC<InvoiceProps> = ({ templateId, setStateObject, stateObje
           </tr>
           <tr className="text-right bg-white py-1 text-2xl font-bold border-t-2 border-t-zinc-500">
             <td colSpan={3} className="text-right bg-white py-1 font-semibold text-zinc-700">GRAND TOTAL: </td>
-            <td className="text-right bg-white py-1 font-bold px-4">{stateObject.metadata.currency.symbol} {splitInThousand(stateObject.grandTotal)}</td>
+            <td className="text-right bg-white py-1 font-bold break-keep min-w-max px-4">{stateObject.metadata.currency.symbol}{splitInThousand(stateObject.grandTotal)}</td>
             
           </tr>
       </tbody>

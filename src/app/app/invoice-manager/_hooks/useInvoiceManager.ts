@@ -136,20 +136,32 @@ const useInvoiceManager = (
       );
 
       // Compute total tax
-      const totalTax = invoice.taxes?.reduce(
+      const totalTax = invoice.taxes[0].amount ? invoice.taxes?.reduce(
         (sum, tax) => sum + parseFloat(String(tax.amount)),
         0
-      ) || 0;
+      ) : parseFloat(String(invoice.totalTax));
 
       // Compute total discount
-      const totalDiscount = invoice.discounts?.reduce(
+      const totalDiscount = invoice.discounts[0].amount ? invoice.discounts?.reduce(
         (sum, discount) => sum + parseFloat(String(discount.amount)),
         0
-      ) || 0;
+      ) : parseFloat(String(invoice.totalDiscount));
 
+      // Compute VAT amount dynamically if VAT rate is present
+      // const vatAmount = parseFloat(
+      //   (subtotal * (invoice.valueAddedTax.rate / 100)).toFixed(2)
+      // );
+
+      // Update VAT rate if VAT amount changes (two-way synchronization)
+      // const vatRate = invoice.valueAddedTax.amount
+      //   ? parseFloat(
+      //       ((invoice.valueAddedTax.amount / subtotal) * 100).toFixed(2)
+      //     )
+      //   : invoice.valueAddedTax.rate;
 
       // Compute grand total
-
+      // const grandTotal =
+      //   subtotal + vatAmount + totalTax - totalDiscount + (invoice.adjustments || 0);
       const grandTotal =
         subtotal + invoice.valueAddedTax.amount + totalTax - totalDiscount + (invoice.adjustments || 0);
 
@@ -164,8 +176,11 @@ const useInvoiceManager = (
         totalTax,
         totalDiscount,
         grandTotal,
+        // valueAddedTax: { rate: vatRate, amount: vatAmount },
         lineItems,
       }
+
+      // console.log(vatAmount)
 
       // Update state with computed values
       if (JSON.stringify(dataToSet) !== JSON.stringify(invoice)) {
@@ -175,6 +190,7 @@ const useInvoiceManager = (
           totalTax,
           totalDiscount,
           grandTotal,
+          // valueAddedTax: { rate: vatRate, amount: vatAmount },
           lineItems,
         }));
       }

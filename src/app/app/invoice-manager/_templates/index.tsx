@@ -1,5 +1,8 @@
 import Commercial1 from "./commercial/Commercial1";
+import Commercial2 from "./commercial/Commercial2";
 import Simple1 from "./simple/Simple1";
+import Simple2 from "./simple/Simple2";
+;
 
 export const invoiceTemplates = {
   COMMERCIAL: {
@@ -7,19 +10,7 @@ export const invoiceTemplates = {
       templateMarkup: Commercial1
     },
     COMMERCIAL_2: {
-      templateMarkup: Commercial1
-    },
-    COMMERCIAL_3: {
-      templateMarkup: Commercial1
-    },
-    COMMERCIAL_4: {
-      templateMarkup: Commercial1
-    },
-    COMMERCIAL_5: {
-      templateMarkup: Commercial1
-    },
-    COMMERCIAL_6: {
-      templateMarkup: Commercial1
+      templateMarkup: Commercial2
     },
   },
   SIMPLE: {
@@ -27,16 +18,9 @@ export const invoiceTemplates = {
       templateMarkup: Simple1
     },
     SIMPLE_2: {
-      templateMarkup: Commercial1
-    }
-  },
-  "PRO FORMA": {
-    "PRO_FORMA_1": {
-      templateMarkup: Commercial1
+      templateMarkup: Simple2
     },
-    "PRO_FORMA_2": {
-      templateMarkup: Commercial1
-    }
-  }
+  },
+
 }
 
