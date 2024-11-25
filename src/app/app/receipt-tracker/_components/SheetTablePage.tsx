@@ -7,8 +7,10 @@ import { replaceJSXRecursive, splitInThousand } from "@/utils/miscelaneous";
 import useHandlePageLogoActions from "@/sharedHooks/useHandlePageLogoActions";
 import { SaveLoadingSpinner } from "@/sharedComponents/CustomIcons";
 import Image from "next/image";
+import PageImage from "@/sharedComponents/PageImage";
 
 interface IProps {
+  fileId: string;
   pageIndex: number;
   inputRefs: any;
   handleInputChange: (pageIndex: number, rowIndex: number, field: string, value: string | number) => void;
@@ -40,6 +42,7 @@ interface IProps {
 }
 
 export default function SheetTablePage({
+  fileId,
   pageIndex,
   inputRefs,
   handleInputChange,
@@ -96,10 +99,12 @@ export default function SheetTablePage({
 
   return (
     <DraggablePage pageIndex={pageIndex} movePage={movePage}>
-      <div key={pageIndex} ref={(el: HTMLDivElement) => {((singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el)}} className="mb-8 w-full  max-w-[1080px] md:rounded mx-auto bg-white px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300">
-
+      <div key={pageIndex} ref={(el: HTMLDivElement) => {((singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el)}} className="relative w-full  max-w-[1080px] md:rounded mx-auto bg-white px-4 pt-8 pb-6 xl:pb-8">
+        <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
         <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
           <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
+            {/* Refactor the use of the component below before uncommenting */}
+            {/* <PageImage width={80} placeholder="Add/drop Logo" fileId={fileId} formData={pages} setFormData={setPages} isLoggedIn={isLoggedIn} imageProperty={pages?.[pageIndex]?.imageUrl as string} propertyKey={`${pageIndex}.imageUrl`} /> */}
             {
               (isLoading.uploading || isLoading.deleting || isLoading.removingPage || page?.imageUrl)
               ? <div className={`${isDragging ? "bg-green-500/40" : ""} relative !overflow-hidde z-[2] !w-[80px] !h-[80px] -translate-y-1 `} onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop}>
@@ -114,7 +119,7 @@ export default function SheetTablePage({
                           <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
                       </button>
-                      <Image fill src={imageSrc as string}  alt='alternative'  className='object-contain w-full h-auto aspect-square'  onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop} />
+                      <Image height={80} width={80} src={imageSrc as string}  alt='alternative'  className='object-contain w-full h-auto aspect-square'  onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop} />
                     </div>
                   )
                 }
@@ -141,10 +146,10 @@ export default function SheetTablePage({
 
           <div className="mb-3 noExport" />
           <ResizableTable
-            headers={["DATE", "NAME", "ID", "AMOUNT", "TYPE", "RECEIPT"]}
+            headers={["S/N", "DATE", "NAME", "ID", "AMOUNT", "TYPE", "RECEIPT"]}
             minCellWidth={100}
-            columnsPercentageWidth={[11.5,38,12,13.5,11.5,13.5]}
-            tableClassName="!grid-cols-[11.5%_38%_12%_13.5%_11.5%_13.5%]"
+            columnsPercentageWidth={[6,11.5,32,12,13.5,11.5,13.5]}
+            tableClassName="!grid-cols-[5%_11.5%_33%_12%_13.5%_11.5%_13.5%]"
             tableContent={
               <tbody className=''>
                 <>
@@ -179,10 +184,12 @@ export default function SheetTablePage({
                 <td className="px-1 py-2 text-right font-bold">{splitInThousand(page.totalAmount)}</td>
                 <td className="px-1 py-2 text-right font-bold" />
                 <td className="px-1 py-2 text-right"/>
+                <td className="px-1 py-2 text-right"/>
               </tr>
             </tbody>
             }
           />
+          <a style={{ fontFamily: "sans-serif" }} href="https://app-suite.vercel.app" className="text-xs text-blue-600 mt-6">Powered by https://app-suite.vercel.app</a>
           <div className="line noExport" />
           <div className={`mt-6 noExport flex [&>*]:grow flex-wrap gap-y-2 gap-x-2.5`}>
             <label htmlFor={`csv-import-${pageIndex}`} className="px-4 py-2 cursor-pointer text-center bg-rose-500 text-white rounded" >
@@ -225,7 +232,8 @@ export default function SheetTablePage({
             </button>
           </div>
         </div>
-        </div>
+      </div>
+      <div className="mb-8 noExport" /> {/** Margin for preview */}
     </DraggablePage>
   )
 }

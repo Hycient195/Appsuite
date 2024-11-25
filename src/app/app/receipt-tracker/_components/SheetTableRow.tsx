@@ -138,10 +138,14 @@ export default function SheetTableRow({ row, pageIndex, rowIndex, inputRefs, han
 
   return (
     <tr style={{ fontFamily: "sans-serif"}} className={`relative group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden`}>
-      <td  className="  items-center relative ">
+      <td className="items-center relative">
         <div style={{ width: `${tableWidth}px`}} className="bg-transparen bg-green-500 opacity-0 hover:opacity-100 !border-none group/line absolute z-[2] left-[-1px] bottom-0 translate-y-[4px] cursor-pointer h-1 rounded">
           <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="bg-green-500 hidden duration-300 group-hover/line:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-2 items-center justify-center font-semibold">+</button>
         </div>
+        <div className="h-full flex items-center justify-center my-auto">{rowIndex + 1}</div>
+      </td>
+
+      <td className="items-center relative">
         <input
           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-date`, el)}}
           type="text"

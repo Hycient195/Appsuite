@@ -69,8 +69,8 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
   return (
     <DraggablePage pageIndex={pageIndex} movePage={movePage}>   
 
-      <div key={pageIndex} ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el}} className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full  max-w-[1080px] md:rounded mx-auto px-4 pt-8 pb-6 xl:pb-8 border border-zinc-300`}>
-        
+      <div key={pageIndex} ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el}} className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full  max-w-[1080px] md:rounded mx-auto px-4 pt-8 pb-6 xl:pb-8`}>
+      <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
         <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
           <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
             {
@@ -191,6 +191,8 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
             </tbody>
             }
           />
+
+          <a style={{ fontFamily: "sans-serif" }} href="https://app-suite.vercel.app" className="text-xs text-blue-600 mt-6">Powered by https://app-suite.vercel.app</a>
           <div className="line noExport" />
           <div className={`mt-6 noExport flex [&>*]:grow flex-wrap gap-x-2.5 gap-y-2`}>
             <label htmlFor={`csv-import-${pageIndex}`} className="px-4 py-2 cursor-pointer text-center bg-rose-500 text-white rounded" >
@@ -247,7 +249,8 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
             </button>
           </div>
         </div>
-        </div>
+      </div>
+      <div className="mb-8 noExport" /> {/** Margin for preview */}
     </DraggablePage>
   )
 }

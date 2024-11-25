@@ -160,6 +160,7 @@ const ReceiptTracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSu
           {pages?.map((page, pageIndex) => (
             <SheetTablePage
               key={`sheet-page-${pageIndex}`}
+              fileId={params?.fileId}
               pageIndex={pageIndex}
               inputRefs={inputRefs}
               handleInputChange={handleInputChange}
