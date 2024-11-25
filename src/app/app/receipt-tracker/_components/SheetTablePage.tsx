@@ -179,11 +179,11 @@ export default function SheetTablePage({
               {/* Total Credit, Debit, and Final Balance Row */}
               <tr style={{ fontFamily: "sans-serif" }} className="[&>*]:!border-t-black" >
                 <td className="px-1 py-2 text-right"/>
+                <td className="px-1 py-2 text-right"/>
                 <td className="px-1 py-2 text-center font-bold">TOTAL</td>
                 <td className="px-1 py-2 text-right font-bold text-green-600"></td>
                 <td className="px-1 py-2 text-right font-bold">{splitInThousand(page.totalAmount)}</td>
                 <td className="px-1 py-2 text-right font-bold" />
-                <td className="px-1 py-2 text-right"/>
                 <td className="px-1 py-2 text-right"/>
               </tr>
             </tbody>
