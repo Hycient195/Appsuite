@@ -47,8 +47,8 @@ const ReceiptTracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSu
     })
   }
 
-  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Account Report.pdf`})
-  const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` })
+  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "C3", fileName: `Account Report.pdf`})
+  const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "C3", getFileName: (fileName) => `${fileName}.pdf` })
   
   const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
   const [ uploadImage, { isLoading: isUploadingImage, isSuccess: isUploadingImageSuccess} ] = api.commonApis.useUploadImageMutation();
