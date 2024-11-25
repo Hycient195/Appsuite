@@ -149,7 +149,7 @@ export default function SheetTablePage({
             headers={["S/N", "DATE", "NAME", "ID", "AMOUNT", "TYPE", "RECEIPT"]}
             minCellWidth={100}
             columnsPercentageWidth={[6,11.5,32,14,12.5,11.5,12.5]}
-            tableClassName="!grid-cols-[5%_11.5%_32%_14%_12.5%_11.5%_12.5%]"
+            tableClassName="!grid-cols-[6%_11.5%_32%_14%_12.5%_11.5%_12.5%]"
             tableContent={
               <tbody className=''>
                 <>
