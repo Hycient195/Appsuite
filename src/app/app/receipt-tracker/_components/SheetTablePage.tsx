@@ -148,8 +148,8 @@ export default function SheetTablePage({
           <ResizableTable
             headers={["S/N", "DATE", "NAME", "ID", "AMOUNT", "TYPE", "RECEIPT"]}
             minCellWidth={100}
-            columnsPercentageWidth={[6,11.5,32,12,13.5,11.5,13.5]}
-            tableClassName="!grid-cols-[5%_11.5%_33%_12%_13.5%_11.5%_13.5%]"
+            columnsPercentageWidth={[6,11.5,32,14,12.5,11.5,12.5]}
+            tableClassName="!grid-cols-[5%_11.5%_32%_14%_12.5%_11.5%_12.5%]"
             tableContent={
               <tbody className=''>
                 <>
