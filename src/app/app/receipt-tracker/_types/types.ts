@@ -2,8 +2,9 @@ export interface IReceiptTrackerTableRow {
   date: string;
   receiptName: string;
   amount: string;
-  subTotal: string;
   receipt: string;
+  paymentType: string;
+  payerId: string;
 }
 
 export interface IReceiptTrackerPage {

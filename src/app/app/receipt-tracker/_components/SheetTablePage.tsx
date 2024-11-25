@@ -141,9 +141,10 @@ export default function SheetTablePage({
 
           <div className="mb-3 noExport" />
           <ResizableTable
-            headers={["DATE", "NAME", "AMOUNT", "SUB TOTAL", "RECEIPT"]}
+            headers={["DATE", "NAME", "ID", "AMOUNT", "TYPE", "RECEIPT"]}
             minCellWidth={100}
-            columnsPercentageWidth={[11.5,48,13.5,13.5,13.5]}
+            columnsPercentageWidth={[11.5,38,12,13.5,11.5,13.5]}
+            tableClassName="grid-cols-[11.5%_38%_12%_13.5%_11.5%_13.5%]"
             tableContent={
               <tbody className=''>
                 <>
@@ -171,13 +172,14 @@ export default function SheetTablePage({
                 </>
 
               {/* Total Credit, Debit, and Final Balance Row */}
-              <tr style={{ fontFamily: "sans-serif" }} >
+              <tr style={{ fontFamily: "sans-serif" }} className="[&>*]:!border-t-black" >
                 <td className="px-1 py-2 text-right"/>
                 <td className="px-1 py-2 text-center font-bold">TOTAL</td>
                 {/* <td className="px-1 py-2 text-right font-bold text-green-600">{splitInThousand(page.totalAmount)}</td> */}
                 <td className="px-1 py-2 text-right font-bold text-green-600"></td>
-                <td className="px-1 py-2 text-right font-bold">{splitInThousand(page.totalSubTotal)}</td>
-                <td className="px-1 py-2 text-right font-bold text-red-600"></td>
+                <td className="px-1 py-2 text-right font-bold">{splitInThousand(page.totalAmount)}</td>
+                <td className="px-1 py-2 text-right font-bold" />
+                <td className="px-1 py-2 text-right"/>
               </tr>
             </tbody>
             }

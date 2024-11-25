@@ -138,6 +138,17 @@ export default function SheetTableRow({ row, pageIndex, rowIndex, inputRefs, han
           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "receiptName")}
         />
       </td>
+
+      <td className="items-center relative">
+        {/* <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{row.receiptName}</p> Placeholder to hold textarea height autoresize */}
+        <input
+          ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-receiptName`, el)}}
+          value={row.payerId}
+          className='w-full h-full px-1 text-center focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+          onChange={e => handleInputChange(pageIndex, rowIndex, 'payerId', e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "payerId")}
+        />
+      </td>
       
       <td className="items-center " >
         <input
@@ -151,8 +162,19 @@ export default function SheetTableRow({ row, pageIndex, rowIndex, inputRefs, han
         />
       </td>
 
-      <td className={`px-1 relative text-right flex justify-end text-black/80 items-center ${parseFloat(row.subTotal) < 0 && "text-red-600"} ${(rowIndex === 0 && row?.receiptName === "BALANCE BROUGHT FORWARD") ? "!font-bold" : "font-medium"}`}>
+      {/* <td className={`px-1 relative text-right flex justify-end text-black/80 items-center ${parseFloat(row.subTotal) < 0 && "text-red-600"} ${(rowIndex === 0 && row?.receiptName === "BALANCE BROUGHT FORWARD") ? "!font-bold" : "font-medium"}`}>
         {splitInThousand(row.subTotal)}
+      </td> */}
+
+      <td className="items-center relative">
+        {/* <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{row.receiptName}</p> Placeholder to hold textarea height autoresize */}
+        <input
+          ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-receiptName`, el)}}
+          value={row.paymentType}
+          className='w-full h-full px-1 text-center focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+          onChange={e => handleInputChange(pageIndex, rowIndex, 'paymentType', e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "paymentType")}
+        />
       </td>
 
       <td onDragOver={handleReceiptDragOver}
