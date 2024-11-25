@@ -3,6 +3,8 @@ import { formatDateInput, splitInThousand, splitInThousandForTextInput } from "@
 import axios from "axios";
 import { IReceiptTrackerPage, IReceiptTrackerTableRow } from "../_types/types";
 import { ChangeEvent, useState } from "react";
+import { MenuItem, Select } from "@mui/material";
+import { SelectInputProps } from "@mui/material/Select/SelectInput";
 
 interface ITableRowProps {
   row: IReceiptTrackerTableRow;
@@ -27,7 +29,9 @@ export default function SheetTableRow({ row, pageIndex, rowIndex, inputRefs, han
 
   const [ isLoading, setIsLoading ] = useState({ uploading: false, deleting: false, removingRow: false });
   const [ isDragging, setIsDragging ] = useState<boolean>(false);
-  
+  const [customValue, setCustomValue] = useState<string>('');
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+
   const handleUploadReceipt = async (file: any, pageIndex: number, rowIndex: number) => {
     if (!file || !isLoggedIn) return;
     setIsLoading({ ...isLoading, uploading: true });
@@ -111,6 +115,27 @@ export default function SheetTableRow({ row, pageIndex, rowIndex, inputRefs, han
     }
   };
 
+  const handleSelectChange = (event: React.ChangeEvent<SelectInputProps>) => {
+
+    const value = event.target.value as string;
+    if (["Transfer", "Cash"].includes(value)) {
+      handleInputChange(pageIndex, rowIndex, 'paymentType', event.target.value as string);
+      setMenuOpen(false); // Close the menu for non-custom options
+    }
+  };
+
+
+  const handleMenuOpen = () => {
+    setMenuOpen(true);
+  };
+
+  const handleMenuClose = (event: {}, reason: string) => {
+    // Prevent menu from closing when interacting with the custom text field
+    if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+      setMenuOpen(false);
+    }
+  };
+
   return (
     <tr style={{ fontFamily: "sans-serif"}} className={`relative group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden`}>
       <td  className="  items-center relative ">
@@ -168,13 +193,32 @@ export default function SheetTableRow({ row, pageIndex, rowIndex, inputRefs, han
 
       <td className="items-center relative">
         {/* <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{row.receiptName}</p> Placeholder to hold textarea height autoresize */}
-        <input
+        <Select
+          open={menuOpen}
+          // displayEmpty
+          onOpen={handleMenuOpen}
+          MenuProps={{
+            onClose: handleMenuClose,
+          }}
+          ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-receiptName`, el)}}
+          value={row.paymentType}
+          onChange={(e) => handleSelectChange(e as any)}
+          onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "paymentType")}
+          className="[&_*]:!border-none [&>*]:!p-0 [&>*]:!my-auto [&_svg]:!hidden !text-center [&_*]:!flex [&_*]:!items-center [&_*]:!justify-center !bg- !w-full !h-full"
+        >
+          <MenuItem value="Transfer">Transfer</MenuItem>
+          <MenuItem value="Cash">Cash</MenuItem>
+          <MenuItem value={!["Transfer", "Cash"].includes(row.paymentType) ? row.paymentType : ""} onClick={(e) => { e.preventDefault(), e.stopPropagation()}} className="!py-0 !w-max !px-0.5 !bg-white">
+            <input value={row.paymentType} onChange={e => handleInputChange(pageIndex, rowIndex, 'paymentType', e.target.value)} className="h-full !w-full !py-2  !text-center !min-w-0 !px-4" placeholder="Other" />
+          </MenuItem>
+        </Select>
+        {/* <input
           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-receiptName`, el)}}
           value={row.paymentType}
           className='w-full h-full px-1 text-center focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
           onChange={e => handleInputChange(pageIndex, rowIndex, 'paymentType', e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "paymentType")}
-        />
+        /> */}
       </td>
 
       <td onDragOver={handleReceiptDragOver}
