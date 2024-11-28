@@ -93,7 +93,7 @@ const ReceiptTracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSu
 
   const handleSaveFile = (saveType: IUpdateFileRequest["updateType"]) => {
     if (isLoggedIn && loadedSucessfully) {
-      const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+      const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,,\n,,,,,\n');
       saveFile({ fileId: params?.fileId, content: csvData, mimeType: "text/csv", updateType: saveType })
     }
   }
