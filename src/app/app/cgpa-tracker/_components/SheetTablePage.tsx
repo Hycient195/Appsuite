@@ -38,7 +38,6 @@ interface IBalanceSheetPageProps {
   //   e: React.FocusEvent<HTMLInputElement>
   // ) => void;
   handleCSVImport: (e: React.ChangeEvent<HTMLInputElement>, pageIndex: number) => void;
-  handleAddImageURL: (pageIndex: number, imageUrl: string) => void;
   downloadPageCSV: (pageIndex: number) => void;
   createDocumentPDF: (pageIndex: number, title: string) => void;
   removePage: (pageIndex: number) => void;
@@ -57,7 +56,7 @@ interface IBalanceSheetPageProps {
   params: any;
 }
 
-export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, canUndo, createDocumentPDF, cursorPositionRef, downloadPageCSV, handleAddImageURL, handleCSVImport, handleInputChange, handleKeyDown, inputRefs, insertRow, movePage, page, pageIndex, redo, removePage, removeRow, resetCursorPosition, singleDocumentRef, tableContainerRef, tableWidth, tbodyRef, undo, updatePageSubtitle, updatePageTitle, updateRowsToAdd, addPage, params }: IBalanceSheetPageProps) {
+export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, canUndo, createDocumentPDF, cursorPositionRef, downloadPageCSV, handleCSVImport, handleInputChange, handleKeyDown, inputRefs, insertRow, movePage, page, pageIndex, redo, removePage, removeRow, resetCursorPosition, singleDocumentRef, tableContainerRef, tableWidth, tbodyRef, undo, updatePageSubtitle, updatePageTitle, updateRowsToAdd, addPage, params }: IBalanceSheetPageProps) {
   const {
     isLoading, isDragging, imageSrc,
     handleRemoveLogo, handleRemovePage,

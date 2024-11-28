@@ -414,7 +414,7 @@ export const useCGPATracker = (fileName?: string) => {
       .join('\n');
     const totalCSV = `${page.imageUrl??""},"TOTAL","${page.totalUnitLoad}",${page.cgpaScale},"${page.totalGradePoint}"`
     const gpaCSV = `,"GRADE POINT AVERAGE (GPA)",,,"${page.gradePointAverage}"`
-    const cgpaCSV = `,"CUMMULATIVE GRADE POINT AVERAGE (CGPA)",,,${page.cummulativeGradePointAverage}`
+    const cgpaCSV = `,"CUMMULATIVE GRADE POINT AVERAGE (CGPA)",,,"${page.cummulativeGradePointAverage}"`
     return `"${page.title}",,,,\n"${page.subTitle}",,,,\n"Course Code","Course Title","Unit Load","Grade","Grade Point"\n${rowsCSV}\n${totalCSV}\n${gpaCSV}\n${cgpaCSV}`;
   };
 

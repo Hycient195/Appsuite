@@ -112,7 +112,7 @@
 import { ChangeEvent, useEffect } from "react";
 import { IGlobalInvoice } from "../_types/types";
 import { defaultGlobalInvoice } from "../_templates/globalDummyData";
-import { handleInputChange, handleUpdateStateProperty } from "@/utils/miscelaneous";
+import { handleUpdateStateProperty } from "@/utils/miscelaneous";
 
 const useInvoiceManager = (
   invoice: IGlobalInvoice,
@@ -136,7 +136,7 @@ const useInvoiceManager = (
       );
 
       // Compute total tax
-      const totalTax = invoice.taxes[0].amount ? invoice.taxes?.reduce(
+      const totalTax = invoice?.taxes?.[0]?.amount ? invoice?.taxes?.reduce(
         (sum, tax) => sum + parseFloat(String(tax.amount)),
         0
       ) : parseFloat(String(invoice.totalTax));

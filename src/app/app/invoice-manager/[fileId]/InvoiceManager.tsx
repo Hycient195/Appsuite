@@ -17,6 +17,7 @@ import TemplateThemeColorPicker from "@/sharedComponents/TemplateThemeColorPicke
 import TemplatePreviewScaledWrapper from "@/sharedComponents/TemplateScaledWrapper"
 import { useThemeContext } from "../_contexts/themeContext"
 import { comprehensiveInvoice, defaultGlobalInvoice } from "../_templates/globalDummyData"
+import useSaveDocument from "@/sharedHooks/useSaveDocument"
 
 interface IProps {
   loadedSucessfully: boolean;
@@ -26,59 +27,20 @@ interface IProps {
 
 export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData }: IProps) {
   const params = useParams<any>();
-  const isFirstRender = useRef(true);
 
   const { setTheme } = useThemeContext();
 
   const [ SelectedTemplate, SetSelectedTemplate ] = useState<any>();
+  const [ isTemplatePaneOpen, setIsTemplatePaneOpen ] = useState<boolean>(false);
   const [ globalState, setGlobalState ] = useState<IGlobalInvoice>(jsonData);
   const [ formData, setFormData ] = useState({
     fileName: "",
     templateId: ""
   })
-  const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
-  const [ isTemplatePaneOpen, setIsTemplatePaneOpen ] = useState<boolean>(false);
 
   const controls = useInvoiceManager(globalState, setGlobalState);
-
-  const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
+  const { handleSaveFile, saveFileIsError, saveFileIsSuccess, isSaving } = useSaveDocument({ fileId: params?.fileId, contentMimeType: "application/json", contentToSave: globalState, isLoggedIn, loadedSucessfully });
   const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "B3", fileName: `${jsonData?.fileName}.pdf`})
-
-
-  const handleSaveFile = (saveType: IUpdateFileRequest["updateType"]) => {
-    if (isLoggedIn && loadedSucessfully) {
-      saveFile({ fileId: params?.fileId, content: JSON.stringify(globalState), mimeType: "application/json", updateType: saveType })
-    }
-  }
-
-  /* Autosave page change tracker debounce effect */
-  useEffect(() => {
-    // Skip the effect on the first render
-    const newTimer: NodeJS.Timer|null = null;
-
-    if (isFirstRender.current) {
-      isFirstRender.current = false; // Set to false after first render
-      return;
-    } else {
-      if (saveTimer) {
-        clearTimeout(saveTimer);
-      }
-      const newTimer = setTimeout(() => {
-        if (!isFirstRender.current && isLoggedIn && loadedSucessfully && !isFirstRender.current) {
-          handleSaveFile("autosave");
-        }
-        clearTimeout(newTimer);
-      }, 3000);
-  
-      setSaveTimer(newTimer);
-    }
-
-    return () => {
-      if (newTimer) {
-        clearTimeout(newTimer);
-      }
-    };
-  }, [ globalState ]);
 
 
   /** Reset discount fields to default on invoice template change */

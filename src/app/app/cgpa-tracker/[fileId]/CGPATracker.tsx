@@ -196,7 +196,7 @@ const CGPATracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuces
         <div className="max-w-[1080px] mx-auto">
           <div className="!h-[20px] sticky !top-16 !bg-zinc-100 z-[2] noExport" />
           <div className="bg-white border-zinc-300 rounded-lg border p-4 sticky !top-[83px] z-[3]">
-            <FormSelect labelText="CGPA Scale" value={pages[0].cgpaScale} onChange={(e) => updateCGPAScale(e.target.value)} options={[ { text: "5 Point Scale", value: "OVER5" }, { text: "4 Point Scale", value: "OVER4"} ]} />
+            <FormSelect labelText="CGPA Scale" value={pages?.[0]?.cgpaScale} onChange={(e) => updateCGPAScale(e.target.value)} options={[ { text: "5 Point Scale", value: "OVER5" }, { text: "4 Point Scale", value: "OVER4"} ]} />
           </div>
           <div className="!h-[25px] sticky !top-[175px] !bg-zinc-100 z-[2] noExport" /> {/** Margin for preview */}
         </div>
@@ -214,7 +214,7 @@ const CGPATracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuces
               createDocumentPDF={createDocumentPDF}
               cursorPositionRef={cursorPositionRef}
               downloadPageCSV={downloadPageCSV}
-              handleAddImageURL={handleAddImageURL}
+              // handleAddImageURL={handleAddImageURL}
               handleCSVImport={handleCSVImport}
               handleInputChange={handleInputChange}
               handleKeyDown={handleKeyDown as any}

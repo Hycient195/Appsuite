@@ -247,7 +247,7 @@ export const useReceiptTracker = (fileName?: string) => {
     const text = await file.text();
     const importedPages: IReceiptTrackerPage[] = [];
     
-    const sections = text.split('\n,,,,\n,,,,\n'); // Split pages by the separator in 'downloadAllPagesCSV'
+    const sections = text.split('\n,,,,,\n,,,,,\n'); // Split pages by the separator in 'downloadAllPagesCSV'
     
     for (const section of sections) {
       const lines = section.trim().split('\n');
