@@ -19,7 +19,7 @@ const geistMono = localFont({
 });
 
 const geist = Geist({
-  weight: [ "300", "400", "700", "900" ],
+  weight: [ "300", "400", "500", "600", "700", "900" ],
   subsets: [ "latin" ]
 });
 
@@ -38,7 +38,7 @@ export default function RootLayout({
       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID as string}>
         <ReduxProvider>
           {/* <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} > */}
-          <body className={`${geist.className}  antialiased`} >
+          <body className={`${geist.className}  antialiased bg-white`} >
             {children}
           </body>
         </ReduxProvider>

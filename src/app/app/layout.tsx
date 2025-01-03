@@ -13,6 +13,7 @@ import { ILoggedInUser } from "@/types/shared.types";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { LogoAndTextWhite } from "@/sharedComponents/CustomIcons";
 // import WithAuth from "@/HOCs/WithAuth";
 
 interface IProps {
@@ -51,42 +52,21 @@ function AppLayout({ children }: IProps) {
       {
         !isSidebarHidden
         && (
-          <aside className={`${isMobileSidebarHidden ? "hidden" : "flex "} max-lg:absolute animate-slide-in-right max-lg:z-[5] max-lg:h-full max-lg:w-full max-lg:left-0 max-lg:top-0 bg-white lg:flex flex-col px-5 lg:px-6  max-w-[270px] w-[20vw] min-w-[280px]  h-[100dvh] border border-r-zinc-200`}>
+          <aside className={`${isMobileSidebarHidden ? "hidden" : "flex "} max-lg:absolute bg-primary animate-slide-in-right max-lg:z-[5] max-lg:h-full max-lg:w-full max-lg:left-0 max-lg:top-0 text-white lg:flex flex-col px-4 lg:px-4  max-w-[270px] w-[20vw] min-w-[280px]  h-[100dvh] border border-r-zinc-200`}>
             
-            <Link href="/sign-in" className="py-4 -translate-x-2 flex flex-row items-center gap-x-1">
-              <svg 
-                width="30" 
-                height="30" 
-                viewBox="0 0 100 100" 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="black"
-                className=" animate-spin [animation-duration:4s]"
-                >
-
-                <circle cx="50" cy="50" r="12" fill="black" />
-
-                <path d="M50,10 A40,40 0 0,1 90,50" fill="none" stroke="black" strokeWidth="6" />
-                <path d="M90,50 A40,40 0 0,1 50,90" fill="none" stroke="black" strokeWidth="6" />
-                <path d="M50,90 A40,40 0 0,1 10,50" fill="none" stroke="black" strokeWidth="6" />
-                <path d="M10,50 A40,40 0 0,1 50,10" fill="none" stroke="black" strokeWidth="6" />
-
-                <circle cx="50" cy="10" r="6" fill="black" />
-                <circle cx="90" cy="50" r="6" fill="black" />
-                <circle cx="50" cy="90" r="6" fill="black" />
-                <circle cx="10" cy="50" r="6" fill="black" />
-              </svg>
-              <h2 className="text-xl font-sans font-semibold tracking-wide">APP SUITE</h2>
+            <Link href="/sign-in" className="py-4 -translate-x-2 flex flex-row items-center gap-x-1 mb-6 px-2 mt-2 lg:mt-3">
+              <LogoAndTextWhite className="aspect-[4/1] w-auto h-8" />
             </Link>
-            <h4 className="text-neutral-400 text-xs mt-[2vh]">PRIMARY</h4>
+            {/* <h4 className="text-neutral-400 text-xs mt-[2vh]">PRIMARY</h4> */}
             <NavList route={navRoutes.map(x => { return { ...x, href: `/app/${x.href}`}})} />
-            <h4 className="text-neutral-400 text-xs mt-[2vh]">COMMON</h4>
-            <NavList route={commonRoutes} />
+            {/* <h4 className="text-neutral-400 text-xs mt-[2vh]">COMMON</h4> */}
+            <NavList route={commonRoutes} className="mt-auto" />
             <NavList className="md:hidden" route={signOutMobileRoute} />
             
-            
+            <div className="h-px bg-slate-500 w-full !my-4" />
 
-            <button onClick={navigateToProfile} className="grid grid-cols-[1fr_2.8fr] text-left mt-auto mb-5 lg:mb-6 gap-2 relative">
-              <figure className="bg-gray-200 w-full h-auto aspect-square rounded-lg overflow-hidden relative outline outline-1 outline-zinc-300 outline-offset-1">
+            <button onClick={navigateToProfile} className="grid grid-cols-[1fr_2.8fr] text-left  mb-5 lg:mb-6 gap-2 relative">
+              <figure className="bg-gray-200 w-full h-auto aspect-square rounded-full overflow-hidden relative outline outline-1 outline-zinc-300 outline-offset-1">
                 { loggInUser?.picture && <Image src={loggInUser?.picture} fill className="object-cover object-center" alt={`${loggInUser?.given_name} ${loggInUser?.family_name}`} /> }
               </figure>
               <div className="flex flex-col gap-1 justify-evenly h-full">

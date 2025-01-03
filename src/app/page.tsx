@@ -63,7 +63,7 @@ export default function LandingPage() {
         <nav className="flex flex-wrap gap-10 justify-between items-center px-12 w-full text-base text-blue-100 whitespace-nowrap bg-primary min-h-[64px] rounded-[33px] max-md:px-5 max-md:max-w-full">
           <LogoAndTextWhite className='aspect-[4/1] w-auto h-7 lg:h-8' />
           <div className="flex self-stretch my-auto">
-            <div className="flex gap-6 justify-center text-sm md:text-base items-center h-full">
+            <div className="flex gap-6 justify-center text-sm md:text-base items-center h-full max-md:pr-2">
               <Link href={{ hash: "features"}} className="self-stretch my-auto">Features</Link>
               <Link href={{ hash: "about"}} className="self-stretch my-auto">About</Link>
             </div>
@@ -88,9 +88,9 @@ export default function LandingPage() {
           With a range of tools, AppSuite simplifies it all with seamless,
           intuitive features designed to keep you organized and in control
         </div>
-        <button className="self-center font-bold px-7 py-6 mt-10 max-w-full text-xl tracking-tight leading-tight text-white border border-gray-800 border-solid bg-primary min-h-[68px] rounded-full shadow-[0px_5px_0px_rgba(31,41,55,1)] w-full md:w-[417px]  max-md:px-10">
+        <Link href="/sign-in" className="self-center font-bold px-7 text-center py-6 mt-10 max-w-full text-xl tracking-tight leading-tight text-white border border-gray-800 border-solid bg-primary min-h-[68px] rounded-full shadow-[0px_5px_0px_rgba(31,41,55,1)] w-full md:w-[417px]  max-md:px-10">
           Start for free
-        </button>
+        </Link>
       </div>
 
       <div id='features' className="flex flex-col pt-12 mt-11 w-full max-md:mt-10 max-md:max-w-full">
@@ -106,12 +106,6 @@ export default function LandingPage() {
               <Image src="/images/home/module-1.png" fill alt='Module 1' />
             </div>
           </div>
-          {/* <Image
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/cac15143821c00e150d38acdb95de41e4e3e5676524fc231f50999128c9ade34?apiKey=0ce679486ae447bd8ce08b2cc2263e2e&"
-            alt="Feature Showcase"
-            className="object-contain z-10 self-center mt-0 w-full aspect-[1.54] max-w-[1318px] rounded-[35px] shadow-[0px_0px_4px_rgba(0,0,0,0.25)] max-md:max-w-full"
-          /> */}
         </div>
         <div className="flex flex-col justify-center  w-full  px-4 py-20 lg:py-28 ">
           <LogoAndText className='aspect-[4/1] h-auto w-full max-w-screen-lg mx-auto ' />
