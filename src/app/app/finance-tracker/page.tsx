@@ -81,7 +81,7 @@ export default function LandingPage() {
         <div className="mt-3.5 text-xl lg:text-2xl text-center text-slate-500 max-md:mr-1.5 max-md:max-w-full">
           A user-driven, single-purpose application that empowers you to track income and expenditure with ease, securely storing your data in your own Google Drive.
         </div>
-        <ProceedOrSignInButton href='files' />
+        <ProceedOrSignInButton href='finance-tracker/files' />
       </div>
 
       <div id='features' className="flex overflow-hidden max-w-[100vw] flex-col pt-12 mt-11 w-full max-md:mt-10 max-md:max-w-full">
