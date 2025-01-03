@@ -20,6 +20,7 @@ const config: Config = {
         "screen-slide-in-left": "screen-slide-in-left 1s ease-in-out",
         "screen-slide-in-top": "screen-slide-in-top 700ms ease-in-out",
         "screen-slide-in-bottom": "screen-slide-in-bottom 700ms ease-in-out",
+        "slide-in-bottom": "slide-in-bottom 500ms ease-in-out",
         "eye-disappear": "disappear 2s",
         "fade-in": "fade-in 500ms ease-in",
         float: 'float 3s ease-in-out infinite',
@@ -121,6 +122,14 @@ const config: Config = {
         scrollLeft: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' }, // Scroll halfway, because the image set is duplicated
+        },
+        "slide-in-bottom": {
+          from: {
+            transform: "translateY(100%)"
+          },
+          to: {
+            transform: "translateY(0)"
+          }
         },
       }
     },

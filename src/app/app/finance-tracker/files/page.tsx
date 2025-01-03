@@ -11,6 +11,11 @@ import Link from "next/link";
 import { parseCookies } from "nookies";
 import { MenuItem, Select } from "@mui/material";
 import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
+import ModuleFilesHeader from "@/sharedComponents/ModuleFilesHeader";
+import EmptyFileList from "@/sharedComponents/emptyState/EmptyFileList";
+import CustomModal from "@/sharedComponents/CustomModal";
+import ModuleLandingPageNav from "../../_components/ModuleLandingPageNav";
+import CreateFinanceTrackerSheet from "../_components/CreateSheet";
 
 
 export default function BalanceSheetFiles() {
@@ -18,14 +23,23 @@ export default function BalanceSheetFiles() {
 
   const [ hasDeleted, sethasDeleted ] = useState<boolean>(false);
   const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFoldersWithPrimaryFileQuery();
+  const [ isCreateModalOpen, setIsCreateModalOpen ] = useState<boolean>(false);
 
   useEffect(() => {
     getFiles({ folderName: "FINANCE_TRACKER", primaryFileMimeType: "text/csv" });
   }, [ getFiles, hasDeleted ])
 
   return (
-    <main className="h-full relative">
-      <div className="bg-white border-[12px] border-white min-h-full  max-h-[50vh] overflow-y-auto ring-1 ring-zinc-200 rounded-md">
+    <main className="h-full relative bg-white p-3 rounded-md grid grid-rows-[max-content_1fr]">
+      <div className="">
+        <ModuleLandingPageNav className="lg:hidden !pt-0 pb-3" /> 
+        <ModuleFilesHeader />
+      </div>
+      
+      <div className="file-list flex h-full">
+        <div className="flex items-center justify-center h-full w-full"><EmptyFileList handleInitiateCreateSheet={() => setIsCreateModalOpen(true)} /></div>
+      </div>
+      {/* <div className="bg-white border-[12px] border-white min-h-full  max-h-[50vh] overflow-y-auto ring-1 ring-zinc-200 rounded-md">
         <table cellPadding={10} className=" w-full">
           <thead className="head sticky top-0 w-full z-[1]">
             <tr className="bg-black w-full text-white font-bold">
@@ -69,7 +83,8 @@ export default function BalanceSheetFiles() {
             }
           </tbody>
         </table>
-      </div>
+      </div> */}
+      { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet handleModalClose={() => setIsCreateModalOpen(false)} /></CustomModal> }
     </main>
   )
 }
@@ -117,82 +132,79 @@ function TableRow({ file , hasDeleted, sethasDeleted }: ITableRowProps) {
   const handleGetFileVersions = (e: MouseEvent<HTMLButtonElement|any>, fileId: string) => {
     e.stopPropagation();
     getFileVersions(fileId);
-  }
-
-  // const handleGetFileVersions
-
-  console.log(fileVersions)
+  };
 
   return (
-    <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
-      <td>
-        <div className="">
-          <input
-            type="text"
-            value={fileName}
-            ref={inputRef}
-            // onFocus={() => setIsEditing(true)}
-            onBlur={() => !isEditing && setIsEditing(false)}
-            // onClick={(e) => e.stopPropagation()}
-            onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
-            className="inline-block w-full bg-transparent outline-none py-2 h-full"
-          />
-        </div>
-      </td>
-      <td>{file?.primaryFile?.size} Kb</td>
-      <td>
-        <div className="flex flex-row items-center gap-2">
-          <LoadingButton
-            loading={isUpdatingFile}
-            success={fileNameUpdateSuccess}
-            successResetDuration={1500}
-            successText="Sucessful"
-            className="px-4 !py-2 bg-violet-500 text-white rounded"
-            onClick={handleEdit}
-          >
-            { isEditing ? "Save" : "Rename" }
-          </LoadingButton>
-          {/* <LoadingButton loading={isRestoringFileVersion} success={fileRestoreIsSuccess} onClick={(e) => e.stopPropagation()} className="!px-4 !py-2 !bg-amber-400 rounded-md relative">
-            <span>Versions</span>
-            <Select
-              onMouseDown={(e) => handleGetFileVersions(e, file?.id)}
-              itemID="location"
-              defaultValue={0}
-              value={0}
-              className="[&>*]:!py-0 [&>*]:!px-0 !absolute !w-full !opacity-0 !bg-tes !left-0 !h-full !top-0 [&>*]:!border-none  pr- font-semibold text-md text-zinc-600 min-w-[40px]"
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Age"
-            >
-              <MenuItem className="">Versions</MenuItem>
-              {
-                !isGettingFileVersions
-                ? (
-                  !fileVersionsIsError
-                  ? (
-                    fileVersions && fileVersions?.map((version, index) => (
-                      <MenuItem onClick={() => restoreFileVersion({ fileId: file?.id, revisionId: version?.id, mimeType: "text/csv" })} key={`file-version-${index}`} className="flex gap-2"><span className="text-zinc-400">Timestamp: </span> {version?.modifiedTime?.split(".")[0]?.replace("T", " ")}</MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem className="">No file versions</MenuItem>
-                  )
+    <></>
+    // <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
+    //   <td>
+    //     <div className="">
+    //       <input
+    //         type="text"
+    //         value={fileName}
+    //         ref={inputRef}
+    //         // onFocus={() => setIsEditing(true)}
+    //         onBlur={() => !isEditing && setIsEditing(false)}
+    //         // onClick={(e) => e.stopPropagation()}
+    //         onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
+    //         className="inline-block w-full bg-transparent outline-none py-2 h-full"
+    //       />
+    //     </div>
+    //   </td>
+    //   <td>{file?.primaryFile?.size} Kb</td>
+    //   <td>
+    //     <div className="flex flex-row items-center gap-2">
+    //       <LoadingButton
+    //         loading={isUpdatingFile}
+    //         success={fileNameUpdateSuccess}
+    //         successResetDuration={1500}
+    //         successText="Sucessful"
+    //         className="px-4 !py-2 bg-violet-500 text-white rounded"
+    //         onClick={handleEdit}
+    //       >
+    //         { isEditing ? "Save" : "Rename" }
+    //       </LoadingButton>
+    //       <LoadingButton loading={isRestoringFileVersion} success={fileRestoreIsSuccess} onClick={(e) => e.stopPropagation()} className="!px-4 !py-2 !bg-amber-400 rounded-md relative">
+    //         <span>Versions</span>
+    //         <Select
+    //           onMouseDown={(e) => handleGetFileVersions(e, file?.id)}
+    //           itemID="location"
+    //           defaultValue={0}
+    //           value={0}
+    //           className="[&>*]:!py-0 [&>*]:!px-0 !absolute !w-full !opacity-0 !bg-tes !left-0 !h-full !top-0 [&>*]:!border-none  pr- font-semibold text-md text-zinc-600 min-w-[40px]"
+    //           labelId="demo-simple-select-label"
+    //           id="demo-simple-select"
+    //           label="Age"
+    //         >
+    //           <MenuItem className="">Versions</MenuItem>
+    //           {
+    //             !isGettingFileVersions
+    //             ? (
+    //               !fileVersionsIsError
+    //               ? (
+    //                 fileVersions && fileVersions?.map((version, index) => (
+    //                   <MenuItem onClick={() => restoreFileVersion({ fileId: file?.id, revisionId: version?.id, mimeType: "text/csv" })} key={`file-version-${index}`} className="flex gap-2"><span className="text-zinc-400">Timestamp: </span> {version?.modifiedTime?.split(".")[0]?.replace("T", " ")}</MenuItem>
+    //                 ))
+    //               ) : (
+    //                 <MenuItem className="">No file versions</MenuItem>
+    //               )
                   
-                ) : (
-                  <MenuItem className="">Loading ...</MenuItem>
-                )
-              }
+    //             ) : (
+    //               <MenuItem className="">Loading ...</MenuItem>
+    //             )
+    //           }
               
-            </Select>
-          </LoadingButton> */}
-          <LoadingButton
-            loading={isLoading}
-            className="px-4 !py-2 bg-red-600 text-white rounded"
-            onClick={(e) => { e.stopPropagation(); deleteDocument(file?.folderId as string)}}
-          >
-            Delete
-          </LoadingButton>
-        </div>
-      </td>
-    </tr>
+    //         </Select>
+    //       </LoadingButton>
+    //       <LoadingButton
+    //         loading={isLoading}
+    //         className="px-4 !py-2 bg-red-600 text-white rounded"
+    //         onClick={(e) => { e.stopPropagation(); deleteDocument(file?.folderId as string)}}
+    //       >
+    //         Delete
+    //       </LoadingButton>
+    //     </div>
+    //   </td>
+    // </tr>
   )
 }

@@ -19,6 +19,7 @@ import { IBalanceSheetPage } from '../_types/types';
 import axios from 'axios';
 import LoadingButton from '@/sharedComponents/LoadingButton';
 import BalanceSheetPage from '../_components/SheetTablePage';
+import { BalanceSheetContextProvider } from '../_contexts/financeTrackerContext';
 
 const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
 
@@ -53,6 +54,8 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
   const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
   const [ uploadImage, { isLoading: isUploadingImage, isSuccess: isUploadingImageSuccess} ] = api.commonApis.useUploadImageMutation();
 
+  const balanceSheetInstance = useBalanceSheet();
+
   const {
     pages,
     updatePageTitle,
@@ -79,7 +82,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     handleKeyDown,
     inputRefs,
     movePage
-  } = useBalanceSheet();
+  } = balanceSheetInstance;
 
   /* Loading CSV file fetched from the server using SSR */
   useEffect(() => {
@@ -185,85 +188,87 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
 
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Teleport rootId='saveIconPosition'>
-        <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
-          <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
-        </button>
-      </Teleport>
-      <main className=" w-full border-zinc-200 ">
-     
-        <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
-          {(pages).map((page, pageIndex) => (
-            <BalanceSheetPage
-              key={`page-${pageIndex}`}
-              isLoggedIn={isLoggedIn}
-              pages={pages}
-              setPages={setPages}
-              addPage={addPage}
-              canRedo={canRedo}
-              canUndo={canUndo}
-              createDocumentPDF={createDocumentPDF}
-              cursorPositionRef={cursorPositionRef}
-              downloadPageCSV={downloadPageCSV}
-              handleAddImageURL={handleAddImageURL}
-              handleCSVImport={handleCSVImport}
-              handleInputChange={handleInputChange}
-              handleKeyDown={handleKeyDown as any}
-              handleNumericInputBlur={handleNumericInputBlur}
-              inputRefs={inputRefs}
-              insertRow={insertRow}
-              movePage={movePage}
-              page={page}
-              pageIndex={pageIndex}
-              redo={redo}
-              removePage={removePage}
-              removeRow={removeRow}
-              resetCursorPosition={resetCursorPosition}
-              singleDocumentRef={singleDocumentRef as any}
-              tableContainerRef={tableContainerRef}
-              tableWidth={tableWidth}
-              tbodyRef={tbodyRef}
-              undo={undo}
-              updatePageSubtitle={updatePageSubtitle}
-              updatePageTitle={updatePageTitle}
-              updateRowsToAdd={updateRowsToAdd}
-              params={params}
-            />
-          ))}
+    <BalanceSheetContextProvider balanceSheetInstance={balanceSheetInstance}>
+      <DndProvider backend={HTML5Backend}>
+        <Teleport rootId='saveIconPosition'>
+          <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
+            <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
+          </button>
+        </Teleport>
+        <main className=" w-full border-zinc-200 ">
+      
+          <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
+            {(pages).map((page, pageIndex) => (
+              <BalanceSheetPage
+                key={`page-${pageIndex}`}
+                isLoggedIn={isLoggedIn}
+                pages={pages}
+                setPages={setPages}
+                addPage={addPage}
+                canRedo={canRedo}
+                canUndo={canUndo}
+                createDocumentPDF={createDocumentPDF}
+                cursorPositionRef={cursorPositionRef}
+                downloadPageCSV={downloadPageCSV}
+                handleAddImageURL={handleAddImageURL}
+                handleCSVImport={handleCSVImport}
+                handleInputChange={handleInputChange}
+                handleKeyDown={handleKeyDown as any}
+                handleNumericInputBlur={handleNumericInputBlur}
+                inputRefs={inputRefs}
+                insertRow={insertRow}
+                movePage={movePage}
+                page={page}
+                pageIndex={pageIndex}
+                redo={redo}
+                removePage={removePage}
+                removeRow={removeRow}
+                resetCursorPosition={resetCursorPosition}
+                singleDocumentRef={singleDocumentRef as any}
+                tableContainerRef={tableContainerRef}
+                tableWidth={tableWidth}
+                tbodyRef={tbodyRef}
+                undo={undo}
+                updatePageSubtitle={updatePageSubtitle}
+                updatePageTitle={updatePageTitle}
+                updateRowsToAdd={updateRowsToAdd}
+                params={params}
+              />
+            ))}
 
-          {/* Global Actions */}
-          <div className={`flex flex-wrap max-md:px-4 noExport flex-row gap-3 lg:gap-4 justify-end`}>
-            <button
-              className="px-4 py-2 bg-green-500 text-white rounded"
-              onClick={downloadAllPagesCSV}
-            >
-              Download All Pages as CSV
-            </button>
-            <button
-              className="px-4 py-2 bg-amber-500 text-white rounded"
-              onClick={createPdf}
-            >
-              Download All Pages as PDF
-            </button>
-            <label
-              htmlFor='csv-import'
-              className="px-4 py-2 cursor-pointer bg-rose-500 text-white rounded"
-            >
-              Import CSV
-              <input id='csv-import' type="file" accept=".csv" className='hidden' onChange={handleCSVImport} />
-            </label>
-            <button
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-              onClick={() => addPage(pages.length - 1)}
-            >
-              Add New Page
-            </button>
-            
+            {/* Global Actions */}
+            <div className={`flex flex-wrap max-md:px-4 noExport flex-row gap-3 lg:gap-4 justify-end`}>
+              <button
+                className="px-4 py-2 bg-green-500 text-white rounded"
+                onClick={downloadAllPagesCSV}
+              >
+                Download All Pages as CSV
+              </button>
+              <button
+                className="px-4 py-2 bg-amber-500 text-white rounded"
+                onClick={createPdf}
+              >
+                Download All Pages as PDF
+              </button>
+              <label
+                htmlFor='csv-import'
+                className="px-4 py-2 cursor-pointer bg-rose-500 text-white rounded"
+              >
+                Import CSV
+                <input id='csv-import' type="file" accept=".csv" className='hidden' onChange={handleCSVImport} />
+              </label>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() => addPage(pages.length - 1)}
+              >
+                Add New Page
+              </button>
+              
+            </div>
           </div>
-        </div>
-      </main>
-    </DndProvider>
+        </main>
+      </DndProvider>
+    </BalanceSheetContextProvider>
   );
 };
 

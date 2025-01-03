@@ -1,6 +1,7 @@
 "use client"
 
 import store from "@/redux/store/store";
+import ToastProvider from "@/sharedComponents/utilities/ToastContainer";
 import { Provider } from "react-redux";
 
 interface IProps {
@@ -10,7 +11,9 @@ interface IProps {
 export default function ReduxProvider ({ children }: IProps) {
   return (
     <Provider store={store}>
-      {children}
+      <ToastProvider>
+        {children}
+      </ToastProvider>
     </Provider>
   )
 }

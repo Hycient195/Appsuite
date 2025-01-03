@@ -44,7 +44,7 @@
     1px 1px 0 #000;
   }
   .btn {
-    @apply px-6 py-3 font-medium rounded-md shadow-lg;
+    @apply px-5 py-2.5 font-medium rounded-lg shadow-sm flex flex-row items-center justify-center text-center gap-1.5;
     transition: background-color 500ms;
   }
   .btn-sm {
@@ -81,6 +81,10 @@
 
   .spread-out {
     @apply flex flex-row items-center justify-between;
+  }
+
+  .line-in {
+    @apply flex flex-row items-center gap-2;
   }
 
   .line {

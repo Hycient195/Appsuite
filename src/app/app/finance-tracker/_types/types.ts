@@ -15,6 +15,7 @@ export interface IBalanceSheetPage {
   finalBalance: string;
   rowsToAdd: number;
   imageUrl?: string;
+  templateLayout?: "CLASSIC" | "MODERN"
 }
 
 export interface IBalanceSheetFile {

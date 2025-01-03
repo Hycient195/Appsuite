@@ -21,7 +21,7 @@ const DashboardNav = memo(() => {
 
   // const loggedInUser: ILoggedInUser = parseCookies()?.asUserProfile ? JSON.parse(parseCookies()?.asUserProfile) : {};
 
-  const rootPath = pathname?.split(/\//g)[2];
+  const rootPath = "/" + pathname?.split(/\//g)[1] + "/" +  pathname?.split(/\//g)[2];
 
   const navContent = useAppSelector((rootState) => rootState?.sharedSlice.navContent);
 
@@ -52,6 +52,8 @@ const DashboardNav = memo(() => {
     destroyCookie({ }, "asUserProfile", { path: "/"});
     googleLogout();
   };
+
+  console.log(rootPath)
 
   return (
     // {/* A React Portal and also placeholder element Used to Render content outside DOM Heirachy */}

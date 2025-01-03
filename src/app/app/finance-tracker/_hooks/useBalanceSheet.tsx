@@ -19,7 +19,8 @@ export const defaultPage: IBalanceSheetPage = {
   totalDebit: "0",
   finalBalance: "0",
   rowsToAdd: 1,
-  imageUrl: ""
+  imageUrl: "",
+  templateLayout: "CLASSIC"
 };
 
 export const useBalanceSheet = (fileName?: string) => {
@@ -371,7 +372,7 @@ export const useBalanceSheet = (fileName?: string) => {
       .map(row => `"${row.date}","${row.narration}","${row.credit}","${row.debit}","${row.balance}"`)
       .join('\n');
     const totalCSV = `${page.imageUrl??""},"TOTAL","${page.totalCredit}","${page.totalDebit}","${page.finalBalance}" `
-    return `"${page.title}",,,,\n"${page.subTitle}",,,,\n"Date","Narration","Credit","Debit","Balance"\n${rowsCSV}\n${totalCSV}`;
+    return `"${page.title}",,,,\n"${page.subTitle}",${page.templateLayout},,,\n"Date","Narration","Credit","Debit","Balance"\n${rowsCSV}\n${totalCSV}`;
   };
 
   const downloadCSV = (csvData: string, filename: string) => {

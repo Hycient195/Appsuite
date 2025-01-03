@@ -6,7 +6,8 @@ const initialState: {
     content: JSX.Element|React.ReactNode
   },
   sidebar: {
-    isHidden: boolean
+    isHidden: boolean,
+    isHalfVisible: boolean
   },
   mobileSidebar: {
     isHidden: boolean
@@ -20,7 +21,8 @@ const initialState: {
     content: null
   },
   sidebar: {
-    isHidden: false
+    isHidden: false,
+    isHalfVisible: typeof window !== "undefined" ? JSON.parse(localStorage.getItem("isSidebarhalfVisible") as string || "false" ) : false
   },
   mobileSidebar: {
     isHidden: true
@@ -45,12 +47,26 @@ const sharedSlice = createSlice({
     },
     showSidebar: (state) => {
       state.sidebar.isHidden = false;
+      state.sidebar.isHalfVisible = false,
+      localStorage.setItem("isSidebarhalfVisible", "false");
+    },
+    peekSidebar: (state) => {
+      state.sidebar.isHidden = false;
+      state.sidebar.isHalfVisible = true;
+      localStorage.setItem("isSidebarhalfVisible", "true");
+    },
+    toggleSidebarPeek: (state) => {
+      state.sidebar.isHidden = false;
+      state.sidebar.isHalfVisible = !state.sidebar.isHalfVisible;
+      localStorage.setItem("isSidebarhalfVisible", JSON.stringify(state.sidebar.isHalfVisible));
     },
     hideMobileSidebar: (state) => {
       state.mobileSidebar.isHidden = true;
     },
     showMobileSidebar: (state) => {
       state.mobileSidebar.isHidden = false;
+      state.sidebar.isHalfVisible = false;
+      localStorage.setItem("isSidebarhalfVisible", "false");
     },
     toggleMobileSidebar: (state) => {
       state.mobileSidebar.isHidden = !state.mobileSidebar.isHidden;
