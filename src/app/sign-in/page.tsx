@@ -22,13 +22,13 @@ const SignIn = () => {
       const accessToken = cookies?.asAccessToken
       const refreshToken = cookies?.asRefreshToken
       if (accessToken) {
-        window.location.assign("/app/finance-tracker/create");
+        window.location.assign("/app/finance-tracker");
       } else {
         if (refreshToken) {
           const tokenResponse = (await getNewAccessToken(refreshToken as string));
           if (tokenResponse) {
             setCookie(null, "asAccessToken", tokenResponse.access_token, { path: "/", maxAge: (60 * 60) });
-            window.location.assign("/app/finance-tracker/create");
+            window.location.assign("/app/finance-tracker");
           }
         }
       }
@@ -58,11 +58,11 @@ const SignIn = () => {
           .then((signInRes) => {
             setIsSigningIn(false);
             setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
-            window.location.assign("/app/finance-tracker/create");
+            window.location.assign("/app/finance-tracker");
           }).catch(() => {
             setIsSigningIn(false);
             setCookie(null, "asUserProfile", JSON.stringify(res.data), { path: "/", maxAge: (60 * 60 * 24 * 7) });
-            window.location.assign("/app/finance-tracker/create");
+            window.location.assign("/app/finance-tracker");
           })
       })
       .catch((err) => console.log(err));
