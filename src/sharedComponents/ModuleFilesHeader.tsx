@@ -11,7 +11,7 @@ export default function ModuleFilesHeader() {
           <span className="text-slate-500">Finance Tracker</span>
         </div>
         
-        <h1 className="text-slate-900 text-2xl lg:text-3xl font-semibold mt-3">Finance Tracker</h1>
+        <h1 className="text-slate-900 text-2xl lg:text-3xl font-semibold mt-3 max-md:hidden">Finance Tracker</h1>
         <p className="text-slate-500">Track, manage and forecast your customers and orders.</p>
       </div>
       <div className="right line-in gap-3">

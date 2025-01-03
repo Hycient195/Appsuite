@@ -16,6 +16,7 @@ import EmptyFileList from "@/sharedComponents/emptyState/EmptyFileList";
 import CustomModal from "@/sharedComponents/CustomModal";
 import ModuleLandingPageNav from "../../_components/ModuleLandingPageNav";
 import CreateFinanceTrackerSheet from "../_components/CreateSheet";
+import { AnimatePresence } from "motion/react";
 
 
 export default function BalanceSheetFiles() {
@@ -84,7 +85,9 @@ export default function BalanceSheetFiles() {
           </tbody>
         </table>
       </div> */}
-      { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet handleModalClose={() => setIsCreateModalOpen(false)} /></CustomModal> }
+      <AnimatePresence>
+        { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet handleModalClose={() => setIsCreateModalOpen(false)} /></CustomModal> }
+      </AnimatePresence>
     </main>
   )
 }
