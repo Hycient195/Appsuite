@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: "frame-src 'self' https://lh3.googleusercontent.com;",
           },
+          // {
+          //   key: 'Content-Security-Policy',
+          //   value: "frame-src 'self' https://cdn.builder.io;",
+          // },
         ],
       },
     ];

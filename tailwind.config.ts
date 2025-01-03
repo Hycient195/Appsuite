@@ -23,9 +23,10 @@ const config: Config = {
         "eye-disappear": "disappear 2s",
         "fade-in": "fade-in 500ms ease-in",
         float: 'float 3s ease-in-out infinite',
+        'scroll-left': 'scrollLeft 30s linear infinite',
       },
       colors: {
-        primary: "black",
+        primary: "#002037",
         secondary: colors.zinc[600],
         tertiary: colors.zinc[300],
         "dark-blue": "#043665",
@@ -116,6 +117,10 @@ const config: Config = {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        scrollLeft: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' }, // Scroll halfway, because the image set is duplicated
         },
       }
     },

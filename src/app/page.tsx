@@ -1,189 +1,178 @@
-"use client"
+import { InstagramIcon, LogoAndText, LogoAndTextWhite, TelegramIcon, YoutubeIcon } from '@/sharedComponents/CustomIcons';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { LogoIcon } from "@/sharedComponents/CustomIcons";
-import Link from "next/link";
-import { useState } from "react";
+export interface FeatureCardProps {
+  title: string;
+  description: string;
+  link: string
+}
 
-const links = [
-  // {
-  //   text: "Features",
-  //   path: "/",
-  //   id: "features"
-  // },
+export interface SocialIconProps {
+  src: string;
+  alt: string;
+  width: string;
+  aspectRatio: string;
+}
+
+export interface FooterLinkProps {
+  text: string;
+}
+
+export interface NavigationLinkProps {
+  text: string;
+}
+
+const features = [
   {
-    text: "About",
-    path: "",
-    id: "about"
+    title: "Finance Tracker",
+    description: "Gain clarity over your finances with tools to track expenses, income, and savings in one streamlined dashboard.",
+    link: "/app/finance-tracker"
   },
   {
-    text: "Contact",
-    path: "",
-    id: "contact"
+    title: "Receipt Tracker",
+    description: "Effortlessly organize and store receipts digitally for quick access and better financial management.",
+    link: "/app/receipt-tracker"
   },
-]
+  {
+    title: "Grades Tracker",
+    description: "Effortlessly organize track your grades.",
+    link: "/app/grades-tracker"
+  }
+];
 
-function App() {
-  const [ isMobileNavOpen, setIsMobileNavOpen ] = useState<boolean>(false);
+const socialIcons = [
+  {
+    href: "",
+    icon: <TelegramIcon />
+  },
+  {
+    href: "",
+    icon: <InstagramIcon />
+  },
+  {
+    href: "",
+    icon: <YoutubeIcon />
+  },
+];
 
+export default function LandingPage() {
   return (
-    <div className="bg-white relative text-primaryColor min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="w-full sticky top-0 z-[3] bg-white flex justify-between items-center">
-        {/* <div className="text-xl font-bold text-primary">AppSuite</div>
-        <nav className="flex space-x-6">
-          <a href="#features" className="hover:text-highlightColor transition-colors">Features</a>
-          <a href="#about" className="hover:text-highlightColor transition-colors">About</a>
-          <a href="#contact" className="hover:text-highlightColor transition-colors">Contact</a>
-          <a href="#sign-in" className="text-highlightColor font-semibold">Sign In</a>
-        </nav> */}
-         <nav className="shadow w-full  bg-gradient-to-t [&_*]:borde [&_*]:border-dashed [&_*]:border-black">
-          <div className="mx-auto spread-out max-w-screen-2xl px-4 py-4 max-md:py-3.5 flex flex-row gap-2 items-center">
-            <Link href="/" className="logo flex flex-row gap-1 lg:gap-2 items-center">
-              <LogoIcon />
-              <span style={{ animationDuration: "700ms"}} className="text-slate-800  text-2xl font-medium">AppSuite</span>
-            </Link>
-            <div style={{ animationDuration: "1000ms"}} className="md:ml-[4%] max-md:hidden">
-              { links.map(link => <Link key={link.text} className="capitalize py-3 px-4 text-zinc-700 xl:px-5" href={`${link.path}${link.id?`#${link.id}`:""}`}>{link.text}</Link>)}
-              {/* { links.map(link => <Link key={link.text} className="capitalize py-3 px-4 text-slate-600 xl:px-5" href={{ pathname: `${link.path}`, hash: `${link.id?`${link.id}`:""}`}} preventScrollReset >{link.text}</Link>)} */}
+    <div className="flex overflow-hidden flex-col pt-14 bg-[url(/images/home/hero-bg.png)] bg-contain bg-no-repeat bg-left-top">
+      <div className="flex flex-col self-center text-primary max-w-screen-md px-4">
+        <nav className="flex flex-wrap gap-10 justify-between items-center px-12 w-full text-base text-blue-100 whitespace-nowrap bg-primary min-h-[64px] rounded-[33px] max-md:px-5 max-md:max-w-full">
+          <LogoAndTextWhite className='aspect-[4/1] w-auto h-7 lg:h-8' />
+          <div className="flex self-stretch my-auto">
+            <div className="flex gap-6 justify-center text-sm md:text-base items-center h-full">
+              <Link href={{ hash: "features"}} className="self-stretch my-auto">Features</Link>
+              <Link href={{ hash: "about"}} className="self-stretch my-auto">About</Link>
             </div>
-            <Link href="/sign-in" className="px-6 max-md:hidden ml-auto py-2.5 rounded-full font-medium bg-black text-white bg-blue">Try for Free</Link>
-            <button onClick={() => setIsMobileNavOpen(true)} className="ml-auto md:hidden ">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-9 text-slate-700">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-            </button>
           </div>
         </nav>
-      </header>
 
-      {/* Main content */}
-      <main className="flex-grow ">
-        {/* Hero section */}
-        <section className="text-center mb-20 relative bg-[url(/images/home/hero-bg.jpg)] flex items-center justify-center bg-cover bg-no-repeat h-[clamp(400px,60vh,700px)] after:absolute after:h-full after:w-full after:left-0 after:top-0 after:bg-white/50">
-          <div className=" p-[clamp(16px,3vw,40px)] z-[1]">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primaryColor">Welcome to AppSuite</h1>
-            <p className="text-lg md:text-xl text-secondary mb-8">
-              Your precisely and efficiently tailored special-purpose apps, all in one suite.
-            </p>
-            {/* <a href="#features" className="bg-highlightColor text-white py-3 px-6 rounded-full shadow-lg hover:bg-purple-700 transition-all">
-              Explore Features
-            </a> */}
-            <Link href="/sign-in" className="bg-black/90 text-white py-3 px-6 rounded-full shadow-lg duration-500 hover:bg-black/70 transition-all">
-              Try for Free
-            </Link>
-          </div>
-        </section>
-
-        {/* Features section */}
-        {/* <section id="features" className="mb-20">
-          <h2 className="text-3xl font-bold text-center mb-10">Features</h2>
-          <div className="grid md:grid-cols-3 gap-10">
-            <div className="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
-              <h3 className="text-xl font-semibold mb-4">Income & Expense Tracker</h3>
-              <p className="text-secondary mb-6">
-                Track your finances effortlessly and keep your data safe in your Google Drive.
-              </p>
-              <a href="#income-expense" className="text-highlightColor font-semibold">Learn More</a>
-            </div>
-            <div className="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
-              <h3 className="text-xl font-semibold mb-4">Finance Tracker Manager</h3>
-              <p className="text-secondary mb-6">
-                Create and organize your balance sheets with ease, featuring multi-page support and CSV export.
-              </p>
-              <a href="#finance-tracker" className="text-highlightColor font-semibold">Learn More</a>
-            </div>
-            <div className="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
-              <h3 className="text-xl font-semibold mb-4">Single-Purpose Utilities</h3>
-              <p className="text-secondary mb-6">
-                Each tool is designed to solve a specific need—keeping your tasks focused and organized.
-              </p>
-              <a href="#utilities" className="text-highlightColor font-semibold">Learn More</a>
-            </div>
-          </div>
-        </section> */}
-
-        {/* About section */}
-        <section id="about" className="mb-20 px-4">
-          <h2 className="text-3xl font-bold text-center mb-10">About AppSuite</h2>
-          <div className="max-w-3xl mx-auto text-center text-secondary">
-            <p className="mb-6">
-              AppSuite is built with simplicity and privacy in mind. Each app in our suite serves a distinct purpose, and all data is securely stored in your Google Drive, putting you in control of your information.
-            </p>
-            <p className="mb-6">
-              Our goal is to offer straightforward tools that solve specific problems efficiently, whether it’s managing finances or organizing data across various fields.
-            </p>
-          </div>
-        </section>
-
-        {/* Contact / Call-to-Action */}
-        <section id="contact" className="text-center px-4 py-10 bg-zinc-100 shadow-inner">
-          <h3 className="text-2xl font-semibold mb-4">Get in Touch</h3>
-          <p className="text-secondary mb-6">
-            Have questions? Reach out to our team to learn more about AppSuite and how it can help you manage your tasks efficiently.
-          </p>
-          <a href="mailto:onyeukwuhycient@gmail.com" className="text-highlightColor font-semibold underline">
-            onyeukwuhycient@gmail.com
-          </a>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-zinc-200 py-6">
-        <div className="container mx-auto px-8 flex flex-wrap gap-6 max-md:justify-center justify-between items-center">
-          <div className="text-secondary">
-            © {new Date().getFullYear()} AppSuite. All rights reserved.
-          </div>
-          <nav className="flex space-x-6 text-secondary">
-            <a href="/terms-of-service" className="hover:text-highlightColor">Terms of Service</a>
-            <a href="/privacy-policy" className="hover:text-highlightColor">Privacy Policy</a>
-            <a href="#contact" className="hover:text-highlightColor">Contact Us</a>
-          </nav>
+        <div className="z-10 w-20 h-20 rounded-full justify-center items-center flex bg-sky-100 self-start mt-28 ml-16 animate-float text-4xl tracking-tighter leading-none text-center max-md:mt-10 max-md:ml-2.5">
+          🎓
         </div>
-      </footer>
-      <MobileNav isMobileNavOpen={isMobileNavOpen} setIsMobileNavOpen={setIsMobileNavOpen} />
-    </div>
-  );
-}
-
-export default App;
-
-
-interface IProps {
-  isMobileNavOpen: boolean
-  setIsMobileNavOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-function MobileNav({ isMobileNavOpen, setIsMobileNavOpen }: IProps){
-  return (
-    <section className={`fixed animate-screen-slide-in-right [animation-duration:500ms] lg:hidden flex flex-col scroll w-full left-0 top-0 bg-primary min-h-screen bg-white text-slate-800 backdrop-blur-[7px] !z-[10] ${!isMobileNavOpen && "!hidden"}`}>
-      <div className="flex shadow py-4 px-5 flex-row items-center gap-4 justify-between bg-zinc-100">
-        <Link href="/" className="logo flex flex-row gap-2 xl:gap-3 items-center">
-          <LogoIcon />
-          <span style={{ animationDuration: "700ms"}} className="text-slate-800  text-2xl font-medium">AppSuite</span>
-        </Link>
-        <button onClick={() => setIsMobileNavOpen(false)} className="">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-8">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-          </svg>
+        <div className="flex flex-wrap gap-1.5 self-end text-center max-md:mr-1.5">
+          <h1 className="flex-auto text-7xl tracking-tighter leading-[91px] max-md:max-w-full max-md:text-5xl max-md:leading-[1.8ch] ">
+            All-in-One Tools for Smarter Organization
+          </h1>
+          <div className="px-3 my-auto w-20 h-20 animate-float delay-150 text-4xl flex place-items-center justify-center tracking-tighter leading-none whitespace-nowrap bg-sky-100 min-h-[80px] rounded-[99px]">
+            🛠️
+          </div>
+        </div>
+        <div className="z-10 self-center animate-float delay-200 mt-0 text-4xl tracking-tighter leading-none text-center w-20 h-20 rounded-full justify-center items-center flex bg-sky-100">
+          💶
+        </div>
+        <div className="mt-3.5 text-xl lg:text-2xl text-center text-slate-500 max-md:mr-1.5 max-md:max-w-full">
+          With a range of tools, AppSuite simplifies it all with seamless,
+          intuitive features designed to keep you organized and in control
+        </div>
+        <button className="self-center font-bold px-7 py-6 mt-10 max-w-full text-xl tracking-tight leading-tight text-white border border-gray-800 border-solid bg-primary min-h-[68px] rounded-full shadow-[0px_5px_0px_rgba(31,41,55,1)] w-full md:w-[417px]  max-md:px-10">
+          Start for free
         </button>
       </div>
 
-      <div className="p-5 mt-4">
-        {
-          links.map((link) => (
-            <div key={link.text} className=" border-b !p-0 border-b-outline py-3 cursor-pointer relative text-white text-xl font-medium flex flex-col gap-x-1">
-              <div className="[&::-webkit-details-marker]:hidden flex flex-row text-2xl bg-tes items-center gap-5 justify-between">
-                <Link onClick={() => setIsMobileNavOpen(false)} className="capitalize py-5 w-full text-slate-700" href={link.path as string}>{link.text}</Link>
-              </div>
-            </div>
-          ))
-        }
-        <div className=" border-b !p-0 border-b-outline py-3 cursor-pointer relative text-white text-xl font-medium flex flex-col gap-x-1">
-          <div className="[&::-webkit-details-marker]:hidden flex flex-row text-2xl bg-tes items-center gap-5 justify-between">
-            <Link onClick={() => setIsMobileNavOpen(false)} className="capitalize py-5 w-full text-slate-700" href="/sign-in">Try Free</Link>
+      <div id='features' className="flex flex-col pt-12 mt-11 w-full max-md:mt-10 max-md:max-w-full">
+        <div className="flex overflow-hidden  t z-10 flex-col  w-full leading-none font-[146] max-md:max-w-full">
+          <div className="flex gap-8 min-h-[258px] animate-scroll-left bg-tes">
+            {/* asfd */}
+            {[ ...features, ...features ].map((feature, index) => (
+              <FeatureCard key={index} {...feature} />
+            ))}
           </div>
+          <div className="px-4 max-w-screen-lg mx-auto h-full w-full">
+            <div className=" relative aspect-[1.6/1] w-full mx-auto h-auto -m-4 -mb-14 z-[1]">
+              <Image src="/images/home/module-1.png" fill alt='Module 1' />
+            </div>
+          </div>
+          {/* <Image
+            loading="lazy"
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/cac15143821c00e150d38acdb95de41e4e3e5676524fc231f50999128c9ade34?apiKey=0ce679486ae447bd8ce08b2cc2263e2e&"
+            alt="Feature Showcase"
+            className="object-contain z-10 self-center mt-0 w-full aspect-[1.54] max-w-[1318px] rounded-[35px] shadow-[0px_0px_4px_rgba(0,0,0,0.25)] max-md:max-w-full"
+          /> */}
+        </div>
+        <div className="flex flex-col justify-center  w-full  px-4 py-20 lg:py-28 ">
+          <LogoAndText className='aspect-[4/1] h-auto w-full max-w-screen-lg mx-auto ' />
         </div>
       </div>
-    </section>
-  )
-}
+
+      <footer id='about' className="bg-primary">
+        <div className="flex overflow-hidden flex-wrap gap-4 px-32 py-16 max-w-screen-2xl mx-auto w-full max-md:px-5 max-md:mt-10 max-md:max-w-full">
+          <div className="flex flex-col flex-1 shrink justify-between items-start basis-0 min-w-[240px] max-md:max-w-full">
+            <LogoAndTextWhite className='aspect-[4/1] w-auto h-8' />
+            <div className="flex gap-4 justify-center items-center mt-44 max-md:mt-10">
+              {socialIcons.map((icon, index) => (
+                <a key={`social-icon-${index}`} href={icon.href} className="">{icon.icon}</a>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col self-start leading-snug text-white min-w-[240px] w-[484px] max-md:max-w-full">
+            <div className="flex flex-wra gap-10 items-start w-full max-md:max-w-full">
+              <nav className="flex flex-col whitespace-nowrap w-[234px]">
+                <h2 className="text-xs font-medium tracking-wide uppercase">NAVIGATION</h2>
+                <div className="flex flex-col mt-6 w-full text-sm">
+                  <button className="text-left">Home</button>
+                  <button className="mt-1.5 text-left">About</button>
+                  <button className="mt-1.5 text-left">Features</button>
+                  <button className="mt-1.5 text-left">Contact</button>
+                </div>
+              </nav>
+              <div className="flex flex-col flex-1 shrink basis-0">
+                <h2 className="text-xs font-medium tracking-wide uppercase">Contacts us</h2>
+                <div className="flex flex-col mt-6 w-full text-sm">
+                  <div>Get in touch with us</div>
+                  <a href="mailto:onyeukwuhycient@gmail.com" className="mt-1.5">onyeukwuhycient@gmail.com</a>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-10 justify-between items-start mt-20 w-full text-xs font-medium text-right max-md:mt-10 max-md:max-w-full">
+              <button className="rotate-[1.6081230200044232e-16rad]">Privacy</button>
+              <button className="rotate-[1.6081230200044232e-16rad]">Terms of Service</button>
+              <div className="rotate-[1.6081230200044232e-16rad]">© 2024 — Copyright</div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, link }) => {
+  return (
+    <div className="flex overflow-hidden flex-col justify-center px-14 py-2 bg-white rounded-xl min-w-[240px] border border-b-white border-slate-200 md:min-w-[580px] max-md:px-5 max-md:max-w-full">
+      <div className="flex flex-col w-full max-md:max-w-full">
+        <div className="text-2xl tracking-tight font-bold text-primary max-md:max-w-full">
+          {title}
+        </div>
+        <div className="mt-5 text-base leading-5 text-gray-800 font-[68] max-md:max-w-full">
+          {description}
+        </div>
+        <Link href={link} className="mt-5 text-lg tracking-tight font-semibold text-indigo-500 max-md:max-w-full">
+          Learn More
+        </Link>
+      </div>
+    </div>
+  );
+};

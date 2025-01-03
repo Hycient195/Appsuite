@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Geist } from "next/font/google";
+
 import ReduxProvider from "../_Providers/ReduxProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -14,6 +16,11 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+});
+
+const geist = Geist({
+  weight: [ "300", "400", "700", "900" ],
+  subsets: [ "latin" ]
 });
 
 export const metadata: Metadata = {
@@ -30,7 +37,8 @@ export default function RootLayout({
     <html lang="en">
       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID as string}>
         <ReduxProvider>
-          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} >
+          {/* <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} > */}
+          <body className={`${geist.className}  antialiased`} >
             {children}
           </body>
         </ReduxProvider>
