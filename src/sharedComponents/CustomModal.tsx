@@ -23,13 +23,14 @@ export default function CustomModal({ handleModalClose, modalClassName, children
           animate={{ translateY: "0%" }}
           exit={{ translateY: "100%" }}
           transition={{
-            duration: 0.5, // Adjust the animation duration
-            ease: "easeInOut", // Smooth easing
+            duration: 0.4,
+            ease: "easeInOut",
           }}
-          className="w-full animate-slide-in-botto md:animate-fade-in flex flex-col max-md:rounded-t-2xl md:rounded-lg lg:rounded-xl bg-white p-5 md:p-6 md:max-w-screen-xl md:mx-auto">
-          <button onClick={handleModalClose} className={`md:absolute md:hidden ml-auto w-max top-5 right-5 bg-white rounded-full p-1.5 md:p-2 border border-zinc-400`} >
+          className="w-full relative animate-slide-in-botto md:animate-fade-in pt-6 flex flex-col max-md:rounded-t-3xl md:rounded-lg lg:rounded-xl bg-white p-5 md:p-6 md:max-w-screen-xl md:mx-auto">
+            <div className="h-1 rounded-full bg-slate-400 w-24 absolute left-0 right-0 top-3 mx-auto" />
+          {/* <button onClick={handleModalClose} className={`md:absolute md:hidden ml-auto w-max top-5 right-5 bg-white rounded-full p-1.5 md:p-2 border border-zinc-400`} >
             <CloseIcon className="!size-3" />
-          </button>
+          </button> */}
           {/* <h3 className="text-3xl font-semibold md:hidden">Find a space</h3> */}
           
           <div className="">
