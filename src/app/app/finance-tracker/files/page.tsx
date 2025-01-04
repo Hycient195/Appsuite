@@ -173,7 +173,7 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProp
               onFocus={() => setIsEditing(true)}
               // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
               onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
-              className="inline-block w-max text-slate-800 max-md:text-sm leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
+              className="inline-block w-max text-slate-800 max-md:text-sm max-md:leading-[1.6ch] leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
             />
             <div className="text-xs flex flex-row gap-2">
               <span className="">Jan 6 2024</span>
