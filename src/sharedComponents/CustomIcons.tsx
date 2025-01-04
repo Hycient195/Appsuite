@@ -193,6 +193,25 @@ export const ImportIcon = ({ className }: { className?: string}) => {
     </svg>
   )
 };
+
+export const TrashIcon = ({ className }: { className?: string}) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" className={`${className}`}><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
+  )
+};
+
+export const PenIcon = ({ className }: { className?: string}) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" className={`${className}`}><path fill="currentColor" d="M5 19h1.425L16.2 9.225L14.775 7.8L5 17.575zm-2 2v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15t.775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM19 6.4L17.6 5zm-3.525 2.125l-.7-.725L16.2 9.225z"/></svg>
+  )
+};
+
+export const ClockTimeIcon = ({ className }: { className?: string}) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" className={`${className}`}><path fill="currentColor" d="M8.5 19.5q-3.125 0-5.312-2.187T1 12t2.188-5.312T8.5 4.5t5.313 2.188T16 12t-2.187 5.313T8.5 19.5m0-2q2.3 0 3.9-1.6T14 12t-1.6-3.9t-3.9-1.6t-3.9 1.6T3 12t1.6 3.9t3.9 1.6m1-5.825V9q0-.425-.288-.712T8.5 8t-.712.288T7.5 9v3.075q0 .2.075.388t.225.337l2 2q.275.275.7.275t.7-.275t.275-.7t-.275-.7zm9.3 7.625L16.5 17q-.275-.3-.275-.712t.3-.688t.713-.287t.687.287l.575.575V5q0-.425.288-.712T19.5 4t.713.288T20.5 5v11.2l.6-.6q.275-.275.7-.275t.7.275t.275.7t-.275.7l-2.3 2.3q-.3.3-.7.3t-.7-.3"/></svg>
+  )
+};
+
 export const HouseIcon = ({ className }: { className?: string}) => {
   return (
     <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg"  className={`${className}`}>

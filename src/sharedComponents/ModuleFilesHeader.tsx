@@ -15,7 +15,7 @@ export default function ModuleFilesHeader() {
         <p className="text-slate-500">Track, manage and forecast your customers and orders.</p>
       </div>
       <div className="right line-in gap-3">
-        <button className="btn text-primary border border-slate-200 0"><ImportIcon /> Import</button>
+        <button className="btn text-primary bg-white border border-slate-200 0"><ImportIcon /> Import</button>
         <button className="btn bg-primary text-white"><PlusIcon /> Create New Sheet</button>
       </div>
     </section>

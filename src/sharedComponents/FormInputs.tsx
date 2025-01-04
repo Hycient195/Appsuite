@@ -145,6 +145,7 @@ interface IResponsiveProps {
   href?: string;
   target?: string;
   rel?: string;
+  ref?: MutableRefObject<any>
 }
 
 export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
@@ -156,7 +157,7 @@ export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & 
         <span className="text-transparent">{replaceJSXRecursive(props.value, { "\n": <br /> })}</span>
         <span className={`${(props.value || props.value === 0) && "!hidden"} text-transparent flex min-w-max flex-row items-center px-1 noExport`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</span>
       </div>
-      <textarea className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props.value} />
+      <textarea ref={props.ref} className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props.value} />
     </div>
   )
 }
