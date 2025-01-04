@@ -44,10 +44,10 @@ export default function BalanceSheetFiles() {
       </div>
       
       <div className="file-list h-full grid">
-        <div className="bg-white border-[12px] border-white shadow min-h-full w-full  max-h-[50vh] overflow-y-auto ring-1 ring-zinc-200 rounded-md">
-          <table cellPadding={10} className=" min-w-max w-full">
-            <thead className="head sticky top-0 w-full z-[1] text-slate-500">
-              <tr className=" w-full text-sm font-medium">
+        <div className="bg-white border-[12px]  border-white shadow min-h-full w-full  max-h-[50vh] overflow-y-auto ring-1 ring-zinc-200 rounded-md">
+          <table cellPadding={10} className=" w-full">
+            <thead className="head sticky top-0 w-ful z-[1] text-slate-500">
+              <tr className=" w-ful text-sm font-medium">
                 <td className="cell">
                   <div className="line-in">
                     <Checkbox className="!p-0" />
@@ -163,9 +163,9 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProp
   return (
     <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer text-slate-500 odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
       <td className="cursor-pointer">
-        <div onClick={(e) => e.stopPropagation()} className="line-in bg-tes w-max">
+        <div onClick={(e) => e.stopPropagation()} className="line-in bg-tes w-ma">
           <Checkbox className="!p-0" />
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full">
             <ResponsiveTextInput
               type="text"
               value={fileName}
@@ -173,9 +173,9 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProp
               onFocus={() => setIsEditing(true)}
               // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
               onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
-              className="inline-block w-max text-slate-800 pr-2 outline-none h-full"
+              className="inline-block w-max text-slate-800 max-md:text-sm leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
             />
-            <div className="text-xs flex flex-row gap-3">
+            <div className="text-xs flex flex-row gap-2">
               <span className="">Jan 6 2024</span>
               <span className="">{splitInThousand(file?.primaryFile?.size as string)} Kb</span>
             </div>

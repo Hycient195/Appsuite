@@ -2,7 +2,7 @@ import { handleInputChange, replaceJSXRecursive } from "@/utils/miscelaneous";
 import { MenuItem, Select } from "@mui/material";
 import { Country, State } from "country-state-city";
 import Image from "next/image";
-import { ChangeEvent, CSSProperties, FC, LegacyRef, MutableRefObject, RefObject, useEffect, useState } from "react";
+import { ChangeEvent, CSSProperties, FC, LegacyRef, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 
 type TElementTypes = HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement
 
@@ -149,16 +149,14 @@ interface IResponsiveProps {
 }
 
 export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
-
   return (
-    <div className="relative my-1 ">
+    <div className="relative w-full grid grid-cols-2 my-1 ">
       <div className={`${className} w-full min-w-[20px] `}>
         {!!props.href && <a rel={props.rel} target={props.target} href={props.href} className={`absolute w-full h-full top-0 left-0 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })}</a>}
-        <span className="text-transparent">{replaceJSXRecursive(props.value, { "\n": <br /> })}</span>
-        <span className={`${(props.value || props.value === 0) && "!hidden"} text-transparent flex min-w-max flex-row items-center px-1 noExport`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</span>
+        <p className="text-transparent break-words !max-w-[200px] !block">{replaceJSXRecursive(props.value, { "\n": <br /> })}</p>
+        <p className={`${(props.value || props.value === 0) && "!hidden"} text-transparent flex min-w-max flex-row items-center px-1 noExport`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</p>
       </div>
       <textarea ref={props.ref} className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props.value} />
     </div>
   )
 }
-

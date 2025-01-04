@@ -30,7 +30,7 @@ export default function CustomModal({ handleModalClose, modalClassName, children
   return (
     <ModalContextProvider handleModalClose={closeModal} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} modalData={modalData}>
        <section  className="screen-no-scroll slide-over fixed h-[100dvh] w-full top-0 left-0 flex z-[2] ">
-        <motion.div exit={{ opacity: 0 }} onClick={closeModal} style={{ WebkitBackdropFilter: "blur(5px)"}} className="absolute h-full w-full animate-fade-in bg-black/50 backdrop-blur-sm" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 100 }} exit={{ opacity: 0 }} onClick={closeModal} className="absolute h-full w-full bg-black/50" />
         <div  className={`md:px-3 lg:px-4 z-[1] mt-auto md:mb-auto w-full max-w-2xl mx-auto ${modalClassName}`}>
           <motion.div
             initial={{ translateY: "100%" }}
