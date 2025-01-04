@@ -12,7 +12,7 @@ export default function ModuleFilesHeader() {
         </div>
         
         <h1 className="text-slate-900 text-2xl lg:text-3xl font-semibold mt-3 max-md:hidden">Finance Tracker</h1>
-        <p className="text-slate-500">Track, manage and forecast your customers and orders.</p>
+        <p className="text-slate-500 max-md:text-sm">Track, manage and forecast your customers and orders.</p>
       </div>
       <div className="right line-in gap-3">
         <button className="btn text-primary bg-white border border-slate-200 0"><ImportIcon /> Import</button>

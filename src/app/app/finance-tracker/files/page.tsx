@@ -21,6 +21,7 @@ import { ClockTimeIcon, PenIcon, TickIcon, TrashIcon } from "@/sharedComponents/
 import DeleteFileModal from "../_components/DeleteFileModal";
 import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
 import { Toast } from "@/sharedComponents/utilities/Toast";
+import { splitInThousand } from "@/utils/miscelaneous";
 
 
 export default function BalanceSheetFiles() {
@@ -53,8 +54,8 @@ export default function BalanceSheetFiles() {
                     Name
                   </div>
                 </td>
-                <td className="cell">Last Updated</td>
-                <td className="cell">Size (in kB)</td>
+                <td className="cell max-md:hidden">Last Updated</td>
+                <td className="cell max-md:hidden">Size (in kB)</td>
                 <td className="cell"></td>
               </tr>
             </thead>
@@ -158,28 +159,34 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProp
     }
     if (updateFileNameIsError) Toast("error", `Unable to update file name ${file?.primaryFile?.fileName}`);
   }, [ fileNameUpdateSuccess, updateFileNameIsError ]);
-
+  console.log(file)
   return (
     <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer text-slate-500 odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
       <td className="cursor-pointer">
         <div onClick={(e) => e.stopPropagation()} className="line-in bg-tes w-max">
           <Checkbox className="!p-0" />
-          <ResponsiveTextInput
-            type="text"
-            value={fileName}
-            ref={inputRef}
-            onFocus={() => setIsEditing(true)}
-            // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
-            onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
-            className="inline-block w-max text-slate-800 pr-2 outline-none h-full"
-          />
+          <div className="flex flex-col">
+            <ResponsiveTextInput
+              type="text"
+              value={fileName}
+              ref={inputRef}
+              onFocus={() => setIsEditing(true)}
+              // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
+              onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
+              className="inline-block w-max text-slate-800 pr-2 outline-none h-full"
+            />
+            <div className="text-xs flex flex-row gap-3">
+              <span className="">Jan 6 2024</span>
+              <span className="">{splitInThousand(file?.primaryFile?.size as string)} Kb</span>
+            </div>
+          </div>
           { isEditing && <button onClick={(e) => { e.stopPropagation(), inputRef.current?.focus(), handleEdit(e)}} className="z-[3] text-green-600 rounded-full h-5 w-5 flex items-center justify-center ring-2 ring-green-500">
             { isUpdatingFile ? <CircularProgress size={14} /> : <TickIcon className="!size-5" /> }
           </button>}
         </div>
       </td>
-      <td className="">Jan 6 2024</td>
-      <td>{file?.primaryFile?.size} Kb</td>
+      <td className="max-md:hidden">Jan 6 2024</td>
+      <td className="max-md:hidden">{splitInThousand(file?.primaryFile?.size as string)} Kb</td>
       <td>
         <div className="flex flex-row items-center gap-2">
           <button onClick={(e) => { e.stopPropagation(), handleEdit(e)}} className=""><PenIcon className="size-5 lg:size-6" /></button>

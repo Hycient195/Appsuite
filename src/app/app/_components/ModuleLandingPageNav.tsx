@@ -25,7 +25,7 @@ export default function ModuleLandingPageNav({ className }: IProps) {
 
   return (
     <div
-      className={`!w-full z-[2] sticky top-0 pt-6 bg-white md:pt-8 lg:pt-12 px-3 ${className}`}
+      className={`!w-full z-[2] sticky top-0 pt-6  md:pt-8 lg:pt-12 px-3 ${className}`}
       
     >
       <motion.nav
