@@ -64,21 +64,21 @@ export default function LandingPage() {
       <ModuleLandingPageNav />       
 
       <div className="flex flex-col self-center text-primary max-w-screen-md mx-auto px-3">
-        <div className="w-20 h-20 rounded-full justify-center items-center flex bg-sky-100 self-start mt-28 ml-16 animate-float text-4xl tracking-tighter leading-none text-center max-md:mt-10 max-md:ml-2.5">
+        <div className="h-14 w-14 lg:w-20 lg:h-20 text-2xl rounded-full justify-center items-center flex bg-sky-100 self-start mt-28 ml-16 animate-float lg:text-4xl tracking-tighter leading-none text-center max-md:mt-10 max-md:ml-2.5">
           🎓
         </div>
         <div className="flex flex-wrap gap-1.5 self-end text-center max-md:mr-1.5">
-          <h1 className="flex-auto text-7xl tracking-tighter leading-[91px] max-md:max-w-full max-md:text-5xl max-md:leading-[1.8ch] ">
+          <h1 className="flex-auto text-7xl tracking-tighter leading-[91px] max-md:max-w-full font-medium max-md:text-5xl ">
             Track income and expenditure with ease
           </h1>
-          <div className="px-3 my-auto w-20 h-20 animate-float delay-150 text-4xl flex place-items-center justify-center tracking-tighter leading-none whitespace-nowrap bg-sky-100 min-h-[80px] rounded-[99px]">
+          <div className="px-3 my-auto h-14 w-14 lg:w-20 lg:h-20 text-2xl animate-float delay-150  lg:text-4xl flex place-items-center justify-center tracking-tighter leading-none whitespace-nowrap bg-sky-100 rounded-full">
             🛠️
           </div>
         </div>
-        <div className="self-center animate-float delay-200 mt-0 text-4xl tracking-tighter leading-none text-center w-20 h-20 rounded-full justify-center items-center flex bg-sky-100">
+        <div className="self-center animate-float delay-200 mt-0 lg:text-4xl tracking-tighter leading-none text-center h-14 w-14 lg:w-20 lg:h-20 text-2xl rounded-full justify-center items-center flex bg-sky-100">
           💶
         </div>
-        <div className="mt-3.5 text-xl lg:text-2xl text-center text-slate-500 max-md:mr-1.5 max-md:max-w-full">
+        <div className="mt-3.5 text-lg md:text-xl lg:text-2xl text-center text-slate-500 max-md:mr-1.5 max-md:max-w-full">
           A user-driven, single-purpose application that empowers you to track income and expenditure with ease, securely storing your data in your own Google Drive.
         </div>
         <ProceedOrSignInButton href='finance-tracker/files' />

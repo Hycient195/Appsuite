@@ -14,6 +14,8 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { CloseIcon, LogoAndTextWhite, LogoWhite } from "@/sharedComponents/CustomIcons";
+import { motion, useDragControls, useMotionValue } from "motion/react"
+
 import { googleLogout } from "@react-oauth/google";
 // import WithAuth from "@/HOCs/WithAuth";
 
@@ -73,7 +75,15 @@ function AppLayout({ children }: IProps) {
       {
         !isSidebarHidden
         && (
-          <aside className={`${isMobileSidebarHidden ? "hidden" : "flex "} ${isHalfVisible ? "w-20" : "w-[clamp(270px,20vw,280px)]"} max-lg:absolute bg-primary animate-slide-in-right max-lg:z-[5] max-lg:h-full max-lg:w-full max-lg:left-0 max-lg:top-0 text-white lg:flex flex-col px-4 lg:px-4 border-r border-r-slate-300 h-[100dvh] `}>
+          <motion.div
+            initial={{ translateX: "-100%" }}
+            animate={{ translateX: "0%" }}
+            transition={{
+              duration: 0.4,
+              ease: "easeInOut",
+            }}
+            // exit={{ translateX: "100%" }}
+            className={`${isMobileSidebarHidden ? "hidden" : "flex "} ${isHalfVisible ? "w-20" : "w-[clamp(270px,20vw,280px)]"} max-lg:absolute bg-primary animate-slide-in-right max-lg:z-[5] max-lg:h-full max-lg:w-full max-lg:left-0 max-lg:top-0 text-white lg:flex flex-col px-4 lg:px-4 border-r border-r-slate-300 h-[100dvh] `}>
             
             
               <div className="spread-out w-full mb-3 lg:mb-6 mt-2 lg:mt-3">
@@ -109,7 +119,7 @@ function AppLayout({ children }: IProps) {
                 </svg>
               </button>
             </div>
-          </aside>
+          </motion.div>
         )
       }
       

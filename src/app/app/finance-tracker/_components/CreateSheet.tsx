@@ -45,11 +45,11 @@ export default function CreateFinanceTrackerSheet({ handleModalClose }: { handle
       <FormTextArea name="description" value={formData.description} onChange={(e) => handleInputChange(e, formData, setFormData)} labelText="Description (optional)" placeholder="Enter a description..." />
       <div className="grid grid-cols-2 gap-3">
         <div onClick={() => setFormData({ ...formData, templateLayout: "CLASSIC" })} className=" flex cursor-pointer flex-col gap-2">
-          <figure className={`aspect-[2.1/1] w-full h-auto bg-slate-100 rounded-xl relative overflow-hidden border border-slate-300 ${ formData.templateLayout === "CLASSIC" && "ring-1 ring-slate-500"}`}><Image src="/images/shared/finance-tracker-classic-layout.png" fill alt="Classic Layout" /></figure>
+          <figure className={`aspect-[2.1/1] w-full h-auto bg-slate-100 rounded-lg lg:rounded-xl relative overflow-hidden border border-slate-300 ${ formData.templateLayout === "CLASSIC" && "ring-1 ring-slate-500"}`}><Image src="/images/shared/finance-tracker-classic-layout.png" fill alt="Classic Layout" /></figure>
           <figcaption className="text-slate-600 font-medium">Classic Layout</figcaption>
         </div>
         <div onClick={() => setFormData({ ...formData, templateLayout: "MODERN" })} className=" flex cursor-pointer flex-col gap-2">
-          <figure className={`aspect-[2.1/1] w-full h-auto bg-slate-100 rounded-xl relative overflow-hidden border border-slate-300 ${ formData.templateLayout === "MODERN" && "ring-1 ring-slate-500"}`}><Image src="/images/shared/finance-tracker-modern-layout.png" fill alt="Classic Layout" /></figure>
+          <figure className={`aspect-[2.1/1] w-full h-auto bg-slate-100 rounded-lg lg:rounded-xl relative overflow-hidden border border-slate-300 ${ formData.templateLayout === "MODERN" && "ring-1 ring-slate-500"}`}><Image src="/images/shared/finance-tracker-modern-layout.png" fill alt="Classic Layout" /></figure>
           <figcaption className="text-slate-600 font-medium">Modern Layout</figcaption>
         </div>
       </div>
