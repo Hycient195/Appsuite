@@ -40,7 +40,7 @@ export default function BalanceSheetFiles() {
     <main className="h-full relative p-3 rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">
       <div className="">
         <ModuleLandingPageNav className="lg:hidden !pt-0 pb-3" /> 
-        <ModuleFilesHeader />
+        <ModuleFilesHeader moduleName="Finance Tracker" subtitle="Track, manage and forecast your customers and orders." handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
       </div>
       
       <div className="file-list h-full grid">
@@ -188,7 +188,7 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProp
       <td className="max-md:hidden">Jan 6 2024</td>
       <td className="max-md:hidden">{splitInThousand(file?.primaryFile?.size as string)} Kb</td>
       <td>
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-1.5 md:gap-2">
           <button onClick={(e) => { e.stopPropagation(), handleEdit(e)}} className=""><PenIcon className="size-5 lg:size-6" /></button>
           <button onClick={(e) => { e.stopPropagation(), handleGetFileVersions(e, file?.primaryFile?.fileId as string)}} className="relative">
             { isRestoringFileVersion ? <CircularProgress size={14} /> : <ClockTimeIcon className="size-6 lg:size-6" /> }
