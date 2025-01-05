@@ -23,6 +23,7 @@ import ModuleFileHeader from '@/sharedComponents/ModuleFileHeader';
 import CustomModal from '@/sharedComponents/CustomModal';
 import SheetExportModal from './_components/ExportModal';
 import CreateFinanceTrackerSheet from '../_components/CreateSheet';
+import { AnimatePresence } from 'motion/react';
 
 const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
 
@@ -195,8 +196,9 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
   return (
     <BalanceSheetContextProvider balanceSheetInstance={balanceSheetInstance}>
       <ModuleFileHeader
-        fileName={pages?.[0]?.title} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => {}}
-        handleExport={() => setIsExportModalOpen(true)}
+        fileName={pages?.[0]?.title} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)}
+        handleExport={() => setIsExportModalOpen(true)} handleImport={handleCSVImport}
+        undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}
       />
       <DndProvider backend={HTML5Backend}>
         <Teleport rootId='saveIconPosition'>
@@ -277,8 +279,10 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
           </div>
         </main>
       </DndProvider>
-      { isExportModalOpen && <CustomModal setIsModalOpen={setIsExportModalOpen}><SheetExportModal /></CustomModal> }
-      { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
+      <AnimatePresence>     
+        { isExportModalOpen && <CustomModal setIsModalOpen={setIsExportModalOpen}><SheetExportModal /></CustomModal> }
+        { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
+      </AnimatePresence>
     </BalanceSheetContextProvider>
   );
 };
