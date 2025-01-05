@@ -7,23 +7,21 @@ import api from "@/redux/api";
 import { Toast } from "@/sharedComponents/utilities/Toast";
 import LoadingButton from "@/sharedComponents/LoadingButton";
 import { handleInputChange } from "@/utils/miscelaneous";
+import { useModalContext } from "@/sharedComponents/CustomModal";
+import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
 
-export default function CreateFinanceTrackerSheet({ handleModalClose }: { handleModalClose: () => void }) {
+export default function CreateFinanceTrackerSheet() {
   const router = useRouter();
+
+  const { handleModalClose } = useModalContext<Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0]>();
 
   const [ formData, setFormData ] = useState<{ title: string, description: string, templateLayout: "CLASSIC" | "MODERN" }>({
     title: "", description: "", templateLayout: "CLASSIC"
   })
 
-  // const [ fileName, setFileName ] = useState<string>("");
-
   const { generateCSVData } = useBalanceSheet();
 
   const [ createFile, { isLoading, isSuccess, isError, data }] = api.commonApis.useCreateFileInFolderMutation();
-
-  // const handleInput = (e: string) => {
-  //   handleInputChange(e, formData, setFormData)
-  // }
 
   const handleCreateFile = async (e: FormEvent) => {
     e.preventDefault();

@@ -45,7 +45,7 @@ export default function BalanceSheetFiles() {
       
       <div className="file-list h-full grid">
         <div className="bg-white border-[12px]  border-white shadow min-h-full w-full  max-h-[50vh] overflow-y-auto ring-1 ring-zinc-200 rounded-md">
-          <table cellPadding={10} className=" w-full">
+          <table cellPadding={8} className=" w-full">
             <thead className="head sticky top-0 w-ful z-[1] text-slate-500">
               <tr className=" w-ful text-sm font-medium">
                 <td className="cell">
@@ -95,7 +95,7 @@ export default function BalanceSheetFiles() {
       </div>
       
       <AnimatePresence>
-        { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet handleModalClose={() => setIsCreateModalOpen(false)} /></CustomModal> }
+        { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
         { isDeleteModalOpen && <CustomModal setIsModalOpen={setIsDeleteModalOpen} modalData={selectedFile}><DeleteFileModal /></CustomModal> }
       </AnimatePresence>
     </main>
@@ -161,15 +161,16 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProp
   }, [ fileNameUpdateSuccess, updateFileNameIsError ]);
   console.log(file)
   return (
-    <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer text-slate-500 odd:bg-zinc-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
+    <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer text-slate-500 odd:bg-slate-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
       <td className="cursor-pointer">
-        <div onClick={(e) => e.stopPropagation()} className="line-in bg-tes w-ma">
-          <Checkbox className="!p-0" />
-          <div className="flex flex-col w-full">
+        <div className="line-in  w-ma">
+          <Checkbox onClick={(e) => e.stopPropagation()} className="!p-0" />
+          <div className="flex  flex-col w-full">
             <ResponsiveTextInput
               type="text"
               value={fileName}
               ref={inputRef}
+              onClick={(e) => e.stopPropagation()}
               onFocus={() => setIsEditing(true)}
               // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
               onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}

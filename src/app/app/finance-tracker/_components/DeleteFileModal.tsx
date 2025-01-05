@@ -23,7 +23,7 @@ export default function DeleteFileModal() {
 
   return (
     <div className="md:min-h-[300px] w-full flex flex-col gap-4 max-md:justify-end justify-center">
-      <p className="text-red-600 text-lg font-medium text-center">Are you sure you want to delete "{modalData?.primaryFile?.fileName?.split(".")?.[0]}"?</p>
+      <p className="text-red-600 text-lg font-medium text-center">Are you sure you want to delete &ldquo;{modalData?.primaryFile?.fileName?.split(".")?.[0]}&ldquo;?</p>
       <div className="grid grid-cols-2 gap-3 mt-3">
         <button onClick={handleModalClose} type="button" className="btn bg-white border border-zinc-200 text-primary">Cancel</button>
         <LoadingButton onClick={handleDelete} loading={isLoading} className="btn bg-red-500 text-white">Delete</LoadingButton>
