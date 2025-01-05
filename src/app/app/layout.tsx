@@ -68,7 +68,6 @@ function AppLayout({ children }: IProps) {
     dispatch(sharedSlice.actions.hideMobileSidebar());
   }
 
-  console.log(isMobileSidebarHidden)
   return (
     <div onClick={hideSidebarOnMobile} className={`grid bg-white fixed w-full grid-cols-1 ${!isSidebarHidden && "lg:grid-cols-[max-content_1fr]"} font-lexend`}>
       <div className={`${isMobileSidebarHidden && "hidden"} slide-wrapper lg:hidden h-[100dvh] w-screen left-0 bg-gray-700/30 backdrop-blur-sm absolute z-[5] animate-screen-slide-in-right`} />

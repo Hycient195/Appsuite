@@ -1,14 +1,20 @@
 import { usePathname } from "next/navigation";
-import { ChevronRight, HouseIcon, ImportIcon, PlusIcon } from "./CustomIcons";
+import { ChevronRight, HouseIcon, ImportIcon, PlusIcon, RedoIcon, UndoIcon } from "./CustomIcons";
 
 interface IProps {
   fileName: string;
   subtitle: string;
   handleInitiateCreateFile: () => void;
   className?: string;
+  handleImport?: () => void;
+  handleExport?: () => void;
+  redo?: () => void;
+  undo?: () => void;
+  canRedo?: boolean
+  canUndo?: boolean
 }
 
-export default function ModuleFileHeader({ fileName, subtitle, handleInitiateCreateFile, className }: IProps) {
+export default function ModuleFileHeader({ fileName, subtitle, handleInitiateCreateFile, className, ...props }: IProps) {
   const pathname = usePathname();
   const handleImport = () => {
 
@@ -25,6 +31,12 @@ export default function ModuleFileHeader({ fileName, subtitle, handleInitiateCre
         </div>
         
         <h1 className="text-slate-900 text-2xl font-semibold mt-3 max-md:hidden">{fileName}</h1>
+        <div className="line-in text-slate-700 mt-2 !gap-4 text-sm">
+          <button onClick={props.undo} disabled={!props.canUndo} className={`line-in disabled:text-slate-400`}><UndoIcon className="!size-5" /> Undo</button>
+          <button onClick={props.redo} disabled={!props.canRedo} className="line-in disabled:text-slate-400"><RedoIcon className="!size-5" /> Redo</button>
+          <button onClick={props.handleImport} className="line-in"><ImportIcon className="!size-4" /> Import</button>
+          <button onClick={props.handleExport} className="line-in"><ImportIcon className="!size-4" /> Export</button>
+        </div>
         {/* <p className="text-slate-500 max-md:text-sm">{subtitle}</p> */}
       </div>
       <div className="right line-in gap-3">

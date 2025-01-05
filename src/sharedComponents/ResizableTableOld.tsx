@@ -11,9 +11,10 @@ type TableProps = {
   tableContent: React.ReactNode;
   columnsPercentageWidth: number[];
   tableClassName?: string;
+  tableFooter?: React.ReactNode
 };
 
-const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableContent, columnsPercentageWidth, tableClassName }) => {
+const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableContent, columnsPercentageWidth, tableClassName, tableFooter }) => {
   const [tableHeight, setTableHeight] = useState<string>("auto");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const tableElement = useRef<HTMLTableElement>(null);
@@ -94,27 +95,33 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
   return (
     <div className="containe max-w-screen-lg mx-auto">
       <div className="table-wrapper grid bg-green-5">
-        <table className={`relative resizeable-table w-full [&_th]:relative
+        <div className={`relative resizeable-table w-full [&_th]:relative
           [&_td]:border-t [&_td:not(:last-of-type)]:border-r [&_th]:border-t [&_th:not(:last-of-type)]:border-r [&]:border-zinc-500 [&_*]:border-zinc-500 border-x border-b
           [&_thead]:!contents [&_tbody]:!contents [&_tr]:!contents
-          grid grid-cols-[11.5%_48%_13.5%_13.5%_13.5%] ${tableClassName}`}
+           ${tableClassName}`}
           ref={tableElement}>
-          <thead className="w-full">
-            <tr style={{ fontFamily: "sans-serif"}} className=" select-none  w-full">
-              {columns.map(({ ref, text }, i) => (
-                <td ref={ref} key={text} className="font-bold text-center py-1.5 relative">
-                  <span className=" whitespace-nowrap overflow-ellipsis overflow-hidden block">{text}</span>
-                  <div
-                    style={{ height: tableHeight }}
-                    onMouseDown={() => mouseDown(i)}
-                    className={`resize-handle block hover:bg-[#ccc] absolute cursor-col-resize w-[3px] right-0 !top-0 z-[1] border-r-2 !border-r-transparent  ${activeIndex === i ? "!border-r !border-r-[#517ea5]" : "idle"}`}
-                  />
-                </td>
+          <div className="w-full">
+            <div  style={{ fontFamily: "sans-serif", gridTemplateColumns: columnsPercentageWidth?.map(x => `${x}%`)?.join(" ")}} className="grid w-full">
+              <tr>
+                {columns.map(({ ref, text }, i) => (
+                  <td ref={ref} key={text} className="font-bold text-center py-1.5 relative">
+                    <span className=" whitespace-nowrap overflow-ellipsis overflow-hidden block">{text}</span>
+                    <div
+                      style={{ height: tableHeight }}
+                      onMouseDown={() => mouseDown(i)}
+                      className={`resize-handle block hover:bg-[#ccc] absolute cursor-col-resize w-[3px] right-0 !top-0 z-[1] border-r-2 !border-r-transparent  ${activeIndex === i ? "!border-r !border-r-[#517ea5]" : "idle"}`}
+                    />
+                  </td>
               ))}
-            </tr>
-          </thead>
+              </tr>
+            </div>
+          </div>
           {tableContent}
-        </table>
+          <div style={{ fontFamily: "sans-serif", gridTemplateColumns: columnsPercentageWidth?.map(x => `${x}%`)?.join(" ")}} className={`grid w-full`}>
+            <tr>{tableFooter}</tr>
+          </div>
+          
+        </div>
       </div>
       {/* <button onClick={resetTableCells}>Reset</button> */}
     </div>
