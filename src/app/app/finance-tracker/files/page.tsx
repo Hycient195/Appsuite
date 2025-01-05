@@ -159,13 +159,13 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProp
     }
     if (updateFileNameIsError) Toast("error", `Unable to update file name ${file?.primaryFile?.fileName}`);
   }, [ fileNameUpdateSuccess, updateFileNameIsError ]);
-  console.log(file)
+  console.log(fileName)
   return (
     <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer text-slate-500 odd:bg-slate-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
       <td className="cursor-pointer">
         <div className="line-in  w-ma">
           <Checkbox onClick={(e) => e.stopPropagation()} className="!p-0" />
-          <div className="flex  flex-col w-full">
+          <div onClick={(e) => e.stopPropagation()} className="flex  flex-col w-ful">
             <ResponsiveTextInput
               type="text"
               value={fileName}
@@ -173,8 +173,8 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProp
               onClick={(e) => e.stopPropagation()}
               onFocus={() => setIsEditing(true)}
               // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
-              onChange={(e) => { e.stopPropagation(); setFileName(e.target.value)}}
-              className="inline-block w-max text-slate-800 max-md:text-sm max-md:leading-[1.6ch] leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
+              onChange={(e) => { setFileName(e.target.value)}}
+              className="w-max text-slate-800 max-md:text-sm max-md:leading-[1.6ch]  leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
             />
             <div className="text-xs flex flex-row gap-2">
               <span className="">Jan 6 2024</span>

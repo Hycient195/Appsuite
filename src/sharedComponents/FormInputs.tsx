@@ -148,15 +148,74 @@ interface IResponsiveProps {
   ref?: MutableRefObject<any>
 }
 
+// export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
+//   // const handleInput = (e: React.FormEvent<HTMLSpanElement>) => {
+//   //   if (props.onChange ) props.onChange(e)
+//   // };
+//   const cursorPositionRef = useRef(0);
+
+//   const handleInput = (e: React.FormEvent<HTMLSpanElement>) => {
+//     // Extract text content from the editable span
+//     const text = e.currentTarget.textContent || "";
+
+//     // Simulate a typical input event structure for onChange
+//     const simulatedEvent = {
+//       ...e,
+//       target: {
+//         ...e.target,
+//         value: text,
+//         name: props.name
+//       },
+//     };
+
+//     if (props.onChange) {
+//       props.onChange(simulatedEvent as unknown as React.ChangeEvent<HTMLInputElement>);
+//     }
+//   };
+
+//   const resetCursorPosition = (event: React.ChangeEvent<HTMLInputElement>|any) => {
+//     const input = event.currentTarget;
+//     const arr = [3,6]
+//     setTimeout(() => {
+//       input.selectionStart = arr.includes(cursorPositionRef.current as number) ? ((cursorPositionRef.current as number) + 1) : cursorPositionRef.current;
+//       input.selectionEnd = arr.includes(cursorPositionRef.current as number) ? ((cursorPositionRef.current as number) + 1) : cursorPositionRef.current;
+//     }, 0);
+//   };
+
+//   return (
+//     <span
+//       contentEditable
+//       suppressContentEditableWarning // Suppresses React's warning about contentEditable
+//       onInput={(e) => {
+//         resetCursorPosition(e);
+//         handleInput(e);
+//       }} // Updates state when user modifies content
+//       dangerouslySetInnerHTML={{ __html: (props?.value??props?.placeholder as string)}} // Sets content programmatically
+//       className={`min-h-3 min-w-2 z-[2] bg-test cursor-text ${className}`}
+//       {...props}
+//     />
+//   );
+// }
+
+
+
+interface IResponsiveProps {
+  className?: string;
+  href?: string;
+  target?: string;
+  rel?: string;
+  ref?: MutableRefObject<any>
+}
+
 export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
   return (
-    <div className="relative w-full grid grid-cols-2 my-1 ">
-      <div className={`${className} w-full min-w-[20px] `}>
+    <span className="relative my-1">
+      <span className={`${className} l min-w-[20px]  !w-full`}>
         {!!props.href && <a rel={props.rel} target={props.target} href={props.href} className={`absolute w-full h-full top-0 left-0 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })}</a>}
-        <p className="text-transparent break-words !max-w-[200px] !block">{replaceJSXRecursive(props.value, { "\n": <br /> })}</p>
-        <p className={`${(props.value || props.value === 0) && "!hidden"} text-transparent flex min-w-max flex-row items-center px-1 noExport`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</p>
-      </div>
-      <textarea ref={props.ref} className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props.value} />
-    </div>
+        <span className="text-transparent  break-word max-md:max-w-[200px ">{replaceJSXRecursive(props.value, { "\n": <br /> })}</span>
+        <span className={`${(props.value || props.value === 0) && "!hidden"} text-transparent flex min-w-max flex-row items-center px-1 noExport`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</span>
+      </span>
+      <textarea ref={props.ref} className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full !w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props.value} />
+    </span>
   )
 }

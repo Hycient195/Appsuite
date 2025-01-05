@@ -18,8 +18,8 @@ export default function DeleteFileModal() {
       Toast("success", `Deleted ${modalData?.primaryFile?.fileName}`);
       handleModalClose();
     };
-    if (isError) Toast("error", "Unable to delete file");
-  }, [ isSuccess, isError ])
+    if (isError) Toast("error", `Unable to delete ${modalData?.primaryFile?.fileName}`);
+  }, [ isSuccess, isError ]);
 
   return (
     <div className="md:min-h-[300px] w-full flex flex-col gap-4 max-md:justify-end justify-center">
