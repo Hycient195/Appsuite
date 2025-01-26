@@ -2,7 +2,7 @@ import { handleInputChange, replaceJSXRecursive } from "@/utils/miscelaneous";
 import { MenuItem, Select } from "@mui/material";
 import { Country, State } from "country-state-city";
 import Image from "next/image";
-import { ChangeEvent, CSSProperties, FC, LegacyRef, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, CSSProperties, FC, LegacyRef, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 
 type TElementTypes = HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement
 
@@ -13,6 +13,7 @@ interface IProps {
   // options?: { value: (string|number), text: (string|JSX.Element|React.ReactNode) }[];
   options?: { value: any, text: (string|JSX.Element|React.ReactNode) }[];
   onChange?: (arg?: { target: { value: string }} | any) => void;  // onChange?: ((e: ChangeEvent<HTMLTextAreaElement>) => void | ((e: ChangeEvent<HTMLInputElement>) => void) | ((e: ChangeEvent<HTMLSelectElement>) => void) | ((e: SelectChangeEvent<string|number>) => void));
+  onBlur?: ChangeEventHandler
   footerText?: string;
   name?: string;
   id?: string;
@@ -64,12 +65,12 @@ export const FormRegionSelect: FC<IProps & {countryCode: string}> = (props) => {
   )
 }
 
-export const FormText = ({ labelText, ref, value, onChange, footerText, name, id, placeholder, type = "text", wrapperClassName, labelClassName, inputClassName, isLoading = false, disabled = false, icon, iconPosition = "left", required }: IProps) => {
+export const FormText = ({ labelText, ref, value, onChange, onBlur, footerText, name, id, placeholder, type = "text", wrapperClassName, labelClassName, inputClassName, isLoading = false, disabled = false, icon, iconPosition = "left", required }: IProps) => {
   return (
     <label htmlFor={id} className={`${wrapperClassName}`}>
       { labelText && <p className={`${isLoading ? "text-zinc-400" : "text-zinc-700"} duration-700 text-sm mb-1.5 ${labelClassName}`}>{labelText}</p> }
       <div className="relative">
-        <input value={value} ref={ref as LegacyRef<HTMLInputElement>} onChange={(e: ChangeEvent<HTMLInputElement>) => onChange && onChange(e)} name={name} id={id} placeholder={!isLoading ? placeholder : ""} type={type} disabled={isLoading||disabled} required={required} className={`${isLoading ? "bg-gray-300/70 animate-pulse" : "bg-white"} ${icon && (iconPosition === "left" ? "!pl-9" : "!pr-9")} px-3 lg:px-3.5 py-2.5 w-full text-zinc-500 font-light rounded-md border border-zinc-300 outline-none focus:ring-1 focus:ring-slate-300 ${inputClassName}`} />
+        <input value={value} ref={ref as LegacyRef<HTMLInputElement>} onChange={(e: ChangeEvent<HTMLInputElement>) => onChange && onChange(e)} name={name} id={id} onBlur={onBlur} placeholder={!isLoading ? placeholder : ""} type={type} disabled={isLoading||disabled} required={required} className={`${isLoading ? "bg-gray-300/70 animate-pulse" : "bg-white"} ${icon && (iconPosition === "left" ? "!pl-9" : "!pr-9")} px-3 lg:px-3.5 py-2.5 w-full text-zinc-500 font-light rounded-md border border-zinc-300 outline-none focus:ring-1 focus:ring-slate-300 ${inputClassName}`} />
         { icon && <span className={`absolute top-0 bottom-0 h-max my-auto flex items-center ${iconPosition === "left" ? "left-3" : "right-3"}`}>{icon}</span> }
       </div>
       { footerText && <p className={`${isLoading ? "text-zinc-300" : "text-zinc-400"} font-light text-xs mt-1.5`}>{footerText}</p> }

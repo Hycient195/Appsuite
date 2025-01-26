@@ -2,6 +2,7 @@ import { readFile } from "@/services/googleDriveService";
 import BalanceSheet from "./BalanceSheet";
 import { cookies } from "next/headers";
 import { getNewAccessToken } from "@/utils/getRefreshToken";
+import { IFinanceTrackerDocument } from "../_types/types";
 
 interface IProps {
   params: Promise<{
@@ -13,7 +14,10 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
   const appCookies = (await cookies());
   const isLoggedIn = !!appCookies.get("asAccessToken")?.value;
 
-  let csvString = "";
+  let csvString: IFinanceTrackerDocument = {
+    templateLayout: "CLASSIC",
+    filename: "",
+  };
   let loadedSucessfully = false;
 
   try {
@@ -24,11 +28,12 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
     //     appCookies.set("asAccessToken", tokenResponse?.access_token as string, { maxAge: (60*60)})
     //   }
     // }
-    csvString = (await readFile((await params).fileId)) as string;
+    csvString = (await readFile((await params).fileId)) as IFinanceTrackerDocument;
+    // console.log(csvString)
     loadedSucessfully = true;
   } catch (error) {
     console.log(`Error fetching balance sheet`, error);
-    csvString = "";
+    // csvString = {};
   }
 
   return <BalanceSheet csvString={csvString} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />

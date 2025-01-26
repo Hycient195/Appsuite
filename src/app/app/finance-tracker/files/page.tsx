@@ -46,7 +46,7 @@ export default function BalanceSheetFiles() {
       <div className="file-list h-full grid">
         <div className="bg-white border-[12px]  border-white shadow min-h-full w-full  max-h-[50vh] overflow-y-auto ring-1 ring-zinc-200 rounded-md">
           <table cellPadding={8} className=" w-full">
-            <thead className="head sticky top-0 w-ful z-[1] text-slate-500">
+            <thead className="head sticky top-0 w-ful z-[1] bg-white text-slate-500">
               <tr className=" w-ful text-sm font-medium">
                 <td className="cell">
                   <div className="line-in">

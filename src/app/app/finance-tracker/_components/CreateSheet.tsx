@@ -9,6 +9,7 @@ import LoadingButton from "@/sharedComponents/LoadingButton";
 import { handleInputChange } from "@/utils/miscelaneous";
 import { useModalContext } from "@/sharedComponents/CustomModal";
 import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
+import { IFinanceTrackerDocument } from "../_types/types";
 
 export default function CreateFinanceTrackerSheet() {
   const router = useRouter();
@@ -25,8 +26,9 @@ export default function CreateFinanceTrackerSheet() {
 
   const handleCreateFile = async (e: FormEvent) => {
     e.preventDefault();
-    const pageDefault = [{ ...defaultPage, title: formData.title, subTitle: formData?.description, templateLayout: formData?.templateLayout  }].map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-    createFile({ appName: "FINANCE_TRACKER", fileName: `${formData.title.replace(" ", "_").trim()}.csv`, content: pageDefault, mimeType: "text/csv"});
+    // const pageDefault = [{ ...defaultPage, title: formData.title, subTitle: formData?.description, templateLayout: formData?.templateLayout  }].map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+    const pageDefault: IFinanceTrackerDocument = { filename: formData.title, templateLayout: formData.templateLayout, description: formData.description, pages: [ defaultPage ] }
+    createFile({ appName: "FINANCE_TRACKER", fileName: `${formData.title.replace(" ", "_").trim()}.json`, content: JSON.stringify(pageDefault), mimeType: "application/json"});
   };
 
   useEffect(() => {

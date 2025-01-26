@@ -24,3 +24,11 @@ export interface IBalanceSheetFile {
   size: number;
   mimeType: string
 }
+
+export interface IFinanceTrackerDocument {
+  templateLayout?: "CLASSIC" | "MODERN";
+  filename: string;
+  description?: string;
+  currentPage?: number;
+  pages?: IBalanceSheetPage[]
+}

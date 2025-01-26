@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Papa from "papaparse";
-import { IBalanceSheetPage, IRow } from '../_types/types';
+import { IBalanceSheetPage, IFinanceTrackerDocument, IRow } from '../_types/types';
 import { useCancelableDebounce } from '@/sharedHooks/useCancellableDebounce';
 
 const defaultRow: IRow = {
@@ -23,8 +23,16 @@ export const defaultPage: IBalanceSheetPage = {
   templateLayout: "CLASSIC"
 };
 
+export const defaultDocument: IFinanceTrackerDocument = {
+  templateLayout: "CLASSIC",
+  filename: "",
+  currentPage: 0
+  // pages: [ defaultPage ]
+}
+
 export const useBalanceSheet = (fileName?: string) => {
   const [pages, setPages] = useState<IBalanceSheetPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
+  const [ documentFile, setDocumentFile ] = useState<IFinanceTrackerDocument>(defaultDocument);
   const [history, setHistory] = useState<IBalanceSheetPage[][]>([]);
   const [future, setFuture] = useState<IBalanceSheetPage[][]>([]);
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
@@ -39,8 +47,6 @@ export const useBalanceSheet = (fileName?: string) => {
     pageCopy[pageIndex].imageUrl = url;
     updatePages(pageCopy);
   };
-
-
 
   const updateRowsToAdd = (pageNumber: number, action: ("increament"|"decreament"|null), defaltValue?: number): void => {
     const pageCopy = [ ...pages ]
@@ -367,6 +373,11 @@ export const useBalanceSheet = (fileName?: string) => {
     downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
   };
 
+  const downloadCustomPagesCSV = (pageIndexes: number[]) => {
+    const csvData = pages?.filter((_, index) => pageIndexes.includes(index)).map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+    downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
+  };
+
   const generateCSVData = (page: IBalanceSheetPage) => {
     const rowsCSV = page.rows
       .map(row => `"${row.date}","${row.narration}","${row.credit}","${row.debit}","${row.balance}"`)
@@ -479,11 +490,14 @@ export const useBalanceSheet = (fileName?: string) => {
     loadCSVData,
     generateCSVData,
     downloadPageCSV,
+    downloadCustomPagesCSV,
     downloadAllPagesCSV,
     handleInputChange,
     updateRowsToAdd,
     setPages,
     updatePages,
+    documentFile,
+    setDocumentFile,
 
     handleNumericInputBlur,
     moveRow,

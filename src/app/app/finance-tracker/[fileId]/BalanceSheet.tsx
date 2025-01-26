@@ -1,22 +1,16 @@
 "use client"
 
-import React, { ChangeEvent, LegacyRef, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { LegacyRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { defaultPage, useBalanceSheet } from '../_hooks/useBalanceSheet';
-import { formatDateInput, replaceJSXRecursive, splitInThousand, splitInThousandForTextInput } from '@/utils/miscelaneous';
 import useGeneratePDF from '@/sharedHooks/useGeneratePDF';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import DraggablePage from '@/sharedComponents/DraggablePage';
 import { useParams } from 'next/navigation';
 import api from '@/redux/api';
 import Teleport from '@/utils/Teleport';
 import StatusIcon, { SaveLoadingSpinner } from '@/sharedComponents/CustomIcons';
 import Papa from "papaparse";
 import { IUpdateFileRequest } from '@/types/shared.types';
-import Image from 'next/image';
-import { IBalanceSheetPage } from '../_types/types';
-import axios from 'axios';
-import LoadingButton from '@/sharedComponents/LoadingButton';
 import BalanceSheetPage from '../_components/SheetTablePage';
 import { BalanceSheetContextProvider } from '../_contexts/financeTrackerContext';
 import ModuleFileHeader from '@/sharedComponents/ModuleFileHeader';
@@ -24,11 +18,11 @@ import CustomModal from '@/sharedComponents/CustomModal';
 import SheetExportModal from './_components/ExportModal';
 import CreateFinanceTrackerSheet from '../_components/CreateSheet';
 import { AnimatePresence } from 'motion/react';
+import { IBalanceSheetPage, IFinanceTrackerDocument } from '../_types/types';
+import usePageTracker from '@/sharedHooks/usePageTracker';
 
-const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
-
+const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
   const params = useParams<any>();
-
   const tableContainerRef = useRef<HTMLTableRowElement|null>(null);
   const tbodyRef = useRef<HTMLTableSectionElement|null>(null);
   const cursorPositionRef = useRef<number | null>(null);
@@ -53,7 +47,8 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
   }
 
   const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Account Report.pdf`})
-  const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` })
+  const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` });
+
   
   const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
   const [ uploadImage, { isLoading: isUploadingImage, isSuccess: isUploadingImageSuccess} ] = api.commonApis.useUploadImageMutation();
@@ -87,13 +82,24 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     handleNumericInputBlur,
     handleKeyDown,
     inputRefs,
-    movePage
+    movePage,
+    documentFile,
+    setDocumentFile
   } = balanceSheetInstance;
 
+  const { currentPage, pageRefs } = usePageTracker(pages?.length);
+  // const { currentPage, pageRefs } = usePageTracker(28);
+
   /* Loading CSV file fetched from the server using SSR */
-  useEffect(() => {
+  
+  useLayoutEffect(() => {
+    console.log(csvString)
     if (csvString) {
-      loadCSVData(Papa.parse(csvString)?.data as string[][]);
+      // loadCSVData(Papa.parse(csvString)?.data as string[][]);
+      // const decodedData = JSON.parse(csvString) as IFinanceTrackerDocument;
+      console.log(csvString)
+      setPages(csvString?.pages as IBalanceSheetPage[])
+      setDocumentFile({ filename: csvString?.filename, templateLayout: csvString?.templateLayout });
     } else {
       setPages([{ ...defaultPage }]);
     }
@@ -101,8 +107,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
 
   const handleSaveFile = (saveType: IUpdateFileRequest["updateType"]) => {
     if (isLoggedIn && loadedSucessfully) {
-      const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-      saveFile({ fileId: params?.fileId, content: csvData, mimeType: "text/csv", updateType: saveType })
+      saveFile({ fileId: params?.fileId, content: JSON.stringify({ ...documentFile, pages }), mimeType: "application/json", updateType: saveType });
     }
   }
 
@@ -192,25 +197,32 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     updateImageUrl("https://drive.google.com/uc?export=view&id=1AEHAhbjEsRzVrdBGEDYNNsS7GtkkHFDz", 0)
   };
 
+  console.log(currentPage)
 
   return (
     <BalanceSheetContextProvider balanceSheetInstance={balanceSheetInstance}>
-      <ModuleFileHeader
-        fileName={pages?.[0]?.title} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)}
-        handleExport={() => setIsExportModalOpen(true)} handleImport={handleCSVImport}
-        undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}
-      />
       <DndProvider backend={HTML5Backend}>
         <Teleport rootId='saveIconPosition'>
           <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
             <StatusIcon isLoading={isSaving} isError={saveFileIsError} isSuccess={saveFileIsSuccess} />
           </button>
         </Teleport>
-        <main className=" w-full border-zinc-200 ">
-      
+        <main className=" w-full relative border-zinc-200">
+          <ModuleFileHeader
+            fileName={documentFile?.filename} setFileName={(e) => setDocumentFile({ ...documentFile, filename: e.target.value })} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)}
+            handleExport={() => setIsExportModalOpen(true)} handleImport={handleCSVImport}
+            undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}
+          />
           <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
             {(pages).map((page, pageIndex) => (
-              <BalanceSheetPage
+              <div
+                key={`page-${pageIndex}`}
+                data-page={pageIndex}
+                ref={(el: any) => {(pageRefs?.current as any)[pageIndex] = el}}
+                className=""
+              >
+                <span className="text-sm text-slate-700">Page {pageIndex+1}</span>
+                <BalanceSheetPage
                 key={`page-${pageIndex}`}
                 isLoggedIn={isLoggedIn}
                 pages={pages}
@@ -244,12 +256,15 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
                 updatePageTitle={updatePageTitle}
                 updateRowsToAdd={updateRowsToAdd}
                 params={params}
+                // pageRefs={pageRefs as any}
+                // pageRef={(el: any) => {((pageRefs.current as any)[pageIndex] = el)}}
               />
+              </div>
             ))}
 
             {/* Global Actions */}
             <div className={`flex flex-wrap max-md:px-4 noExport flex-row gap-3 lg:gap-4 justify-end`}>
-              <button
+              {/* <button
                 className="px-4 py-2 bg-green-500 text-white rounded"
                 onClick={downloadAllPagesCSV}
               >
@@ -267,20 +282,20 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
               >
                 Import CSV
                 <input id='csv-import' type="file" accept=".csv" className='hidden' onChange={handleCSVImport} />
-              </label>
-              <button
+              </label> */}
+              {/* <button
                 className="px-4 py-2 bg-blue-500 text-white rounded"
                 onClick={() => addPage(pages.length - 1)}
               >
                 Add New Page
-              </button>
+              </button> */}
               
             </div>
           </div>
         </main>
       </DndProvider>
       <AnimatePresence>     
-        { isExportModalOpen && <CustomModal setIsModalOpen={setIsExportModalOpen}><SheetExportModal /></CustomModal> }
+        { isExportModalOpen && <CustomModal setIsModalOpen={setIsExportModalOpen} modalData={{ createDocumentPDF, createPdf, currentPage }}><SheetExportModal /></CustomModal> }
         { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
       </AnimatePresence>
     </BalanceSheetContextProvider>

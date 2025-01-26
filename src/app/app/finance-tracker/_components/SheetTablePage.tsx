@@ -5,6 +5,7 @@ import { formatDateInput, replaceJSXRecursive, splitInThousand, splitInThousandF
 import Image from "next/image";
 import { IBalanceSheetPage } from "../_types/types";
 import useHandlePageLogoActions from "@/sharedHooks/useHandlePageLogoActions";
+import usePageTracker from "@/sharedHooks/usePageTracker";
 
 
 interface IBalanceSheetPageProps {
@@ -64,13 +65,23 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
     handleReceiptDragOver, handleReceiptDragEnter,
     handleReceiptDragLeave, handleReceiptDrop,
     handleUploadLogo, hasLogoOrSpinner
-  } = useHandlePageLogoActions<IBalanceSheetPage>({ isLoggedIn: isLoggedIn, page: page, pageIndex: pageIndex, pages: pages, params: params, removePage: removePage, setPages: setPages })
+  } = useHandlePageLogoActions<IBalanceSheetPage>({ isLoggedIn: isLoggedIn, page: page, pageIndex: pageIndex, pages: pages, params: params, removePage: removePage, setPages: setPages });
+
+
 
   return (
     <DraggablePage pageIndex={pageIndex} movePage={movePage}>   
 
-      <div key={pageIndex} ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el}} className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full  max-w-[1080px] md:rounded mx-auto px-4 pt-8 pb-6 xl:pb-8`}>
-      <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
+      <div
+        key={pageIndex}
+        // ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el; (pageRefs.current as HTMLDivElement[])[pageIndex] = el }}
+        ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el }}
+        
+        // ref={(el) => {((pageRefs.current as any)[pageIndex] = el)}}
+        // data-page={pageIndex + 1}
+        className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full  max-w-[1080px] md:rounded mx-auto px-4 pt-8 pb-6 xl:pb-8`}
+      >
+        <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
         <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
           <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
             {
@@ -213,20 +224,27 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
               )
             } */}
            
-            <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => downloadPageCSV(pageIndex)}>
+            {/* <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => downloadPageCSV(pageIndex)}>
               Download CSV
             </button>
             <button className="px-4 py-2 bg-green-500  text-white rounded" onClick={() => createDocumentPDF(pageIndex, page.title)} >
               Download PDF
-            </button>
+            </button> */}
             <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => handleRemovePage(pageIndex)} >
               Remove Page
             </button>
-            <button className="px-4 py-2 disabled:bg-gray-300 disabled:cursor-not-allowed bg-gray-500 text-white rounded" onClick={redo} disabled={!canRedo} >
+            {/* <button className="px-4 py-2 disabled:bg-gray-300 disabled:cursor-not-allowed bg-gray-500 text-white rounded" onClick={redo} disabled={!canRedo} >
               Redo
             </button>
             <button className="px-4 py-2 disabled:bg-gray-300 disabled:cursor-not-allowed bg-gray-500 text-white rounded" onClick={undo} disabled={!canUndo} >
               Undo
+            </button> */}
+            
+            <button
+              className="px-4 py-2 bg-emerald-500 text-white rounded"
+              onClick={() => addPage(pageIndex)}
+            >
+              Insert Page Below
             </button>
             <div className="px-4 py-2 cursor-pointer bg-blue-500 flex gap-2 items-center justify-between text-white rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
               <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "decreament")}} className="absolut left-2 top-0 bottom-0 my-auto w-3.5 h-3.5 aspect-square flex items-center justify-center bg-white text-blue-500 font-bold rounded-full">
@@ -241,12 +259,6 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
                 </svg>
               </button>
             </div>
-            <button
-              className="px-4 py-2 bg-emerald-500 text-white rounded"
-              onClick={() => addPage(pageIndex)}
-            >
-              Insert Page Below
-            </button>
           </div>
         </div>
       </div>

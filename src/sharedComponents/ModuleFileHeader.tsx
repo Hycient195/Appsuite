@@ -5,6 +5,8 @@ import { ResponsiveTextInput } from "./FormInputs";
 
 interface IProps {
   fileName: string;
+  // setFileName: React.Dispatch<React.SetStateAction<string>>
+  setFileName: ChangeEventHandler<HTMLTextAreaElement>
   subtitle: string;
   handleInitiateCreateFile: () => void;
   className?: string;
@@ -16,13 +18,13 @@ interface IProps {
   canUndo?: boolean
 }
 
-export default function ModuleFileHeader({ fileName, subtitle, handleInitiateCreateFile, className, ...props }: IProps) {
+export default function ModuleFileHeader({ fileName, setFileName, subtitle, handleInitiateCreateFile, className, ...props }: IProps) {
   const pathname = usePathname();
   const handleImport = () => {
 
   };
   return (
-    <section className={`w-full max-w-[1100px] mx-auto spread-out gap-3 max-md:text-center max-md:justify-center flex-wrap py-3 px-2 lg:px-3 ${className}`}>
+    <section className={`w-full sticky top-0 z-[2] bg-slate-100 max-w-[1100px] mx-auto spread-out gap-3 max-md:text-center max-md:justify-center flex-wrap py-3 px-2 lg:px-3 ${className}`}>
       <div className="left flex flex-col max-md:items-center gap-1">
         <div className="line-in md:gap-4 text-sm">
           <HouseIcon />
@@ -31,7 +33,7 @@ export default function ModuleFileHeader({ fileName, subtitle, handleInitiateCre
           <ChevronRight className="!size-4" />
           <span className="text-slate-500 capitalize">{fileName}</span>
         </div>
-        <ResponsiveTextInput className="text-primary text-2xl font-semibold mt-2 focus:ring-0 focus:outline-none" value={fileName} />
+        <ResponsiveTextInput className="text-primary text-2xl font-semibold mt-2 focus:ring-0 focus:outline-none" value={fileName} onChange={setFileName} />
         {/* <h1 className="text-primary text-2xl font-semibold mt-3 max-md:hidden">{fileName}</h1> */}
         <div className="line-in text-slate-700 mt-2 !gap-4 text-sm">
           <button onClick={props.undo} disabled={!props.canUndo} className={`line-in disabled:text-slate-400`}><UndoIcon className="!size-5" /> Undo</button>

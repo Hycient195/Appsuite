@@ -9,9 +9,10 @@ interface IProps {
   pageIndex: number;
   movePage: (fromIndex: number, toIndex: number) => void;
   children: React.ReactNode | JSX.Element;
+  ref?: React.RefObject<HTMLDivElement|null>;
 }
 
-const DraggablePage: React.FC<IProps> = ({ pageIndex, movePage, children }) => {
+const DraggablePage: React.FC<IProps> = ({ pageIndex, movePage, children, ref }) => {
   const [{ isDragging }, drag, preview] = useDrag({
     type: ItemTypes.PAGE,
     item: { pageIndex },
@@ -39,6 +40,8 @@ const DraggablePage: React.FC<IProps> = ({ pageIndex, movePage, children }) => {
   return (
     <div
       ref={containerRef}
+      // ref={(el: HTMLDivElement) => {(containerRef.current as HTMLDivElement) = el; (ref!.current as HTMLDivElement) = el }}
+      // ref={ref as any}
       style={{ opacity: isDragging ? 0.5 : 1 }}
       className="relative w-full max-w-[1080px] mx-auto"
     >

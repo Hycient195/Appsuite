@@ -190,7 +190,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
 
   return (
     <div className="">
-      <ModuleFileHeader fileName={pages?.[0]?.title} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => {}} />
+      {/* <ModuleFileHeader fileName={pages?.[0]?.title} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => {}} /> */}
       <BalanceSheetContextProvider balanceSheetInstance={balanceSheetInstance}>
         <DndProvider backend={HTML5Backend}>
           <Teleport rootId='saveIconPosition'>
