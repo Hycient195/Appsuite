@@ -1,0 +1,15 @@
+{
+  "short_name": "Appsuite",
+  "name": "Appsuite",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#002037",
+  "background_color": "white"
+}
