@@ -18,7 +18,7 @@ const usePageTracker = (totalPages: number) => {
       { threshold: 0.5 } // Fires when at least 60% of the page is visible
     );
     
-    console.log(currentPage)
+    // console.log(currentPage)
     pageRefs.current.forEach((page) => {
       
       if (page) observer.observe(page);
@@ -27,7 +27,7 @@ const usePageTracker = (totalPages: number) => {
     return () => observer.disconnect();
   }, [totalPages]);
 
-  console.log(pageRefs.current)
+  // console.log(pageRefs.current)
 
   return { currentPage, pageRefs };
 };

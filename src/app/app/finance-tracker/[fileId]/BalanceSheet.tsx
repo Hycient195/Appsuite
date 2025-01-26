@@ -197,7 +197,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
     updateImageUrl("https://drive.google.com/uc?export=view&id=1AEHAhbjEsRzVrdBGEDYNNsS7GtkkHFDz", 0)
   };
 
-  console.log(currentPage)
+  // console.log(currentPage)
 
   return (
     <BalanceSheetContextProvider balanceSheetInstance={balanceSheetInstance}>

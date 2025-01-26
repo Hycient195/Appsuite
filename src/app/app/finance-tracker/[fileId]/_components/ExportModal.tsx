@@ -25,7 +25,7 @@ export default function SheetExportModal() {
   });
   
   const exportTypes = [ { text: `Current Page (page ${modalData?.currentPage + 1})`, value: "CURRENT_PAGE", }, { text: "All Pages", value: "ALL_PAGES", }, { text: "Custom", value: "CUSTOM", }, ]
-  const exportFormats = [ { text: "CSV", value: "CSV", }, { text: "PDF", value: "PDF", }, { text: "JSON", value: "JSON", } ];
+  const exportFormats = [ { text: "CSV", value: "CSV", }, { text: "PDF", value: "PDF", } ];
 
   const generateRange = ([ start, end ]: [number, number]): number[] => {
     return Array.from({ length: end - start + 1 }, (_, index) => start + index);
@@ -112,66 +112,70 @@ export default function SheetExportModal() {
     }
   };
 
-  console.log(exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)))
+  // console.log(exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)))
 
   const handleExport = (e: FormEvent) => {
     e.preventDefault();
     // @ts-ignore
     exportMap[exportOptions.exportFormat][exportOptions.exportType]();
   }
-  console.log(documentFile)
+  // console.log(documentFile)
   return (
-    <form onSubmit={handleExport} className="flex flex-col gap-3 max-h-[97dvh] -mx-0.5 px-0.5 overflow-y-auto">
+    <form onSubmit={handleExport} className="flex flex-col gap-3 max-h-[97dvh] -mx-0.5 px-px overflow-y-auto">
       <h2 className="text-xl font-medium text-slate-800">Export</h2>
       <p className="text-slate-500">What are you exporting?</p>
-      <div className="flex flex-col gap-2 lg:gap-3">
-        {
-          exportTypes.map((each) => (
-            <label htmlFor={each.value} key={each.text} className={`rounded-lg cursor-pointer spread-out text-slate-700 font-medium border border-slate-300 px-4 py-3 lg:py-4 ${exportOptions.exportType === each.value && "bg-slate-100 ring-1 ring-primary"}`}>
-              <span className="">{each.text}</span>
-              <Radio onChange={(e) => setExportOptions({ ...exportOptions, exportType: each.value as typeof exportOptions.exportType})} checked={exportOptions.exportType === each.value} id={each.value} className="!p-0 !text-inherit" />
-            </label>
-          ))
-        }
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-2 lg:gap-3">
+          {
+            exportTypes.map((each) => (
+              <label htmlFor={each.value} key={each.text} className={`rounded-lg cursor-pointer spread-out duration-500 text-slate-700 font-medium border border-slate-300 px-4 py-3 lg:py-4 ${exportOptions.exportType === each.value && "bg-slate-100 ring-1 ring-primary"}`}>
+                <span className="">{each.text}</span>
+                <Radio onChange={(e) => setExportOptions({ ...exportOptions, exportType: each.value as typeof exportOptions.exportType})} checked={exportOptions.exportType === each.value} id={each.value} className="!p-0 !text-inherit" />
+              </label>
+            ))
+          }
+        </div>
+        <AnimatePresence>
+          {
+            exportOptions.exportType === "CUSTOM"
+            && (
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: "auto" }}
+                exit={{ height: 0 }}
+                // layout
+                transition={{
+                  duration: 0.4, // Adjust the duration of the animation
+                  ease: "easeInOut", // Choose the easing function
+                }}
+                className=""
+              >
+                <div className="grid grid-cols-[max-content_1fr] gap-3 mt-2">
+                  <FormSelect onChange={(e) => setExportOptions({ ...exportOptions, customOptions: { ...exportOptions.customOptions, type: e.target.value }}) } value={exportOptions.customOptions.type} options={[ { text: "From page", value: "FROM" }, { text: "Pages", value: "PAGES" }, ]} />
+                  {
+                    exportOptions.customOptions.type === "FROM" ?
+                    (
+                      <div className="grid grid-cols-2 gap-2">
+                        <FormText required onBlur={onLowerRangeBlur} value={exportOptions?.customOptions.range?.[0]} name={`customOptions.range.0`} onChange={(e) => handleRangeInput(e, "customOptions.range.0")} type="number" placeholder="from" />
+                        <FormText required onBlur={onUpperRangeBlur} value={exportOptions?.customOptions.range?.[1]} name={`customOptions.range.1`} onChange={(e) => handleRangeInput(e, "customOptions.range.1")} type="number" placeholder="to" />
+                      </div>
+                    )
+                    : (
+                      <FormText required value={exportOptions?.customOptions.value} name={`customOptions.value`} onChange={handlePagesInput} onBlur={handlePagesBlur} placeholder="Page numbers separated by commas (,)" />
+                    )
+                  }
+                </div>
+              </motion.div>
+            )
+          }
+        </AnimatePresence>
       </div>
-      <AnimatePresence>
-        {
-          exportOptions.exportType === "CUSTOM"
-          && (
-            <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: "auto" }}
-              exit={{ height: 0 }}
-              layout
-              transition={{
-                duration: 0.4, // Adjust the duration of the animation
-                ease: "easeInOut", // Choose the easing function
-              }}
-              className="grid grid-cols-[max-content_1fr] gap-3"
-            >
-              <FormSelect onChange={(e) => setExportOptions({ ...exportOptions, customOptions: { ...exportOptions.customOptions, type: e.target.value }}) } value={exportOptions.customOptions.type} options={[ { text: "From page", value: "FROM" }, { text: "Pages", value: "PAGES" }, ]} />
-              {
-                exportOptions.customOptions.type === "FROM" ?
-                (
-                  <div className="grid grid-cols-2 gap-2">
-                    <FormText required onBlur={onLowerRangeBlur} value={exportOptions?.customOptions.range?.[0]} name={`customOptions.range.0`} onChange={(e) => handleRangeInput(e, "customOptions.range.0")} type="number" placeholder="from" />
-                    <FormText required onBlur={onUpperRangeBlur} value={exportOptions?.customOptions.range?.[1]} name={`customOptions.range.1`} onChange={(e) => handleRangeInput(e, "customOptions.range.1")} type="number" placeholder="to" />
-                  </div>
-                )
-                : (
-                  <FormText required value={exportOptions?.customOptions.value} name={`customOptions.value`} onChange={handlePagesInput} onBlur={handlePagesBlur} placeholder="Page numbers separated by commas (,)" />
-                )
-              }
-            </motion.div>
-          )
-        }
-      </AnimatePresence>
       <div className="flex flex-col bg-white z-[30] gap-2">
-        <p className="text-slate-500 mt-1  ">Choose the Formats you would like to export</p>
+        <p className="text-slate-500 mt-1  ">Choose the format you would like to export</p>
         <div className="flex flex-col bg-white gap-2 lg:gap-3">
           {
             exportFormats.map((each) => (
-              <label htmlFor={each.value} key={each.text} className={`rounded-lg cursor-pointer spread-out text-slate-700 font-medium border border-slate-300 px-4 py-3 lg:py-4 ${exportOptions.exportFormat === each.value && "bg-slate-100 ring-1 ring-primary"}`}>
+              <label htmlFor={each.value} key={each.text} className={`rounded-lg cursor-pointer spread-out text-slate-700 font-medium border duration-500 border-slate-300 px-4 py-3 lg:py-4 ${exportOptions.exportFormat === each.value && "bg-slate-100 ring-1 ring-primary"}`}>
                 <span className="">{each.text}</span>
                 <Radio onChange={(e) => setExportOptions({ ...exportOptions, exportFormat: each.value as typeof exportOptions.exportFormat})} checked={exportOptions.exportFormat === each.value} id={each.value} className="!p-0 !text-inherit" />
               </label>
