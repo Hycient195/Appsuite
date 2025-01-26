@@ -38,8 +38,8 @@ export const FormSelect = ({ labelText, ref, value, defaultValue, options, onCha
     <label htmlFor={id} className={`${wrapperClassName}`}>
       { labelText && <p className={`${isLoading ? "text-zinc-400" : "text-zinc-700"} duration-700 text-sm  mb-1.5 ${labelClassName}`}>{labelText}</p> }
       <div className="relative">
-        <Select ref={ref as RefObject<unknown>} defaultValue={defaultValue} onChange={(e) => onChange && onChange(e)} name={name} value={value} id={id} displayEmpty disabled={isLoading||disabled} required={required} className={`${isLoading ? "!bg-gray-300/70 !animate-pulse" : "!bg-white"} ${icon && "[&>*]:!pl-9"} w-full !border !font-lexend !font-light !rounded-md !border-zinc-300 [&>*]:!border-none [&>*]:!py-2.5 [&>*]:!text-zinc-500 focus:[&>*]:!rounded-md focus:[&>*]:!ring-2 focus:[&>*]:!ring-zinc-300 ${inputClassName}`}>
-          { !isLoading && <MenuItem value="" className={``}>{defaultValue}</MenuItem> }
+        <Select ref={ref as RefObject<unknown>} defaultValue={defaultValue} onChange={(e) => onChange && onChange(e)} name={name} value={value} id={id} displayEmpty disabled={isLoading||disabled} required={required} className={`${isLoading ? "!bg-gray-300/70 !animate-pulse" : "!bg-white"} ${icon ? "[&>*]:!pl-9" : "[&>*]:!px-3"} w-full !border !font-lexend !font-light !rounded-md !border-zinc-300 [&>*]:!border-none [&>*]:!py-2.5 [&>*]:!text-zinc-500 focus:[&>*]:!rounded-md focus:[&>*]:!ring-2 focus:[&>*]:!ring-zinc-300 ${inputClassName}`}>
+          { (!isLoading && defaultValue) && <MenuItem value="" className={``}>{defaultValue}</MenuItem> }
           {
             options && options.map((option, index: number) => (
               <MenuItem key={`${labelText}-${index}`} value={option.value} className="!font-lexend !font-zinc-600 !font-light">{option.text}</MenuItem>

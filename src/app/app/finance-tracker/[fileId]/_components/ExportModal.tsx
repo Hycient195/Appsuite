@@ -24,7 +24,7 @@ export default function SheetExportModal() {
     alternateExportName: "", exportType: "", exportFormat: "", customOptions: { type: "FROM", value: "", range: [] }
   });
   
-  const exportTypes = [ { text: `Current Page (page ${modalData?.currentPage + 1})`, value: "CURRENT_PAGE", }, { text: "All Pages", value: "ALL_PAGES", }, { text: "Custom", value: "CUSTOM", }, ]
+  const exportTypes = [ { text: `Current Page (page ${modalData?.currentPage + 1})`, value: "CURRENT_PAGE", }, { text: `All Pages (${pages?.length} page${pages?.length>1&&"s"})`, value: "ALL_PAGES", }, { text: "Custom", value: "CUSTOM", }, ]
   const exportFormats = [ { text: "CSV", value: "CSV", }, { text: "PDF", value: "PDF", } ];
 
   const generateRange = ([ start, end ]: [number, number]): number[] => {
@@ -159,9 +159,8 @@ export default function SheetExportModal() {
                         <FormText required onBlur={onLowerRangeBlur} value={exportOptions?.customOptions.range?.[0]} name={`customOptions.range.0`} onChange={(e) => handleRangeInput(e, "customOptions.range.0")} type="number" placeholder="from" />
                         <FormText required onBlur={onUpperRangeBlur} value={exportOptions?.customOptions.range?.[1]} name={`customOptions.range.1`} onChange={(e) => handleRangeInput(e, "customOptions.range.1")} type="number" placeholder="to" />
                       </div>
-                    )
-                    : (
-                      <FormText required value={exportOptions?.customOptions.value} name={`customOptions.value`} onChange={handlePagesInput} onBlur={handlePagesBlur} placeholder="Page numbers separated by commas (,)" />
+                    ) : (
+                      <FormText required value={exportOptions?.customOptions.value} name={`customOptions.value`} onChange={handlePagesInput} onBlur={handlePagesBlur} placeholder="Page numbers separated by commas (,)" inputClassName="max-md:placeholder:!text-sm" />
                     )
                   }
                 </div>
