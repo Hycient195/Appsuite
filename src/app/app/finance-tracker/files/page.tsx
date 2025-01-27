@@ -3,8 +3,6 @@
 import {  MouseEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import TableSkeleton from "@/sharedComponents/skeletons/TableSkeleton";
-import LoadingButton from "@/sharedComponents/LoadingButton";
-import { IBalanceSheetFile } from "../_types/types";
 import api from "@/redux/api";
 import TableEmpty from "@/sharedComponents/emptyState/TableEmpty";
 import Link from "next/link";
@@ -33,8 +31,8 @@ export default function BalanceSheetFiles() {
   const [ selectedFile, setSelectedFile ] = useState<Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0] | null>(null);
 
   useEffect(() => {
-    getFiles({ folderName: "FINANCE_TRACKER", primaryFileMimeType: "text/csv" });
-  }, [ ])
+    getFiles({ folderName: "FINANCE_TRACKER", primaryFileMimeType: "application/json" });
+  }, [ ]);
 
   return (
     <main className="h-full relative p-3 rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">

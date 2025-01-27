@@ -20,15 +20,12 @@ export default function CreateFinanceTrackerSheet() {
     title: "", description: "", templateLayout: "CLASSIC"
   })
 
-  const { generateCSVData } = useBalanceSheet();
-
   const [ createFile, { isLoading, isSuccess, isError, data }] = api.commonApis.useCreateFileInFolderMutation();
 
   const handleCreateFile = async (e: FormEvent) => {
     e.preventDefault();
-    // const pageDefault = [{ ...defaultPage, title: formData.title, subTitle: formData?.description, templateLayout: formData?.templateLayout  }].map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
     const pageDefault: IFinanceTrackerDocument = { filename: formData.title, templateLayout: formData.templateLayout, description: formData.description, pages: [ defaultPage ] }
-    createFile({ appName: "FINANCE_TRACKER", fileName: `${formData.title.replace(" ", "_").trim()}.json`, content: JSON.stringify(pageDefault), mimeType: "application/json"});
+    createFile({ appName: "FINANCE_TRACKER", fileName: `${formData?.title?.trim()}.json`, content: JSON.stringify(pageDefault), mimeType: "application/json" });
   };
 
   useEffect(() => {

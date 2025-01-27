@@ -29,7 +29,7 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
     //   }
     // }
     csvString = (await readFile((await params).fileId)) as IFinanceTrackerDocument;
-    // console.log(csvString)
+    console.log(csvString)
     loadedSucessfully = true;
   } catch (error) {
     console.log(`Error fetching balance sheet`, error);

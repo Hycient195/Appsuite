@@ -21,7 +21,9 @@ export default function BalanceSheetFiles() {
 
   useEffect(() => {
     getFiles({ folderName: "INVOICE_MANAGER", primaryFileMimeType: "application/json" });
-  }, [ getFiles, hasDeleted ])
+  }, [ getFiles, hasDeleted ]);
+
+  console.log(data)
 
   return (
     <main className="h-full relative">

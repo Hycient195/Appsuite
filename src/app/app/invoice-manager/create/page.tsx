@@ -37,7 +37,7 @@ export default function CreateBalanceSheet() {
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const handleCreateFile = async () => {
-    createFile({ appName: "INVOICE_MANAGER", fileName: `${formData.fileName}.json`, content: JSON.stringify({ ...defaultGlobalInvoice, fileName: formData.fileName, templateId: formData.templateId, branding: { ...defaultGlobalInvoice.branding, themeColor: stateObject.branding?.themeColor } }), mimeType: "application/json"});
+    createFile({ appName: "INVOICE_MANAGER", fileName: `${formData.fileName}.json`, content: JSON.stringify({ ...defaultGlobalInvoice, fileName: formData.fileName, templateId: formData.templateId, branding: { ...defaultGlobalInvoice.branding, themeColor: stateObject.branding?.themeColor } }), mimeType: "application/json" });
   };
 
   useEffect(() => {

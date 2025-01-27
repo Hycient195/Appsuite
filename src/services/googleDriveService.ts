@@ -176,8 +176,7 @@ export async function createFileInFolder({ appName, fileName, content, mimeType 
   });
 }
 
-import { Readable } from "stream"
-
+import { Readable } from "stream";
 
 /**
  * Saves a content file in the same folder as the specified file ID.
