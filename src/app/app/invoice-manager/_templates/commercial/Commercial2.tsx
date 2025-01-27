@@ -50,7 +50,7 @@ export default function Commercial2({ templateId, setStateObject, stateObject, c
         <div className="flex max-md:flex-col">
           <div className="flex  flex-col w-[28%] max-md:ml-0 max-md:w-full">
             <div style={{ backgroundColor: templateThemeColor?.primary?.darkest }} className="flex flex-col items-start px-7 py-10 mx-auto w-full min-h-full max-md:px-5 max-md:pt-24">
-              <PageImage className="mx-auto" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
+              <PageImage className="mx-auto" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={stateObject} setFormData={setStateObject} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
 
               <div className="self-center mt-4 text-xl tracking-wider text-zinc-100">
               <ResponsiveTextInput
@@ -248,7 +248,7 @@ export default function Commercial2({ templateId, setStateObject, stateObject, c
                     className='text-left'
                   />
                 </div>
-                <PageImage className="mt-3" width={80} placeholder="Add/drop QR Code" fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.qrCodeUrl" />
+                <PageImage className="mt-3" width={80} placeholder="Add/drop QR Code" fileId={fileId} formData={stateObject} setFormData={setStateObject} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.qrCodeUrl" />
 
               </div>
             </div>
@@ -372,7 +372,7 @@ export default function Commercial2({ templateId, setStateObject, stateObject, c
 
               {/* Footer Section */}
               <div className="">
-                <PageImage className="ml-auto mt-5"placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
+                <PageImage className="ml-auto mt-5"placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
               </div>
               <div className="self-end mt-3.5 text-lg tracking-wide text-neutral-800 max-md:mr-2.5">
                 {/* Deepak Yadav */}
@@ -532,7 +532,7 @@ export default function Commercial2({ templateId, setStateObject, stateObject, c
 //                 </div>
 //                 <div className="shrink-0 mx-3 mt-3 max-w-full h-px border border-solid border-neutral-800 w-[681px] max-md:mr-2.5" />
 
-//                 <PageImage className="ml-auto mt-5"placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
+//                 <PageImage className="ml-auto mt-5"placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
 
 //                 <div className="self-end mt-3.5 text-lg tracking-wide text-neutral-800 max-md:mr-2.5">
 //                   Deepak Yadav

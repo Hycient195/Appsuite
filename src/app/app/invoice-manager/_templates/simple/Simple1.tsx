@@ -318,7 +318,7 @@ const Simple1: React.FC<InvoiceProps> = ({ templateId, setStateObject, stateObje
       <p className="font-semibold">Signature</p>
       <div className="border-t border-gray-300 mt-1 w-1/4 ml-auto"></div>
 
-      <PageImage placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
+      <PageImage placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
 
     </footer>
   </div>

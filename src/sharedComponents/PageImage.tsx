@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { SaveLoadingSpinner } from "./CustomIcons";
 import Image from "next/image";
 import { handleUpdateStateProperty } from "@/utils/miscelaneous";
+import { isLoggedIn } from "@/sharedConstants/common";
 
 interface IProps<T> {
   formData: T;
@@ -10,14 +11,13 @@ interface IProps<T> {
   fileId?: string;
   imageProperty: string;
   propertyKey: string;
-  isLoggedIn: boolean;
   height?: number;
   width?: number;
   placeholder?: string;
   className?: string;
 }
 
-export default function PageImage<T>({ isLoggedIn,  imageProperty, fileId, formData, setFormData, propertyKey, height = 70, width = 70, placeholder, className }: IProps<T>) {
+export default function PageImage<T>({ imageProperty, fileId, formData, setFormData, propertyKey, height = 70, width = 70, placeholder, className }: IProps<T>) {
   const [ isLoading, setIsLoading ] = useState({ uploading: false, deleting: false, removingPage: false });
   const [ isDragging, setIsDragging ] = useState<boolean>(false);
 

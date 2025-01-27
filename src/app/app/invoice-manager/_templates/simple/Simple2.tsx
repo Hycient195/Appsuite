@@ -93,7 +93,7 @@ const Simple2:React.FC<InvoiceProps> = ({ templateId, setStateObject, stateObjec
         <div className="flex flex-col max-w-[18rem] flex-1">
           <div style={{ color: templateThemeColor?.primary?.base }} className="flex flex-col items-end pl- text-base gap-1 leading-none  max-md:pl-5">
             <div className="w-[80px] h-[70px] flex justify-end">
-              <PageImage width={80} placeholder="Add/drop Logo" fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
+              <PageImage width={80} placeholder="Add/drop Logo" fileId={fileId} formData={stateObject} setFormData={setStateObject} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
             </div>
             <div className="mt-2 font-bold">
               <ResponsiveTextInput

@@ -64,7 +64,43 @@ export function handleInputChange<T>(
   setFormData(newFormData);
 }
 
-export function handleUpdateStateProperty<T>(formData: T, setFormData: React.Dispatch<React.SetStateAction<T>>, value: any, propertyKey: string): void {
+// export function handleUpdateStateProperty<T>(formData: T, setFormData: React.Dispatch<React.SetStateAction<T>>, value: any, propertyKey: string): void {
+//   const setNestedValue = (obj: any, path: string[], value: any): any => {
+//     const [first, ...rest] = path;
+
+//     if (rest.length === 0) {
+//       obj[first] = value;
+//     } else {
+//       const arrayMatch = first.match(/(\w+)\[(\d+)\]/);
+//       if (arrayMatch) {
+//         const [, key, index] = arrayMatch;
+//         obj[key][Number(index)] = setNestedValue(obj[key][Number(index)], rest, value);
+//       } else {
+//         obj[first] = setNestedValue(obj[first] || {}, rest, value);
+//       }
+//     }
+
+//     return obj;
+//   };
+
+//   if (propertyKey === "") {
+//     // If propertyKey is empty, update the root object entirely
+//     setFormData(value); 
+//   } else {
+//     const path = propertyKey.split('.');
+//     const newFormData = { ...formData };
+//     setNestedValue(newFormData, path, value);
+
+//     setFormData(newFormData);
+//   }
+// }
+
+export function handleUpdateStateProperty<T>(
+  formData: T,
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  value: any,
+  propertyKey: string
+): void {
   const setNestedValue = (obj: any, path: string[], value: any): any => {
     const [first, ...rest] = path;
 
@@ -74,23 +110,34 @@ export function handleUpdateStateProperty<T>(formData: T, setFormData: React.Dis
       const arrayMatch = first.match(/(\w+)\[(\d+)\]/);
       if (arrayMatch) {
         const [, key, index] = arrayMatch;
-        obj[key][Number(index)] = setNestedValue(obj[key][Number(index)], rest, value);
+        if (!Array.isArray(obj[key])) obj[key] = []; // Ensure array exists
+        obj[key][Number(index)] = setNestedValue(
+          obj[key][Number(index)] || {},
+          rest,
+          value
+        );
       } else {
         obj[first] = setNestedValue(obj[first] || {}, rest, value);
       }
     }
-
     return obj;
   };
 
   if (propertyKey === "") {
     // If propertyKey is empty, update the root object entirely
-    setFormData(value); 
+    setFormData(value);
   } else {
-    const path = propertyKey.split('.');
-    const newFormData = { ...formData };
-    setNestedValue(newFormData, path, value);
+    const path = propertyKey.split(".");
+    let newFormData: any;
 
+    if (Array.isArray(formData)) {
+      // If formData is an array, update the appropriate object inside the array
+      newFormData = [...formData];
+    } else {
+      newFormData = { ...formData };
+    }
+
+    setNestedValue(newFormData, path, value);
     setFormData(newFormData);
   }
 }

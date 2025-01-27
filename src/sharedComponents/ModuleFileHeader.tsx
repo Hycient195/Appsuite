@@ -1,6 +1,6 @@
 import { usePathname } from "next/navigation";
 import { ChevronRight, HouseIcon, ImportIcon, PlusIcon, RedoIcon, UndoIcon } from "./CustomIcons";
-import { ChangeEventHandler } from "react";
+import { ChangeEventHandler, MouseEventHandler } from "react";
 import { ResponsiveTextInput } from "./FormInputs";
 
 interface IProps {
@@ -10,7 +10,8 @@ interface IProps {
   subtitle: string;
   handleInitiateCreateFile: () => void;
   className?: string;
-  handleImport?: ChangeEventHandler<HTMLInputElement>
+  handleImport?: ChangeEventHandler<HTMLInputElement>;
+  initiateImport?: MouseEventHandler
   handleExport?: () => void;
   redo?: () => void;
   undo?: () => void;
@@ -18,13 +19,11 @@ interface IProps {
   canUndo?: boolean
 }
 
-export default function ModuleFileHeader({ fileName, setFileName, subtitle, handleInitiateCreateFile, className, ...props }: IProps) {
+export default function ModuleFileHeader({ fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, className, ...props }: IProps) {
   const pathname = usePathname();
-  const handleImport = () => {
 
-  };
   return (
-    <section className={`w-full sticky top-0 z-[2] bg-slate-100 max-w-[1100px] mx-auto spread-out gap-3 max-md:text-center max-md:justify-center flex-wrap py-3 px-2 lg:px-3 ${className}`}>
+    <section className={`w-full sticky -top-8 z-[3] bg-slate-100 max-w-[1100px] mx-auto spread-out border-b border-b-slate-200 gap-3 max-md:text-center max-md:justify-center !items-end flex-wrap py-3 px-2 lg:px-3 ${className}`}>
       <div className="left flex flex-col max-md:items-center gap-1">
         <div className="line-in md:gap-4 text-sm">
           <HouseIcon />
@@ -38,7 +37,8 @@ export default function ModuleFileHeader({ fileName, setFileName, subtitle, hand
         <div className="line-in text-slate-700 mt-2 !gap-4 text-sm">
           <button onClick={props.undo} disabled={!props.canUndo} className={`line-in disabled:text-slate-400`}><UndoIcon className="!size-5" /> Undo</button>
           <button onClick={props.redo} disabled={!props.canRedo} className="line-in disabled:text-slate-400"><RedoIcon className="!size-5" /> Redo</button>
-          <label htmlFor="import-input" className="line-in cursor-pointer"><ImportIcon className="!size-4" /> <input onChange={handleImport} id="import-input" className="hidden" type="file" /> Import</label>
+          { handleImport && <label htmlFor="import-input" className="line-in cursor-pointer"><ImportIcon className="!size-4" /> <input onChange={handleImport} id="import-input" className="hidden" type="file" /> Import</label> }
+          { initiateImport && <button onClick={initiateImport} className="line-in cursor-pointer"><ImportIcon className="!size-4" /> Import</button> }
           <button onClick={props.handleExport} className="line-in"><ImportIcon className="!size-4" /> Export</button>
         </div>
         {/* <p className="text-slate-500 max-md:text-sm">{subtitle}</p> */}

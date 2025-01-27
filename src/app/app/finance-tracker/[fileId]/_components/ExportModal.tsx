@@ -6,6 +6,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useBalanceSheetContext } from "../../_contexts/financeTrackerContext";
 import { handleInputChange, handleUpdateStateProperty } from "@/utils/miscelaneous";
+import { Toast } from "@/sharedComponents/utilities/Toast";
 
 export interface IFinanceTrackerExportOptions {
   alternateExportName: string, exportType: "CURRENT_PAGE"|"ALL_PAGES"|"CUSTOM"|""
@@ -16,9 +17,8 @@ export interface IFinanceTrackerExportOptions {
 }
 
 export default function SheetExportModal() {
-  // const { handleModalClose, modalData } = useModalContext<Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0]>();
   const { handleModalClose, modalData, } = useModalContext<any>();
-  const { addPage, downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useBalanceSheetContext()
+  const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useBalanceSheetContext()
 
   const [ exportOptions, setExportOptions ] = useState<IFinanceTrackerExportOptions>({
     alternateExportName: "", exportType: "", exportFormat: "", customOptions: { type: "FROM", value: "", range: [] }
@@ -62,6 +62,7 @@ export default function SheetExportModal() {
     if (exportOptions?.customOptions?.range?.[1] && exportOptions?.customOptions?.range?.[0]) {
       if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0])) || Number(exportOptions?.customOptions?.range?.[1]) >= pages?.length) {
         handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.1");
+        Toast("error", "Value out of range");
       }
     }
   };
@@ -69,6 +70,7 @@ export default function SheetExportModal() {
   const onLowerRangeBlur = () => {
     if (exportOptions?.customOptions?.range?.[0] && (Number(exportOptions?.customOptions?.range?.[0]) <= 0 || Number(exportOptions?.customOptions?.range?.[0]) >= (pages?.length - 1))) {
       handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.0");
+      Toast("error", "Value out of range");
     }
   };
 

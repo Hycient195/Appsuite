@@ -8,8 +8,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useParams } from 'next/navigation';
 import api from '@/redux/api';
 import Teleport from '@/utils/Teleport';
-import StatusIcon, { SaveLoadingSpinner } from '@/sharedComponents/CustomIcons';
-import Papa from "papaparse";
+import StatusIcon from '@/sharedComponents/CustomIcons';
 import { IUpdateFileRequest } from '@/types/shared.types';
 import BalanceSheetPage from '../_components/SheetTablePage';
 import { BalanceSheetContextProvider } from '../_contexts/financeTrackerContext';
@@ -20,6 +19,7 @@ import CreateFinanceTrackerSheet from '../_components/CreateSheet';
 import { AnimatePresence } from 'motion/react';
 import { IBalanceSheetPage, IFinanceTrackerDocument } from '../_types/types';
 import usePageTracker from '@/sharedHooks/usePageTracker';
+import SheetImportModal from './_components/ImportModal';
 
 const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
   const params = useParams<any>();
@@ -30,7 +30,6 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
   const [ tableWidth, setTableWidth ] = useState(2);
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
   const isFirstRender = useRef(true);
-
 
   useLayoutEffect(() => {
     if (tableContainerRef.current) {
@@ -49,55 +48,22 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
   const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Account Report.pdf`})
   const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` });
 
-  
   const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
-  const [ uploadImage, { isLoading: isUploadingImage, isSuccess: isUploadingImageSuccess} ] = api.commonApis.useUploadImageMutation();
   const [ isExportModalOpen, setIsExportModalOpen ] = useState<boolean>(false);
   const [ isCreateModalOpen, setIsCreateModalOpen ] = useState<boolean>(false);
+  const [ isImportModalOpen, setIsImportModalOpen ] = useState<boolean>(false);
 
   const balanceSheetInstance = useBalanceSheet();
 
   const {
-    pages,
-    updatePageTitle,
-    updatePageSubtitle,
-    addPage,
-    removePage,
-    insertRow,
-    removeRow,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-    updateImageUrl,
-    handleCSVImport,
-    generateCSVData,
-    downloadPageCSV,
-    downloadAllPagesCSV,
-    loadCSVData,
-    handleInputChange,
-    updateRowsToAdd,
-    setPages,
-    updatePages,
-    handleNumericInputBlur,
-    handleKeyDown,
-    inputRefs,
-    movePage,
-    documentFile,
-    setDocumentFile
+    pages, undo, redo, canUndo, canRedo, updateImageUrl,
+    handleCSVImport,setPages, documentFile, setDocumentFile
   } = balanceSheetInstance;
 
   const { currentPage, pageRefs } = usePageTracker(pages?.length);
-  // const { currentPage, pageRefs } = usePageTracker(28);
-
-  /* Loading CSV file fetched from the server using SSR */
   
   useLayoutEffect(() => {
-    console.log(csvString)
     if (csvString) {
-      // loadCSVData(Papa.parse(csvString)?.data as string[][]);
-      // const decodedData = JSON.parse(csvString) as IFinanceTrackerDocument;
-      console.log(csvString)
       setPages(csvString?.pages as IBalanceSheetPage[])
       setDocumentFile({ filename: csvString?.filename, templateLayout: csvString?.templateLayout });
     } else {
@@ -139,12 +105,6 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
       }
     };
   }, [ pages ]);
-
-  useEffect(() => {
-    if (isUploadingImageSuccess) {
-      
-    }
-  }, [ isUploadingImageSuccess ])
 
   const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>, pageIndex: number) => {
     const newUrl = e.target.value;
@@ -190,15 +150,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
       input.selectionEnd = arr.includes(cursorPositionRef.current as number) ? ((cursorPositionRef.current as number) + 1) : cursorPositionRef.current;
     }, 0);
   };
-
-  // const handlePrepareExport
-
-  const handleAddImageURL = (pageIndex: number, imageUrl: string): void => {
-    updateImageUrl("https://drive.google.com/uc?export=view&id=1AEHAhbjEsRzVrdBGEDYNNsS7GtkkHFDz", 0)
-  };
-
-  // console.log(currentPage)
-
+  // handleCSVImport
   return (
     <BalanceSheetContextProvider balanceSheetInstance={balanceSheetInstance}>
       <DndProvider backend={HTML5Backend}>
@@ -210,7 +162,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
         <main className=" w-full relative border-zinc-200">
           <ModuleFileHeader
             fileName={documentFile?.filename} setFileName={(e) => setDocumentFile({ ...documentFile, filename: e.target.value })} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)}
-            handleExport={() => setIsExportModalOpen(true)} handleImport={handleCSVImport}
+            handleExport={() => setIsExportModalOpen(true)} initiateImport={() => setIsImportModalOpen(true)}
             undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}
           />
           <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
@@ -221,44 +173,19 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
                 ref={(el: any) => {(pageRefs?.current as any)[pageIndex] = el}}
                 className=""
               >
-                <span className="text-sm text-slate-700">Page {pageIndex+1}</span>
+                <span className="noExport text-sm text-slate-700">Page {pageIndex+1}</span>
                 <BalanceSheetPage
-                key={`page-${pageIndex}`}
-                isLoggedIn={isLoggedIn}
-                pages={pages}
-                setPages={setPages}
-                addPage={addPage}
-                canRedo={canRedo}
-                canUndo={canUndo}
-                createDocumentPDF={createDocumentPDF}
-                cursorPositionRef={cursorPositionRef}
-                downloadPageCSV={downloadPageCSV}
-                handleAddImageURL={handleAddImageURL}
-                handleCSVImport={handleCSVImport}
-                handleInputChange={handleInputChange}
-                handleKeyDown={handleKeyDown as any}
-                handleNumericInputBlur={handleNumericInputBlur}
-                inputRefs={inputRefs}
-                insertRow={insertRow}
-                movePage={movePage}
-                page={page}
-                pageIndex={pageIndex}
-                redo={redo}
-                removePage={removePage}
-                removeRow={removeRow}
-                resetCursorPosition={resetCursorPosition}
-                singleDocumentRef={singleDocumentRef as any}
-                tableContainerRef={tableContainerRef}
-                tableWidth={tableWidth}
-                tbodyRef={tbodyRef}
-                undo={undo}
-                updatePageSubtitle={updatePageSubtitle}
-                updatePageTitle={updatePageTitle}
-                updateRowsToAdd={updateRowsToAdd}
-                params={params}
-                // pageRefs={pageRefs as any}
-                // pageRef={(el: any) => {((pageRefs.current as any)[pageIndex] = el)}}
-              />
+                  key={`page-${pageIndex}`}
+                  cursorPositionRef={cursorPositionRef}
+                  page={page}
+                  pageIndex={pageIndex}
+                  resetCursorPosition={resetCursorPosition}
+                  singleDocumentRef={singleDocumentRef as any}
+                  tableContainerRef={tableContainerRef}
+                  tableWidth={tableWidth}
+                  tbodyRef={tbodyRef}
+                  params={params}
+                />
               </div>
             ))}
 
@@ -296,6 +223,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
       </DndProvider>
       <AnimatePresence>     
         { isExportModalOpen && <CustomModal setIsModalOpen={setIsExportModalOpen} modalData={{ createDocumentPDF, createPdf, currentPage }}><SheetExportModal /></CustomModal> }
+        { isImportModalOpen && <CustomModal setIsModalOpen={setIsImportModalOpen} modalData={{ currentPage }}><SheetImportModal /></CustomModal> }
         { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
       </AnimatePresence>
     </BalanceSheetContextProvider>
@@ -303,5 +231,3 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
 };
 
 export default BalanceSheet;
-
-

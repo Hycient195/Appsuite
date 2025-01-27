@@ -60,7 +60,7 @@ const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject
 
             {/* <figure className="h-[70px] aspect-square w-[70px] bg-zinc-100 rounded-lg"></figure> */}
             <div className="">
-              <PageImage width={80} placeholder="Add/drop Logo" fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
+              <PageImage width={80} placeholder="Add/drop Logo" fileId={fileId} formData={stateObject} setFormData={setStateObject} imageProperty={stateObject?.branding?.logoUrl as string} propertyKey="branding.logoUrl" />
             </div>
             
             <div className="text-right flex flex-col gap-2">
@@ -321,7 +321,7 @@ const Commercial1: React.FC<IProps> = ({ templateId, setStateObject, stateObject
           {/* <figure className="bg-zinc-100 h-[100px] aspect-[2/1]">
 
           </figure> */}
-          <PageImage placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} isLoggedIn={isLoggedIn} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
+          <PageImage placeholder="Add/drop Signature" height={100} width={200} fileId={fileId} formData={stateObject} setFormData={setStateObject} imageProperty={stateObject?.branding?.eSignatureUrl as string} propertyKey="branding.eSignatureUrl" />
         </div>
       </div>
     </div>

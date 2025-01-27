@@ -204,37 +204,14 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
               {(pages).map((page, pageIndex) => (
                 <BalanceSheetPage
                   key={`page-${pageIndex}`}
-                  isLoggedIn={isLoggedIn}
-                  pages={pages}
-                  setPages={setPages}
-                  addPage={addPage}
-                  canRedo={canRedo}
-                  canUndo={canUndo}
-                  createDocumentPDF={createDocumentPDF}
                   cursorPositionRef={cursorPositionRef}
-                  downloadPageCSV={downloadPageCSV}
-                  handleAddImageURL={handleAddImageURL}
-                  handleCSVImport={handleCSVImport}
-                  handleInputChange={handleInputChange}
-                  handleKeyDown={handleKeyDown as any}
-                  handleNumericInputBlur={handleNumericInputBlur}
-                  inputRefs={inputRefs}
-                  insertRow={insertRow}
-                  movePage={movePage}
                   page={page}
                   pageIndex={pageIndex}
-                  redo={redo}
-                  removePage={removePage}
-                  removeRow={removeRow}
                   resetCursorPosition={resetCursorPosition}
                   singleDocumentRef={singleDocumentRef as any}
                   tableContainerRef={tableContainerRef}
                   tableWidth={tableWidth}
                   tbodyRef={tbodyRef}
-                  undo={undo}
-                  updatePageSubtitle={updatePageSubtitle}
-                  updatePageTitle={updatePageTitle}
-                  updateRowsToAdd={updateRowsToAdd}
                   params={params}
                 />
               ))}

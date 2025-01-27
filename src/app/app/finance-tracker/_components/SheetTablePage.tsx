@@ -1,115 +1,45 @@
-import { SaveLoadingSpinner } from "@/sharedComponents/CustomIcons";
 import DraggablePage from "@/sharedComponents/DraggablePage";
 import ResizableTable from "@/sharedComponents/ResizableTable";
 import { formatDateInput, replaceJSXRecursive, splitInThousand, splitInThousandForTextInput } from "@/utils/miscelaneous";
-import Image from "next/image";
 import { IBalanceSheetPage } from "../_types/types";
 import useHandlePageLogoActions from "@/sharedHooks/useHandlePageLogoActions";
-import usePageTracker from "@/sharedHooks/usePageTracker";
-
+import { useBalanceSheetContext } from "../_contexts/financeTrackerContext";
+import { isLoggedIn } from "@/sharedConstants/common";
+import PageImage from "@/sharedComponents/PageImage";
+import { useParams } from "next/navigation";
 
 interface IBalanceSheetPageProps {
-  isLoggedIn: boolean;
-  pages: IBalanceSheetPage[]
-  setPages: React.Dispatch<React.SetStateAction<IBalanceSheetPage[]>>;
-  pageIndex: number;
-  page: IBalanceSheetPage;
-  movePage: (sourceIndex: number, destinationIndex: number) => void;
-  updatePageTitle: (title: string, pageIndex: number) => void;
-  updatePageSubtitle: (subTitle: string, pageIndex: number) => void;
-  insertRow: (pageIndex: number, rowIndex: number, rowsToAdd?: number) => void;
-  removeRow: (pageIndex: number, rowIndex: number) => void;
-  updateRowsToAdd: (pageIndex: number, action: "increament" | "decreament") => void;
-  handleInputChange: (
-    pageIndex: number,
-    rowIndex: number,
-    field: "date" | "narration" | "debit" | "credit",
-    value: string
-  ) => void;
-  handleKeyDown: (
-    e: React.KeyboardEvent,
-    pageIndex: number,
-    rowIndex: number,
-    field: "date" | "narration" | "debit" | "credit"
-  ) => void;
-  handleNumericInputBlur: (
-    pageIndex: number,
-    rowIndex: number,
-    field: "debit" | "credit",
-    e: React.FocusEvent<HTMLInputElement>
-  ) => void;
-  handleCSVImport: (e: React.ChangeEvent<HTMLInputElement>, pageIndex: number) => void;
-  handleAddImageURL: (pageIndex: number, imageUrl: string) => void;
-  downloadPageCSV: (pageIndex: number) => void;
-  createDocumentPDF: (pageIndex: number, title: string) => void;
-  removePage: (pageIndex: number) => void;
-  redo: () => void;
-  undo: () => void;
-  canRedo: boolean;
-  canUndo: boolean;
-  tableWidth: number;
   cursorPositionRef: React.MutableRefObject<number | null>;
+  page: IBalanceSheetPage;
+  pageIndex: number;
   resetCursorPosition: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  inputRefs: React.MutableRefObject<Map<string, HTMLInputElement | HTMLTextAreaElement|null>>;
-  tbodyRef: React.RefObject<HTMLTableSectionElement>;
+  singleDocumentRef: React.MutableRefObject<HTMLDivElement[] | null>;
   tableContainerRef: React.RefObject<HTMLDivElement>;
-  singleDocumentRef: React.MutableRefObject<HTMLDivElement[]|null>;
-  addPage: (arg: any) => void
+  tableWidth: number;
+  tbodyRef: React.RefObject<HTMLTableSectionElement>;
   params: any;
 }
 
-export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo, canUndo, createDocumentPDF, cursorPositionRef, downloadPageCSV, handleAddImageURL, handleCSVImport, handleInputChange, handleKeyDown, handleNumericInputBlur, inputRefs, insertRow, movePage, page, pageIndex, redo, removePage, removeRow, resetCursorPosition, singleDocumentRef, tableContainerRef, tableWidth, tbodyRef, undo, updatePageSubtitle, updatePageTitle, updateRowsToAdd, addPage, params }: IBalanceSheetPageProps) {
+export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, resetCursorPosition, singleDocumentRef, tableContainerRef, tableWidth, tbodyRef, params }: IBalanceSheetPageProps) {
+  const { pages, setPages, handleCSVImport, handleInputChange, handleKeyDown, handleNumericInputBlur, inputRefs, insertRow, movePage, removePage, removeRow, updatePageSubtitle, updatePageTitle, updateRowsToAdd, addPage, } = useBalanceSheetContext();
+  const fileId = useParams()?.fileId as string;
+
   const {
-    isLoading, isDragging, imageSrc,
-    handleRemoveLogo, handleRemovePage,
-    handleReceiptDragOver, handleReceiptDragEnter,
-    handleReceiptDragLeave, handleReceiptDrop,
-    handleUploadLogo, hasLogoOrSpinner
-  } = useHandlePageLogoActions<IBalanceSheetPage>({ isLoggedIn: isLoggedIn, page: page, pageIndex: pageIndex, pages: pages, params: params, removePage: removePage, setPages: setPages });
-
-
+    isLoading, hasLogoOrSpinner
+  } = useHandlePageLogoActions<IBalanceSheetPage>({ isLoggedIn, page, pageIndex: pageIndex, pages: pages, params: params, removePage: removePage, setPages: setPages });
 
   return (
     <DraggablePage pageIndex={pageIndex} movePage={movePage}>   
 
       <div
         key={pageIndex}
-        // ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el; (pageRefs.current as HTMLDivElement[])[pageIndex] = el }}
         ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el }}
-        
-        // ref={(el) => {((pageRefs.current as any)[pageIndex] = el)}}
-        // data-page={pageIndex + 1}
         className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full  max-w-[1080px] md:rounded mx-auto px-4 pt-8 pb-6 xl:pb-8`}
       >
         <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
         <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
           <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
-            {
-              (isLoading.uploading || isLoading.deleting || isLoading.removingPage || page?.imageUrl)
-              ? <div className={`${isDragging ? "bg-green-500/40" : ""} relative !overflow-hidde z-[2] !w-[80px] !h-[80px] -translate-y-2 `} onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop}>
-                {
-                  (isLoading.uploading || isLoading.removingPage || isLoading.deleting)
-                  ? (
-                    <SaveLoadingSpinner height={70} width={70} className='' />
-                  ) : (page.imageUrl && imageSrc) && (
-                    <div className="relative w-full h-full ">
-                      <button onClick={() => handleRemoveLogo(page?.imageUrl?.split("<||>")[0] as string)} className="absolute noExport cursor-pointer z-[10] w-max h-max -top-3 -left-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-5 !text-zinc-400">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                      </button>
-                      <Image fill src={imageSrc as string}  alt='alternative'  className='object-contain w-full h-auto aspect-square'  onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop} />
-                    </div>
-                  )
-                }
-              </div>
-              : (
-                <label htmlFor={`add-logo-${pageIndex}`} className={`${isDragging ? "bg-green-500/20" : "bg-zinc-100"} absolute cursor-pointer z-[1] h-[70px] w-[75px]  flex items-center p-2 justify-center text-center rounded  -top-1  noExport`} onDragOver={handleReceiptDragOver} onDragEnter={handleReceiptDragEnter} onDragLeave={handleReceiptDragLeave} onDrop={handleReceiptDrop}>
-                  <span className="text-xs text-zinc-400">Add/drop Logo</span>
-                  <input id={`add-logo-${pageIndex}`} type="file" accept="image/jpeg, image/jpg, image/png" className='hidden' name={`${pageIndex}`} onChange={(e) => handleUploadLogo(e.target.files![0], pageIndex)} />
-                </label>
-              )
-            }
+            <PageImage className="absolute" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={pages} setFormData={setPages} imageProperty={page?.imageUrl as string} propertyKey={`${pageIndex}.imageUrl`} />
             <div className="titles grid !max-w-[800px] w-full mx-auto">
               <div className="relative h-max !max-w-[800px] w-full mx-auto bg-ts">
                 <p style={{ fontFamily: "sans-serif"}} className="invisib !max-w-[800px] text-black w-full mx-auto py-1 text-2xl border- border-white outline-none font-bold w-ful text-center">{replaceJSXRecursive(page.title, { "\n": <br />})}<span className="invisible">.</span></p>
@@ -193,7 +123,6 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
               {/* Total Credit, Debit, and Final Balance Row */}
               <tr style={{ fontFamily: "sans-serif"}} >
                 <td className="px-1 py-2 text-right" />
-                {/* <td className="px-1 py-2 text-right">{page.imageUrl}</td> */}
                 <td className="px-1 py-2 text-center font-bold">TOTAL</td>
                 <td className="px-1 py-2 text-right font-bold text-red-600">{splitInThousand(page.totalDebit)}</td>
                 <td className="px-1 py-2 text-right font-bold text-green-600">{splitInThousand(page.totalCredit)}</td>
@@ -210,36 +139,9 @@ export default function BalanceSheetPage({ isLoggedIn, pages, setPages, canRedo,
               Load CSV
               <input id={`csv-import-${pageIndex}`} type="file" accept=".csv"  className='hidden' name={`${pageIndex}`} onChange={(e) => handleCSVImport(e, pageIndex)} />
             </label>
-            {/* {
-              !imageSrc
-              ? (
-                <label htmlFor={`add-logo-${pageIndex}`}  className="px-4 py-2 cursor-pointer text-center bg-violet-500 text-white rounded" >
-                  Add Logo
-                  <input id={`add-logo-${pageIndex}`} type="file" accept="image/jpeg, image/jpg, image/png" className='hidden' name={`${pageIndex}`} onChange={(e) => handleUploadLogo(e.target.files![0], pageIndex)} />
-                </label>
-              ) : (
-                <LoadingButton loading={isLoading.deleting || isLoading.removingPage} className="!px-4 !py-2 bg-violet-500 text-white !rounded" onClick={() => handleRemoveLogo(page?.imageUrl?.split("<||>")[0] as string)} >
-                  Remove Logo
-                </LoadingButton>
-              )
-            } */}
-           
-            {/* <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => downloadPageCSV(pageIndex)}>
-              Download CSV
-            </button>
-            <button className="px-4 py-2 bg-green-500  text-white rounded" onClick={() => createDocumentPDF(pageIndex, page.title)} >
-              Download PDF
-            </button> */}
-            <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => handleRemovePage(pageIndex)} >
+            <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => removePage(pageIndex)} >
               Remove Page
             </button>
-            {/* <button className="px-4 py-2 disabled:bg-gray-300 disabled:cursor-not-allowed bg-gray-500 text-white rounded" onClick={redo} disabled={!canRedo} >
-              Redo
-            </button>
-            <button className="px-4 py-2 disabled:bg-gray-300 disabled:cursor-not-allowed bg-gray-500 text-white rounded" onClick={undo} disabled={!canUndo} >
-              Undo
-            </button> */}
-            
             <button
               className="px-4 py-2 bg-emerald-500 text-white rounded"
               onClick={() => addPage(pageIndex)}
