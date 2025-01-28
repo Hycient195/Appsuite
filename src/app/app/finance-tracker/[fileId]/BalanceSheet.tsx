@@ -173,7 +173,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
                 ref={(el: any) => {(pageRefs?.current as any)[pageIndex] = el}}
                 className=""
               >
-                <span className="noExport text-sm text-slate-700">Page {pageIndex+1}</span>
+                <span className="noExport max-md:ml-3 text-sm text-slate-700">Page {pageIndex+1}</span>
                 <BalanceSheetPage
                   key={`page-${pageIndex}`}
                   cursorPositionRef={cursorPositionRef}

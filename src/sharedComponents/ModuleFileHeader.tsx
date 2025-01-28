@@ -43,7 +43,7 @@ export default function ModuleFileHeader({ fileName, setFileName, subtitle, hand
 
   return (
     <section className="sticky -top-0 md:top- lg:-top-8 flex flex-col z-[3]">
-      <div className="p-3 bg-primary lg:hidden flex flex-col gap-4">
+      <div className="p-3.5 bg-primary lg:hidden flex flex-col gap-4">
         <div className="spread-out !gap-5 text-slate-100">
           <LogoAndTextWhite className="-translate-x-2" />
           <button onClick={() => sethasFired(true)} className=""><HamburgerIcon className="!size-7" /></button>
@@ -56,7 +56,7 @@ export default function ModuleFileHeader({ fileName, setFileName, subtitle, hand
           <span className="text-slate-100 capitalize">{fileName}</span>
         </div>
       </div>
-      <div className={`w-full  bg-slate-100 max-w-[1100px] mx-auto spread-out border-b border-b-slate-200 gap-1 md:gap-3 max-md:text-center !items-end flex-wrap py-3 px-2 lg:px-3 ${className}`}>
+      <div className={`w-full  bg-slate-100 max-w-[1100px] mx-auto spread-out border-b border-b-slate-300 gap-1 md:gap-3 max-md:text-center !items-end flex-wrap py-3 px-2 lg:px-3 ${className}`}>
         <div className="left flex flex-col max-md:items-cente gap-1">
           <div className="line-in md:gap-4 text-sm max-md:hidden">
             <HouseIcon />
