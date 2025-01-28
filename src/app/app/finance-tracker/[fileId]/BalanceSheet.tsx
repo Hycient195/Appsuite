@@ -161,6 +161,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
         </Teleport>
         <main className=" w-full relative border-zinc-200">
           <ModuleFileHeader
+            moduleName="Finance Tracker"
             fileName={documentFile?.filename} setFileName={(e) => setDocumentFile({ ...documentFile, filename: e.target.value })} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)}
             handleExport={() => setIsExportModalOpen(true)} initiateImport={() => setIsImportModalOpen(true)}
             undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}

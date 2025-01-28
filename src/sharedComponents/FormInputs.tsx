@@ -200,23 +200,46 @@ interface IResponsiveProps {
 
 
 
+// interface IResponsiveProps {
+//   className?: string;
+//   href?: string;
+//   target?: string;
+//   rel?: string;
+//   ref?: MutableRefObject<any>
+// }
+
+// export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
+//   return (
+//     <span className="relative my-1">
+//       <span className={`${className} l min-w-[20px]  !w-full`}>
+//         {!!props.href && <a rel={props.rel} target={props.target} href={props.href} className={`absolute w-full h-full top-0 left-0 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })}</a>}
+//         <span className="text-transparent  break-word max-md:max-w-[200px ">{replaceJSXRecursive(props.value, { "\n": <br /> })}</span>
+//         <span className={`${(props.value || props.value === 0) && "!hidden"} text-transparent flex min-w-max flex-row items-center px-1 noExport`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</span>
+//       </span>
+//       <textarea ref={props.ref} className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full !w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props.value} />
+//     </span>
+//   )
+// }
+
 interface IResponsiveProps {
   className?: string;
   href?: string;
   target?: string;
   rel?: string;
-  ref?: MutableRefObject<any>
+  inputref?: React.RefObject<HTMLTextAreaElement>
+  containerClassName?: string;
 }
 
 export const ResponsiveTextInput = ({ className, ...props }: IResponsiveProps & React.InputHTMLAttributes<HTMLInputElement|HTMLTextAreaElement>) => {
   return (
-    <span className="relative my-1">
-      <span className={`${className} l min-w-[20px]  !w-full`}>
-        {!!props.href && <a rel={props.rel} target={props.target} href={props.href} className={`absolute w-full h-full top-0 left-0 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })}</a>}
-        <span className="text-transparent  break-word max-md:max-w-[200px ">{replaceJSXRecursive(props.value, { "\n": <br /> })}</span>
-        <span className={`${(props.value || props.value === 0) && "!hidden"} text-transparent flex min-w-max flex-row items-center px-1 noExport`}>{props.placeholder?.split("")?.map((x, index) => <span key={`placeholder-char-${index}`}>{x}</span>)}..</span>
-      </span>
-      <textarea ref={props.ref} className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full !w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props.value} />
+    <span className="relative grid bg-green- py- overflow-hidde">
+      <div className={` l min-w-[20px] bg-green- w- grid `}>
+        {!!props.href && <a style={props?.style} rel={props.rel} target={props.target} href={props.href} className={`absolute w-full h-full top-0 left-0 ${className}`}>{replaceJSXRecursive(props.value, { "\n": <br /> })}</a>}
+        <p style={props?.style} className={`${!props?.value && "!hidden"} !text-transparent break-word max-md:max-w-[200px ${className}`}>{replaceJSXRecursive(props?.value, { "\n": <br />, "\u0020": <div className="inline-block">{`.`}</div> })}</p>
+        <span style={props?.style} className={`${(props.value || props.value === 0) && "!hidden"} text-transparent fle min-w-max flex-row items-center noExport ${className}`}>{replaceJSXRecursive(props?.placeholder, { "\n": <br /> })}</span>
+      </div>
+      <textarea ref={props.inputref} style={props?.style} className={`absolute z-[2] bg-tes bg-transparent bg-tes  break-word resize-none no-scrollbar py- left-0 top-0 h-full !w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={props?.value} />
+      {/* <textarea ref={props.inputref} className={`absolute z-[2] bg-transparent resize-none no-scrollbar left-0 top-0 h-full !w-full ${!!props.href && "noExport"} ${className}`} { ...props} value={(props?.value as string)?.replace(/\s{2,}/g, " ")} /> */}
     </span>
   )
 }

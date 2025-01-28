@@ -8,6 +8,7 @@ import { isLoggedIn } from "@/sharedConstants/common";
 import PageImage from "@/sharedComponents/PageImage";
 import { useParams } from "next/navigation";
 import { MinusIcon, PlusIcon } from "@/sharedComponents/CustomIcons";
+import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
 
 interface IBalanceSheetPageProps {
   cursorPositionRef: React.MutableRefObject<number | null>;
@@ -34,27 +35,21 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
       <div
         key={pageIndex}
         ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el }}
-        className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full max-w-[1080px] md:rounded mx-auto px-3 md:px-4 pt-4 lg:pt-8 pb-6 xl:pb-8`}
+        className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full max-w-[1080px] md:rounded mx-auto px-3 md:px-4 pt-5 lg:pt-8 pb-6 xl:pb-8`}
       >
         <div className="noExport absolute h-full w-full left-0 top-0 border  border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
         <div ref={tableContainerRef} className="max-w-screen-lg relative  mx-auto grid">
           {/* <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}> */}
           <div className={` table-top grid gap-3 `}>
             {/* <PageImage className="md:absolute" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={pages} setFormData={setPages} imageProperty={page?.imageUrl as string} propertyKey={`${pageIndex}.imageUrl`} /> */}
-            <div className="titles grid !max-w-[800px] w-full mx-auto">
-              <div className="relative h-max !max-w-[800px] w-full mx-auto bg-ts">
-                <p style={{ fontFamily: "sans-serif"}} className="invisib !max-w-[800px] text-black w-full mx-auto py-1 text-2xl border- border-white outline-none font-bold w-ful text-center">{replaceJSXRecursive(page.title, { "\n": <br />})}<span className="invisible">.</span></p>
-                <textarea style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ TITLE HERE... ]' autoFocus className="noExport !max-w-[800px] w-full mx-auto text-2xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
-              </div>
-              <div className="mb- noExport" />
-              <div className="relative mb-1">
-                <p style={{ fontFamily: "sans-serif"}} className="text-center  py-1 border- border-white text-black/90 invisibl outline-none text-lg text-black/80 font-semibold w-full">{page.subTitle}<span className="invisible">.</span></p>
-                <textarea style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ SUBTITLE; eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>... ]' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border- border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full`} />
-              </div>
+            <div className="titles grid !max-w-[800px] w-full mx-auto justify-center">
+              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ ..TITLE HERE.. ]' autoFocus className="!max-w-[800px] text-2xl outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
+              <div className="mb-1 noExport" />
+              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' autoFocus className="!max-w-[800px] mb-1 text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
             </div>
           </div>
          
-          <div className={`mb-3 ${!hasLogoOrSpinner ? "noExport" : ""}`} />
+          <div className={`mb-1 md:mb-3 ${!hasLogoOrSpinner ? "noExport" : ""}`} />
           <ResizableTable
             headers={["DATE", "NARRATION", "DEBIT", "CREDIT", "BALANCE"]}
             minCellWidth={100}

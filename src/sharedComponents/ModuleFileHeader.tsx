@@ -1,11 +1,12 @@
 import { usePathname } from "next/navigation";
-import { ChevronRight, HamburgerIcon, HouseIcon, ImportIcon, LogoAndTextWhite, PlusIcon, RedoIcon, UndoIcon } from "./CustomIcons";
+import { ChevronRight, HamburgerIcon, HouseIcon, ImportIcon, LogoAndTextWhite, LogoWhite, PlusIcon, RedoIcon, UndoIcon } from "./CustomIcons";
 import { ChangeEventHandler, MouseEventHandler, useEffect, useState } from "react";
 import { ResponsiveTextInput } from "./FormInputs";
 import sharedSlice from "@/redux/slices/shared.slice";
 import { useAppDispatch } from "@/redux/hooks/hooks";
 
 interface IProps {
+  moduleName: string;
   fileName: string;
   // setFileName: React.Dispatch<React.SetStateAction<string>>
   setFileName: ChangeEventHandler<HTMLTextAreaElement|HTMLInputElement>
@@ -21,7 +22,7 @@ interface IProps {
   canUndo?: boolean
 }
 
-export default function ModuleFileHeader({ fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, className, ...props }: IProps) {
+export default function ModuleFileHeader({ moduleName, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, className, ...props }: IProps) {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
 
@@ -45,7 +46,10 @@ export default function ModuleFileHeader({ fileName, setFileName, subtitle, hand
     <section className="sticky -top-0 md:top- lg:-top-8 flex flex-col z-[3]">
       <div className="p-3.5 bg-primary lg:hidden flex flex-col gap-4">
         <div className="spread-out !gap-5 text-slate-100">
-          <LogoAndTextWhite className="-translate-x-2" />
+          <div className="text-xl text-slate-100 font-semibold line-in">
+            <LogoWhite />
+            {moduleName}
+          </div>
           <button onClick={() => sethasFired(true)} className=""><HamburgerIcon className="!size-7" /></button>
         </div>
         {/* <div className="line-in md:gap-4 text-sm lg:hidden">
