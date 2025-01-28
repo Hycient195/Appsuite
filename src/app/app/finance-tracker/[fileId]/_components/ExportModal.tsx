@@ -24,7 +24,7 @@ export default function SheetExportModal() {
     alternateExportName: "", exportType: "", exportFormat: "", customOptions: { type: "FROM", value: "", range: [] }
   });
   
-  const exportTypes = [ { text: `Current Page (page ${modalData?.currentPage + 1})`, value: "CURRENT_PAGE", }, { text: `All Pages (${pages?.length} page${pages?.length>1&&"s"})`, value: "ALL_PAGES", }, { text: "Custom", value: "CUSTOM", }, ]
+  const exportTypes = [ { text: `Current Page (page ${modalData?.currentPage + 1})`, value: "CURRENT_PAGE", }, { text: `All Pages (${pages?.length} page${pages?.length>1?"s":""})`, value: "ALL_PAGES", }, { text: "Custom", value: "CUSTOM", }, ]
   const exportFormats = [ { text: "CSV", value: "CSV", }, { text: "PDF", value: "PDF", } ];
 
   const generateRange = ([ start, end ]: [number, number]): number[] => {

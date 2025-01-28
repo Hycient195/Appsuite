@@ -59,8 +59,8 @@ export default function CustomModal({ handleModalClose, modalClassName, children
             }}
             className="w-full relative animate-slide-in-botto md:animate-fade-in max-md:pt-7 flex flex-col max-md:rounded-t-2xl md:rounded-lg lg:rounded-xl bg-white p-5 md:p-6 md:max-w-screen-xl md:mx-auto"
           >
-            <button onPointerDown={(e) => controls.start(e)} className="absolute left-0 right-0 top-0 w-max mx-auto px-8 py-3">
-              <div className="h-1.5 md:hidden touch-none cursor-grab rounded-full bg-slate-400 w-24" />
+            <button onPointerDown={(e) => controls.start(e)} className="absolute touch-none cursor-grab left-0 right-0 top-0 w-max mx-auto px-8 py-3">
+              <div className="h-1.5 md:hidden rounded-full bg-slate-400 w-24" />
             </button>
             <button onClick={closeModal} className={`md:absolute max-md:hidden ml-auto w-max top-3 right-3 bg-white rounded-full p-1.5 md:p-1.5 border border-zinc-400`} >
               <CloseIcon className="!size-3" />

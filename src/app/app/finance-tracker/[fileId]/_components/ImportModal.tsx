@@ -18,10 +18,10 @@ export default function SheetImportModal() {
   const { importCSV, handleCSVImport, pages } = useBalanceSheetContext()
 
   const [ importOptions, setImportOptions ] = useState<IFinanceTrackerExportOptions>({
-    importType: "", importFormat: "", customOptions: { page: "" }
+    importType: "", importFormat: "CSV", customOptions: { page: "" }
   });
   
-  const importTypes = [ { text: `For current Page (page ${modalData?.currentPage + 1})`, value: "CURRENT_PAGE", }, { text: `For entire document`, value: "ENTIRE_DOCUMENT", }, { text: "A specific page", value: "SPECIFIC_PAGE"} ]
+  const importTypes = [ { text: `The current Page (page ${modalData?.currentPage + 1})`, value: "CURRENT_PAGE", }, { text: `The entire document`, value: "ENTIRE_DOCUMENT", }, { text: "A specific page", value: "SPECIFIC_PAGE"} ]
   const importFormats = [ { text: "CSV", value: "CSV", } ];
 
 
