@@ -38,8 +38,9 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
       >
         <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
         <div ref={tableContainerRef} className="max-w-screen-lg relative  mx-auto grid">
-          <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
-            <PageImage className="md:absolute" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={pages} setFormData={setPages} imageProperty={page?.imageUrl as string} propertyKey={`${pageIndex}.imageUrl`} />
+          {/* <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}> */}
+          <div className={` table-top grid gap-3`}>
+            {/* <PageImage className="md:absolute" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={pages} setFormData={setPages} imageProperty={page?.imageUrl as string} propertyKey={`${pageIndex}.imageUrl`} /> */}
             <div className="titles grid !max-w-[800px] w-full mx-auto">
               <div className="relative h-max !max-w-[800px] w-full mx-auto bg-ts">
                 <p style={{ fontFamily: "sans-serif"}} className="invisib !max-w-[800px] text-black w-full mx-auto py-1 text-2xl border- border-white outline-none font-bold w-ful text-center">{replaceJSXRecursive(page.title, { "\n": <br />})}<span className="invisible">.</span></p>
