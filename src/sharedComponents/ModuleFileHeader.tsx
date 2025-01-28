@@ -8,7 +8,7 @@ import { useAppDispatch } from "@/redux/hooks/hooks";
 interface IProps {
   fileName: string;
   // setFileName: React.Dispatch<React.SetStateAction<string>>
-  setFileName: ChangeEventHandler<HTMLTextAreaElement>
+  setFileName: ChangeEventHandler<HTMLTextAreaElement|HTMLInputElement>
   subtitle: string;
   handleInitiateCreateFile: () => void;
   className?: string;
@@ -48,24 +48,29 @@ export default function ModuleFileHeader({ fileName, setFileName, subtitle, hand
           <LogoAndTextWhite className="-translate-x-2" />
           <button onClick={() => sethasFired(true)} className=""><HamburgerIcon className="!size-7" /></button>
         </div>
-        <div className="line-in md:gap-4 text-sm lg:hidden">
+        {/* <div className="line-in md:gap-4 text-sm lg:hidden">
           <HouseIcon />
           <ChevronRight className="!size-4 text-slate-50" />
           <span className="text-slate-500 capitalize">{pathname?.split("/")?.[2]?.replace(/-/ig, " ")}</span>
           <ChevronRight className="!size-4 text-slate-50" />
           <span className="text-slate-100 capitalize">{fileName}</span>
-        </div>
+        </div> */}
       </div>
-      <div className={`w-full  bg-slate-100 max-w-[1100px] mx-auto spread-out border-b border-b-slate-300 gap-1 md:gap-3 max-md:text-center !items-end flex-wrap py-3 px-2 lg:px-3 ${className}`}>
+      
+      <div className={`w-full  bg-slate-100 max-w-[1100px] mx-auto flex flex-col lg:grid lg:grid-cols-[1fr_max-content] border-b border-b-slate-300 gap-1 md:gap-x-3 max-md:text-center items-en flex-wrap py-3 px-2 lg:px-3 ${className}`}>
+        <div className="line-in lg:col-span-2 md:gap-4 text-sm max-lg:hidden">
+          <HouseIcon />
+          <ChevronRight className="!size-4" />
+          <span className="text-slate-500 capitalize">{pathname?.split("/")?.[2]?.replace(/-/ig, " ")}</span>
+          <ChevronRight className="!size-4" />
+          <span className="text-slate-500 capitalize">{fileName}</span>
+        </div>
         <div className="left flex flex-col max-md:items-cente gap-1">
-          <div className="line-in md:gap-4 text-sm max-md:hidden">
-            <HouseIcon />
-            <ChevronRight className="!size-4" />
-            <span className="text-slate-500 capitalize">{pathname?.split("/")?.[2]?.replace(/-/ig, " ")}</span>
-            <ChevronRight className="!size-4" />
-            <span className="text-slate-500 capitalize">{fileName}</span>
+          
+          <div className="grid b w-full overflow-x-auto">
+            {/* <ResponsiveTextInput className="text-primary [&_*]:!w-max text-2xl font-semibold lg:mt-2 focus:ring-0 focus:outline-none" value={fileName} onChange={setFileName} /> */}
+            <input className="text-primary text-2xl bg-transparent font-semibold lg:mt-2 focus:ring-0 focus:outline-none" value={fileName} onChange={setFileName} />
           </div>
-          <ResponsiveTextInput className="text-primary text-2xl font-semibold lg:mt-2 focus:ring-0 focus:outline-none" value={fileName} onChange={setFileName} />
           {/* <h1 className="text-primary text-2xl font-semibold mt-3 max-md:hidden">{fileName}</h1> */}
           <div className="line-in text-slate-700 lg:mt-2 !gap-4 text-sm">
             <button onClick={props.undo} disabled={!props.canUndo} className={`line-in disabled:text-slate-400`}><UndoIcon className="!size-5" /> Undo</button>
@@ -79,7 +84,7 @@ export default function ModuleFileHeader({ fileName, setFileName, subtitle, hand
         <div className="right line-in gap-3">
           {/* <button onClick={handleImport} className="btn text-primary bg-white border border-slate-200 0"><ImportIcon /> Import</button> */}
           <div className="flex flex-col gap-2 flex-wrap items-center md:items-end">
-            <button onClick={handleInitiateCreateFile} className="btn w-max bg-primary text-white max-md:hidden"><PlusIcon className="!size-5 !stroke-[2px]" /> Create New Sheet</button>
+            <button onClick={handleInitiateCreateFile} className="btn w-max bg-primary text-white max-lg:hidden"><PlusIcon className="!size-5 !stroke-[2px]" /> Create New Sheet</button>
             <p className="text-slate-400 text-sm">Last sync: <span className="text-slate-600">3rd December 2024, 15:00:00</span></p>
           </div>
         </div>
