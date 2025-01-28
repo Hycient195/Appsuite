@@ -143,16 +143,16 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
               Load CSV
               <input id={`csv-import-${pageIndex}`} type="file" accept=".csv"  className='hidden' name={`${pageIndex}`} onChange={(e) => handleCSVImport(e, pageIndex)} />
             </label> */}
-            <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => removePage(pageIndex)} >
-              Remove Page
+            <button className="px-4 py-1.5 max-md:basis-1 max-md:order-2 bg-white border border-red-600 text-red-600 font-semibold rounded" onClick={() => removePage(pageIndex)} >
+              Delete Page
             </button>
             <button
-              className="px-4 py-2 bg-emerald-500 text-white rounded"
+              className="px-4 py-1.5 max-md:basis-1 max-md:order-3 bg-white border-emerald-600 text-emerald-600 border font-semibold rounded"
               onClick={() => addPage(pageIndex)}
             >
-              Insert Page Below
+              Add Page
             </button>
-            <div className="px-4 py-2 cursor-pointer bg-blue-500 flex gap-2 items-center justify-between text-white rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
+            <div className="px-4 max-md:order-1 max-md:w-full py-2 cursor-pointer bg-blue-500 flex gap-2 items-center justify-between text-white rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
               <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "decreament")}} className="absolut left-2 top-0 bottom-0 my-auto w-3.5 h-3.5 aspect-square flex items-center justify-center bg-white text-blue-500 font-bold rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-3">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
