@@ -7,6 +7,7 @@ import { useBalanceSheetContext } from "../_contexts/financeTrackerContext";
 import { isLoggedIn } from "@/sharedConstants/common";
 import PageImage from "@/sharedComponents/PageImage";
 import { useParams } from "next/navigation";
+import { MinusIcon, PlusIcon } from "@/sharedComponents/CustomIcons";
 
 interface IBalanceSheetPageProps {
   cursorPositionRef: React.MutableRefObject<number | null>;
@@ -30,23 +31,22 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
 
   return (
     <DraggablePage pageIndex={pageIndex} movePage={movePage}>   
-
       <div
         key={pageIndex}
         ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el }}
-        className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full  max-w-[1080px] md:rounded mx-auto px-3 md:px-4 pt-8 pb-6 xl:pb-8`}
+        className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full max-w-[1080px] md:rounded mx-auto px-3 md:px-4 pt-4 lg:pt-8 pb-6 xl:pb-8`}
       >
-        <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
+        <div className="noExport absolute h-full w-full left-0 top-0 border  border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
         <div ref={tableContainerRef} className="max-w-screen-lg relative  mx-auto grid">
           {/* <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}> */}
-          <div className={` table-top grid gap-3`}>
+          <div className={` table-top grid gap-3 `}>
             {/* <PageImage className="md:absolute" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={pages} setFormData={setPages} imageProperty={page?.imageUrl as string} propertyKey={`${pageIndex}.imageUrl`} /> */}
             <div className="titles grid !max-w-[800px] w-full mx-auto">
               <div className="relative h-max !max-w-[800px] w-full mx-auto bg-ts">
                 <p style={{ fontFamily: "sans-serif"}} className="invisib !max-w-[800px] text-black w-full mx-auto py-1 text-2xl border- border-white outline-none font-bold w-ful text-center">{replaceJSXRecursive(page.title, { "\n": <br />})}<span className="invisible">.</span></p>
                 <textarea style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ TITLE HERE... ]' autoFocus className="noExport !max-w-[800px] w-full mx-auto text-2xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
               </div>
-              <div className="mb-2 noExport" />
+              <div className="mb- noExport" />
               <div className="relative mb-1">
                 <p style={{ fontFamily: "sans-serif"}} className="text-center  py-1 border- border-white text-black/90 invisibl outline-none text-lg text-black/80 font-semibold w-full">{page.subTitle}<span className="invisible">.</span></p>
                 <textarea style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ SUBTITLE; eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>... ]' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border- border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full`} />
@@ -63,7 +63,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
               <tbody ref={tbodyRef} className=''>
                 <>
                   {page.rows.map((row, rowIndex) => (
-                    <tr style={{ fontFamily: "sans-serif"}} key={rowIndex} className={`relative group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden`}>
+                    <tr style={{ fontFamily: "sans-serif"}} key={rowIndex} className={`relative lg:[&>*]:hover:-translate-x- group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden`}>
                       <td  className="  items-center relative ">
                         <div style={{ width: `${tableWidth}px`}} className="bg-transparen bg-green-500 opacity-0 hover:opacity-100 !border-none group/line absolute z-[2] left-[-1px] bottom-0 translate-y-[4px] cursor-pointer h-1 rounded">
                           <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="bg-green-500 hidden duration-300 group-hover/line:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-2 items-center justify-center font-semibold">+</button>
@@ -114,10 +114,11 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                           placeholder="Credit"
                         />
                       </td>
-                      <td className={`peer/test  px-1 relative text-right flex justify-end text-black/80 items-center ${parseFloat(row.balance) < 0 && "text-red-600"} ${(rowIndex === 0 && row?.narration === "BALANCE BROUGHT FORWARD") ? "!font-bold" : "font-medium"}`}>
-                        <div className="bg-transparen bg-transparent bg-tes w-[calc(100%+10px)] -right-3 !border-none z-[-1 absolute bg-green-30 bottom- cursor-pointer h-full">
-                          <button onClick={() => removeRow(pageIndex, rowIndex)} className="peer/removeBtn bg-red-400  duration-300 z-[3] hidden group-hover/row:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-3 items-center justify-center font-semibold">-</button>
-                          <div style={{ width: `${tableWidth}px`}} className="remove-hover w-full h-full hidden peer-hover/removeBtn:block bg-red-400/20 -translate-x-3 top-0 right-0 absolute "></div>
+                      <td className={`peer/test  px-1 relative !bg-tes md text-right flex justify-end text-black/80 items-center ${parseFloat(row.balance) < 0 && "text-red-600"} ${(rowIndex === 0 && row?.narration === "BALANCE BROUGHT FORWARD") ? "!font-bold" : "font-medium"}`}>
+                        <div className="bg-transparen bg-transparent lg:w-[calc(100%+45px)] lg:left-0 max-lg:-right-12 !border-none z-[-1 absolute bg-green-30 bottom- cursor-pointer h-full">
+                          <button onClick={() => removeRow(pageIndex, rowIndex)} className="peer/removeBtn bg-red-600  duration-300 z-[3] lg:hidden group-hover/row:flex animate-fade-in [animation-duration:200ms] h-[18px] w-[18px] rounded text-white absolute top-0 bottom-0 my-auto right-6 items-center justify-center font-semibold"><MinusIcon className="!size-4" /></button>
+                          <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="peer/addBtn bg-green-600  duration-300 z-[3] lg:hidden group-hover/row:flex animate-fade-in [animation-duration:200ms] h-[18px] w-[18px] rounded text-white absolute top-0 bottom-0 my-auto right-1 items-center justify-center font-semibold"><PlusIcon className="!size-4 !text-white" /></button>
+                          <div style={{ width: `${tableWidth}px`}} className="remove-hover w-full h-full hidden bg-green- peer-hover/removeBtn:block peer-hover/addBtn:block peer-hover/removeBtn:bg-red-400/20 peer-hover/addBtn:bg-green-400/20 -translate-x-1 top-0 right-10 absolute "></div>
                         </div>
                         {splitInThousand(row.balance)}
                       </td>

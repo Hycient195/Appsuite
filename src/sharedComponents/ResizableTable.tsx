@@ -92,7 +92,7 @@ const ResizableTable: React.FC<TableProps> = ({ headers, minCellWidth, tableCont
   }, [activeIndex, mouseMove, mouseUp, removeListeners]);
 
   return (
-    <div className="containe max-w-screen-lg mx-auto grid overflow-x-auto overflow-y-hidden w-full ">
+    <div className="containe max-w-screen-lg mx-auto grid max-lg:overflow-x-auto max-lg:overflow-y-hidden w-full ">
       <div className="table-wrapper grid bg-green-5 max-md:!min-w-[800px] ">
         <table className={`relative resizeable-table w-full [&_th]:relative 
           [&_td]:border-t [&_td:not(:last-of-type)]:border-r [&_th]:border-t [&_th:not(:last-of-type)]:border-r [&]:border-zinc-500 [&_*]:border-zinc-500 border-x border-b
