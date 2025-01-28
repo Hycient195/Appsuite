@@ -45,7 +45,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
             <div className="titles grid !max-w-[800px] w-full mx-auto justify-center">
               <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ ..TITLE HERE.. ]' autoFocus className="!max-w-[800px] text-2xl outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
               <div className="mb-1 noExport" />
-              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' autoFocus className="!max-w-[800px] mb-1 text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
+              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' className="!max-w-[800px] mb-1 text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
             </div>
           </div>
          

@@ -4,10 +4,14 @@ import { ChangeEventHandler, MouseEventHandler, useEffect, useState } from "reac
 import { ResponsiveTextInput } from "./FormInputs";
 import sharedSlice from "@/redux/slices/shared.slice";
 import { useAppDispatch } from "@/redux/hooks/hooks";
+import { LinearProgress } from "@mui/material";
 
 interface IProps {
   moduleName: string;
   fileName: string;
+  isSaving: boolean;
+  isSavingSuccess: boolean;
+  isSavingError: boolean;
   // setFileName: React.Dispatch<React.SetStateAction<string>>
   setFileName: ChangeEventHandler<HTMLTextAreaElement|HTMLInputElement>
   subtitle: string;
@@ -22,7 +26,7 @@ interface IProps {
   canUndo?: boolean
 }
 
-export default function ModuleFileHeader({ moduleName, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, className, ...props }: IProps) {
+export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, isSavingSuccess, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, className, ...props }: IProps) {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
 
@@ -46,8 +50,8 @@ export default function ModuleFileHeader({ moduleName, fileName, setFileName, su
     <section className="sticky -top-0 md:top- lg:-top-8 flex flex-col z-[3]">
       <div className="p-3.5 bg-primary lg:hidden flex flex-col gap-4">
         <div className="spread-out !gap-5 text-slate-100">
-          <div className="text-xl text-slate-100 font-semibold line-in">
-            <LogoWhite />
+          <div className="text-2xl text-slate-100 font-semibold line-in">
+            <LogoWhite className="!size-7" />
             {moduleName}
           </div>
           <button onClick={() => sethasFired(true)} className=""><HamburgerIcon className="!size-7" /></button>
@@ -87,9 +91,10 @@ export default function ModuleFileHeader({ moduleName, fileName, setFileName, su
         </div>
         <div className="right line-in gap-3">
           {/* <button onClick={handleImport} className="btn text-primary bg-white border border-slate-200 0"><ImportIcon /> Import</button> */}
-          <div className="flex flex-col gap-2 flex-wrap items-center md:items-end">
+          <div className="flex flex-col gap-2 relative flex-wrap items-center md:items-end">
             <button onClick={handleInitiateCreateFile} className="btn w-max bg-primary text-white max-lg:hidden"><PlusIcon className="!size-5 !stroke-[2px]" /> Create New Sheet</button>
-            <p className="text-slate-400 text-sm">Last sync: <span className="text-slate-600">3rd December 2024, 15:00:00</span></p>
+            <p className="text-slate-400 text-sm">Last sync: <span className={`duration-500 ${isSavingSuccess ? "text-green-600" : isSavingError ? "text-red-500" : "text-slate-600"}`}>3rd December 2024, 15:00:00</span></p>
+            <LinearProgress color="inherit" className={`${!isSaving && "!hidden"} w-full text-primary !animate-fade-in !absolute -bottom-1 left-0`} />
           </div>
         </div>
       </div>
