@@ -14,7 +14,7 @@ const defaultRow: IRow = {
 export const defaultPage: IBalanceSheetPage = {
   title: "",
   subTitle: "",
-  rows: [{ ...defaultRow }], // Create a fresh copy for each default page
+  rows: [{ ...defaultRow }],
   totalCredit: "0",
   totalDebit: "0",
   finalBalance: "0",
@@ -27,10 +27,9 @@ export const defaultDocument: IFinanceTrackerDocument = {
   templateLayout: "CLASSIC",
   filename: "",
   currentPage: 0
-  // pages: [ defaultPage ]
 }
 
-export const useBalanceSheet = (fileName?: string) => {
+export const useFinanceTracker = (fileName?: string) => {
   const [pages, setPages] = useState<IBalanceSheetPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
   const [ documentFile, setDocumentFile ] = useState<IFinanceTrackerDocument>(defaultDocument);
   const [history, setHistory] = useState<IBalanceSheetPage[][]>([]);
@@ -73,7 +72,6 @@ export const useBalanceSheet = (fileName?: string) => {
   }
 
   const addPage = (afterPageIndex: number) => {
-    console.log(afterPageIndex)
     const newPage = {
       ...defaultPage,
       rows: [{ ...defaultRow, narration: "BALANCE BROUGHT FORWARD" }],
@@ -181,7 +179,7 @@ export const useBalanceSheet = (fileName?: string) => {
     page.rows.forEach(row => {
       totalCredit += !isNaN(parseFloat(row.credit as unknown as string)) ? parseFloat(row.credit?.replace(/,/ig,"") as unknown as string) : 0;
       totalDebit += !isNaN(parseFloat(row.debit as unknown as string)) ? parseFloat(row.debit?.replace(/,/ig,"") as unknown as string) : 0;
-      finalBalance = !isNaN(parseFloat(row.balance as unknown as string)) ? parseFloat(row.balance?.replace(/,/ig,"") as unknown as string) : 0; // The last row's balance
+      finalBalance = !isNaN(parseFloat(row.balance as unknown as string)) ? parseFloat(row.balance?.replace(/,/ig,"") as unknown as string) : 0;
     });
 
     page.totalCredit = String(totalCredit?.toFixed(2));
@@ -303,7 +301,6 @@ export const useBalanceSheet = (fileName?: string) => {
       // updatePages(pagesCopy)
     } else {
       const pagesData = convertToPages(csvData);
-      // console.log(pagesData)
       setPages(pagesData);
       // updatePages(pagesData)
     }   

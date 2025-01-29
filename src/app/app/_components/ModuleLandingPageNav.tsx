@@ -8,9 +8,10 @@ import { motion } from "motion/react";
 
 interface IProps {
   className?: string;
+  moduleName?: string;
 }
 
-export default function ModuleLandingPageNav({ className }: IProps) {
+export default function ModuleLandingPageNav({ className, moduleName }: IProps) {
   const dispatch = useAppDispatch();
   const [hasFired, sethasFired] = useState<boolean>(false);
 
@@ -42,7 +43,7 @@ export default function ModuleLandingPageNav({ className }: IProps) {
         <div className="flex max-w-screen-md mx-auto gap-10 justify-between items-center overflow-hidden px-12 w-full text-base text-blue-100 whitespace-nowrap bg-primary max-md:min-h-[55px] md:min-h-[64px] rounded-full max-md:px-5 max-md:max-w-full">
           <div className="text-lg text-slate-100 font-semibold line-in">
             <LogoWhite />
-            Finance Tracker
+            {moduleName}
           </div>
           <button onClick={() => sethasFired(true)} className="">
             <svg

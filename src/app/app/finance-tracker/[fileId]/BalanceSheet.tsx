@@ -1,7 +1,7 @@
 "use client"
 
 import React, { LegacyRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { defaultPage, useBalanceSheet } from '../_hooks/useBalanceSheet';
+import { defaultPage, useFinanceTracker } from '../_hooks/useFinanceTracker';
 import useGeneratePDF from '@/sharedHooks/useGeneratePDF';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -53,12 +53,12 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
   const [ isCreateModalOpen, setIsCreateModalOpen ] = useState<boolean>(false);
   const [ isImportModalOpen, setIsImportModalOpen ] = useState<boolean>(false);
 
-  const balanceSheetInstance = useBalanceSheet();
+  const financeTrackerInstance = useFinanceTracker();
 
   const {
-    pages, undo, redo, canUndo, canRedo, updateImageUrl,
-    handleCSVImport,setPages, documentFile, setDocumentFile
-  } = balanceSheetInstance;
+    pages, undo, redo, canUndo, canRedo,
+    setPages, documentFile, setDocumentFile
+  } = financeTrackerInstance;
 
   const { currentPage, pageRefs } = usePageTracker(pages?.length);
   
@@ -106,42 +106,6 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
     };
   }, [ pages ]);
 
-  const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>, pageIndex: number) => {
-    const newUrl = e.target.value;
-    // setImageUrl(newUrl);
-    updateImageUrl(newUrl, pageIndex);
-  };
-
-  // useEffect(() => {
-  //   // Skip the effect on the first render
-  //   if (isFirstRender.current) {
-  //     isFirstRender.current = false;
-  //     return;
-  //   }
-
-  //   // Clear the previous timer
-  //   if (saveTimer) {
-  //     clearTimeout(saveTimer);
-  //   }
-
-  //   // Set a new timer to autosave after 3 seconds
-  //   const newTimer = setTimeout(() => {
-  //     if (isLoggedIn && loadedSucessfully) {
-  //       handleSaveFile("autosave");
-  //     }
-  //   }, 3000);
-
-  //   setSaveTimer(newTimer);
-
-  //   // Clear the timer on cleanup
-  //   return () => {
-  //     if (newTimer) {
-  //       clearTimeout(newTimer);
-  //     }
-  //   };
-  // }, [pages]);
-
-
   const resetCursorPosition = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
     const arr = [3,6]
@@ -150,9 +114,9 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
       input.selectionEnd = arr.includes(cursorPositionRef.current as number) ? ((cursorPositionRef.current as number) + 1) : cursorPositionRef.current;
     }, 0);
   };
-  // handleCSVImport
+
   return (
-    <BalanceSheetContextProvider balanceSheetInstance={balanceSheetInstance}>
+    <BalanceSheetContextProvider financeTrackerInstance={financeTrackerInstance}>
       <DndProvider backend={HTML5Backend}>
         <Teleport rootId='saveIconPosition'>
           <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
@@ -191,35 +155,6 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
               </div>
             ))}
 
-            {/* Global Actions */}
-            <div className={`flex flex-wrap max-md:px-4 noExport flex-row gap-3 lg:gap-4 justify-end`}>
-              {/* <button
-                className="px-4 py-2 bg-green-500 text-white rounded"
-                onClick={downloadAllPagesCSV}
-              >
-                Download All Pages as CSV
-              </button>
-              <button
-                className="px-4 py-2 bg-amber-500 text-white rounded"
-                onClick={createPdf}
-              >
-                Download All Pages as PDF
-              </button>
-              <label
-                htmlFor='csv-import'
-                className="px-4 py-2 cursor-pointer bg-rose-500 text-white rounded"
-              >
-                Import CSV
-                <input id='csv-import' type="file" accept=".csv" className='hidden' onChange={handleCSVImport} />
-              </label> */}
-              {/* <button
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-                onClick={() => addPage(pages.length - 1)}
-              >
-                Add New Page
-              </button> */}
-              
-            </div>
           </div>
         </main>
       </DndProvider>

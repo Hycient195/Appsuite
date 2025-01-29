@@ -1,7 +1,7 @@
 "use client"
 
 import React, { ChangeEvent, LegacyRef, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { defaultPage, useBalanceSheet } from '../_hooks/useBalanceSheet';
+import { defaultPage, useFinanceTracker } from '../_hooks/useFinanceTracker';
 import ResizableTable from '@/sharedComponents/ResizableTable';
 import { formatDateInput, replaceJSXRecursive, splitInThousand, splitInThousandForTextInput } from '@/utils/miscelaneous';
 import useGeneratePDF from '@/sharedHooks/useGeneratePDF';
@@ -55,35 +55,18 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
   const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
   const [ uploadImage, { isLoading: isUploadingImage, isSuccess: isUploadingImageSuccess} ] = api.commonApis.useUploadImageMutation();
 
-  const balanceSheetInstance = useBalanceSheet();
+  const financeTrackerInstance = useFinanceTracker();
 
   const {
     pages,
-    updatePageTitle,
-    updatePageSubtitle,
     addPage,
-    removePage,
-    insertRow,
-    removeRow,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
     updateImageUrl,
     handleCSVImport,
     generateCSVData,
-    downloadPageCSV,
     downloadAllPagesCSV,
     loadCSVData,
-    handleInputChange,
-    updateRowsToAdd,
     setPages,
-    updatePages,
-    handleNumericInputBlur,
-    handleKeyDown,
-    inputRefs,
-    movePage
-  } = balanceSheetInstance;
+  } = financeTrackerInstance;
 
   /* Loading CSV file fetched from the server using SSR */
   useEffect(() => {
@@ -191,7 +174,7 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
   return (
     <div className="">
       {/* <ModuleFileHeader fileName={pages?.[0]?.title} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => {}} /> */}
-      <BalanceSheetContextProvider balanceSheetInstance={balanceSheetInstance}>
+      <BalanceSheetContextProvider financeTrackerInstance={financeTrackerInstance}>
         <DndProvider backend={HTML5Backend}>
           <Teleport rootId='saveIconPosition'>
             <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">

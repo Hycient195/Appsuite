@@ -1,6 +1,5 @@
-import { Reorder } from "motion/react"
-import { useBalanceSheetContext } from "../_contexts/financeTrackerContext"
-import { IBalanceSheetFile, IBalanceSheetPage } from "../_types/types";
+import { useFinanceTrackerContext } from "../_contexts/financeTrackerContext"
+import { IBalanceSheetPage } from "../_types/types";
 import { formatDateInput, splitInThousand, splitInThousandForTextInput } from "@/utils/miscelaneous";
 import { memo, MutableRefObject, RefObject } from "react";
 
@@ -13,7 +12,8 @@ interface IProps {
 }
 function BalanceSheetRow({ rowIndex, pageIndex, cursorPositionRef, resetCursorPosition, row }: IProps) {
 
-  const { insertRow, inputRefs, handleInputChange, handleKeyDown, handleNumericInputBlur, removeRow } = useBalanceSheetContext();
+  const { insertRow, inputRefs, handleInputChange, handleKeyDown, handleNumericInputBlur, removeRow } = useFinanceTrackerContext();
+  
   return (
     <>
       <td  className="  items-center relative ">

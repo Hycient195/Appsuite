@@ -102,7 +102,7 @@ function AppLayout({ children }: IProps) {
               <NavList route={routesState} setRoutesState={setRoutesState} />
               {/* <h4 className="text-neutral-400 text-xs mt-[2vh]">COMMON</h4> */}
               <NavList route={commonRoutes} className="mt-auto" />
-              <NavList className="md:hidden" route={signOutMobileRoute} />
+              <NavList className="" route={signOutMobileRoute} />
               
               <div className="h-px bg-slate-500 w-full !my-4" />
 

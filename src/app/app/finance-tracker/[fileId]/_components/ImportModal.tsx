@@ -1,7 +1,7 @@
 import { useModalContext } from "@/sharedComponents/CustomModal";
 import { Radio } from "@mui/material";
-import {  ChangeEvent, FormEvent, useState } from "react";
-import { useBalanceSheetContext } from "../../_contexts/financeTrackerContext";
+import {  ChangeEvent, useState } from "react";
+import { useFinanceTrackerContext } from "../../_contexts/financeTrackerContext";
 import { handleInputChange, handleUpdateStateProperty } from "@/utils/miscelaneous";
 import { AnimatePresence, motion } from "motion/react";
 import { FormText } from "@/sharedComponents/FormInputs";
@@ -15,7 +15,7 @@ export interface IFinanceTrackerExportOptions {
 
 export default function SheetImportModal() {
   const { handleModalClose, modalData, } = useModalContext<any>();
-  const { importCSV, handleCSVImport, pages } = useBalanceSheetContext()
+  const { importCSV, handleCSVImport, pages } = useFinanceTrackerContext()
 
   const [ importOptions, setImportOptions ] = useState<IFinanceTrackerExportOptions>({
     importType: "", importFormat: "CSV", customOptions: { page: "" }
@@ -68,9 +68,6 @@ export default function SheetImportModal() {
     importMap[importOptions.importFormat][importOptions.importType](e);
     handleModalClose();
   }
-
-  console.log((Number(importOptions?.customOptions?.page) - 1))
-  console.log(importOptions?.importType)
 
   return (
     <form className="flex flex-col gap-3 max-h-[97dvh] -mx-0.5 px-px overflow-y-auto">

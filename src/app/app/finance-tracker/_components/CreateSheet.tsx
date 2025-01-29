@@ -2,7 +2,7 @@ import { FormText, FormTextArea } from "@/sharedComponents/FormInputs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import { defaultPage, useBalanceSheet } from "../_hooks/useBalanceSheet";
+import { defaultPage, useFinanceTracker } from "../_hooks/useFinanceTracker";
 import api from "@/redux/api";
 import { Toast } from "@/sharedComponents/utilities/Toast";
 import LoadingButton from "@/sharedComponents/LoadingButton";

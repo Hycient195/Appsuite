@@ -1,28 +1,28 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useBalanceSheet } from '../_hooks/useBalanceSheet';
+import { useFinanceTracker } from '../_hooks/useFinanceTracker';
 
-type GameContextType = ReturnType<typeof useBalanceSheet>;
+type FinanceTrackerContextType = ReturnType<typeof useFinanceTracker>;
 
-const GameContext = createContext<GameContextType | undefined>(undefined);
+const FinanceTrackerContext = createContext<FinanceTrackerContextType | undefined>(undefined);
 
-interface IGameProviderProps {
+interface IFinanceTrackerProviderProps {
   children: ReactNode;
-  balanceSheetInstance: ReturnType<typeof useBalanceSheet>;
+  financeTrackerInstance: ReturnType<typeof useFinanceTracker>;
 }
 
-export const BalanceSheetContextProvider: React.FC<IGameProviderProps> = ({ children, balanceSheetInstance }) => {
+export const BalanceSheetContextProvider: React.FC<IFinanceTrackerProviderProps> = ({ children, financeTrackerInstance }) => {
   return (
-    <GameContext.Provider value={balanceSheetInstance}>
+    <FinanceTrackerContext.Provider value={financeTrackerInstance}>
       {children}
-    </GameContext.Provider>
+    </FinanceTrackerContext.Provider>
   );
 };
 
-export const useBalanceSheetContext = (): GameContextType => {
-  const context = useContext(GameContext);
+export const useFinanceTrackerContext = (): FinanceTrackerContextType => {
+  const context = useContext(FinanceTrackerContext);
 
   if (!context) {
-    throw new Error('useGameContext must be used within a GameProvider');
+    throw new Error('useFinanceTrackerContext must be used within a finance tracker context');
   }
 
   return context;

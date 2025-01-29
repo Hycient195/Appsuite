@@ -3,13 +3,22 @@
   "name": "Appsuite",
   "icons": [
     {
-      "src": "icon.png",
-      "type": "image/png",
+      "src": "icons-192.png",
+      "type": "icon/png",
       "sizes": "192x192"
+    },
+    {
+      "src": "icons-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#002037",
-  "background_color": "white"
+  "background_color": "#FFFFFF",
+  "description": "A comprehensive suite of apps for productivity and organization.",
+  "scope": "/",
+  "orientation": "portrait",
+  "lang": "en-US"
 }

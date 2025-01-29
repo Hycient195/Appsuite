@@ -12,17 +12,26 @@ import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
 import ModuleFilesHeader from "@/sharedComponents/ModuleFilesHeader";
 import EmptyFileList from "@/sharedComponents/emptyState/EmptyFileList";
 import CustomModal from "@/sharedComponents/CustomModal";
-import ModuleLandingPageNav from "../../_components/ModuleLandingPageNav";
-import CreateFinanceTrackerSheet from "../_components/CreateSheet";
+// import ModuleLandingPageNav from "../../_components/ModuleLandingPageNav";
+// import CreateFinanceTrackerSheet from "../_components/CreateSheet";
 import { AnimatePresence } from "motion/react";
 import { ClockTimeIcon, PenIcon, TickIcon, TrashIcon } from "@/sharedComponents/CustomIcons";
-import DeleteFileModal from "../_components/DeleteFileModal";
+// import DeleteFileModal from "../_components/DeleteFileModal";
 import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
 import { Toast } from "@/sharedComponents/utilities/Toast";
 import { splitInThousand } from "@/utils/miscelaneous";
+import ModuleLandingPageNav from "@/app/app/_components/ModuleLandingPageNav";
+import DeleteFileModal from "./DeleteFileModal";
+import { TMimeTypes } from "@/types/shared.types";
 
+interface IProps {
+  moduleName: string;
+  moduleSubtitle?: string;
+  moduleEnumName: string;
+  fileListMimeType: TMimeTypes;
+}
 
-export default function BalanceSheetFiles() {
+export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumName, fileListMimeType }: IProps) {
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFoldersWithPrimaryFileQuery();
@@ -31,14 +40,14 @@ export default function BalanceSheetFiles() {
   const [ selectedFile, setSelectedFile ] = useState<Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0] | null>(null);
 
   useEffect(() => {
-    getFiles({ folderName: "FINANCE_TRACKER", primaryFileMimeType: "application/json" });
+    getFiles({ folderName: moduleEnumName, primaryFileMimeType: fileListMimeType });
   }, [ ]);
 
   return (
     <main className="h-full relative p-3 rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">
       <div className="">
         <ModuleLandingPageNav className="lg:hidden !pt-0 pb-3" /> 
-        <ModuleFilesHeader moduleName="Finance Tracker" subtitle="Track, manage and forecast your customers and orders." handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
+        <ModuleFilesHeader moduleName={moduleName} subtitle={moduleSubtitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
       </div>
       
       <div className="file-list h-full grid">
@@ -93,7 +102,7 @@ export default function BalanceSheetFiles() {
       </div>
       
       <AnimatePresence>
-        { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
+        {/* { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> } */}
         { isDeleteModalOpen && <CustomModal setIsModalOpen={setIsDeleteModalOpen} modalData={selectedFile}><DeleteFileModal /></CustomModal> }
       </AnimatePresence>
     </main>

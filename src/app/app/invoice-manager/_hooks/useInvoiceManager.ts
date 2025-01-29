@@ -343,7 +343,7 @@ const useInvoiceManager = (
     insertLineItemAtIndex,
     removeLineItemAtIndex,
     handleNumericInputBlur,
-    updateVat, // Expose updateVat for manual updates
+    updateVat,
     insertDiscountAtIndex,
     removeDiscountAtIndex,
     updateDiscount

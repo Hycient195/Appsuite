@@ -18,6 +18,7 @@ import TemplatePreviewScaledWrapper from "@/sharedComponents/TemplateScaledWrapp
 import { useThemeContext } from "../_contexts/themeContext"
 import { comprehensiveInvoice, defaultGlobalInvoice } from "../_templates/globalDummyData"
 import useSaveDocument from "@/sharedHooks/useSaveDocument"
+import ModuleFileHeader from "@/sharedComponents/ModuleFileHeader"
 
 interface IProps {
   loadedSucessfully: boolean;
@@ -115,7 +116,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
 
   // console.log(selectTemplate)
   return (
-    <main className="flex flex-row gap-3 xl:gap-4 justify-center">
+    <main className="flex flex-col justify-center">
       <Teleport rootId='dashboardNavPortal'>
         <li className="-order-4">
           <button onClick={() => handleSaveFile("versionedSave")} className="h-max flex items-center justify-center my-auto">
@@ -136,6 +137,14 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
           <button onClick={() => setIsTemplatePaneOpen(!isTemplatePaneOpen)} className="btn !py-2.5 bg-slate-500 text-white">Switch Template</button>
         </li>
       </Teleport>
+
+      <ModuleFileHeader
+        moduleName="Finance Tracker"
+        isSaving={isSaving} isSavingError={saveFileIsError} isSavingSuccess={saveFileIsSuccess}
+        fileName={globalState?.fileName as string} setFileName={(e) => setGlobalState({ ...globalState, fileName: e.target.value })} subtitle={""} handleInitiateCreateFile={() => ""}
+        // handleExport={() => setIsExportModalOpen(true)} initiateImport={() => setIsImportModalOpen(true)}
+        // undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}
+      />
 
       <DocumentPage onClick={() => isTemplatePaneOpen && setIsTemplatePaneOpen(false)} pageType="B3" ref={elementRef as any} className={`${isTemplatePaneOpen ? "basis-3/4" : "w-full"} h-max`}>
         { TheTemplate &&  <TheTemplate templateId={globalState?.templateId} setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId}  /> }

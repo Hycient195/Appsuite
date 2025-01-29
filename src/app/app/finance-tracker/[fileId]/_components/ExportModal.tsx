@@ -1,11 +1,10 @@
-import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
 import { useModalContext } from "@/sharedComponents/CustomModal";
 import { FormSelect, FormText } from "@/sharedComponents/FormInputs";
-import { Checkbox, Radio } from "@mui/material";
+import { Radio } from "@mui/material";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { useBalanceSheetContext } from "../../_contexts/financeTrackerContext";
-import { handleInputChange, handleUpdateStateProperty } from "@/utils/miscelaneous";
+import { useFinanceTrackerContext } from "../../_contexts/financeTrackerContext";
+import { handleUpdateStateProperty } from "@/utils/miscelaneous";
 import { Toast } from "@/sharedComponents/utilities/Toast";
 
 export interface IFinanceTrackerExportOptions {
@@ -18,7 +17,7 @@ export interface IFinanceTrackerExportOptions {
 
 export default function SheetExportModal() {
   const { handleModalClose, modalData, } = useModalContext<any>();
-  const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useBalanceSheetContext()
+  const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useFinanceTrackerContext()
 
   const [ exportOptions, setExportOptions ] = useState<IFinanceTrackerExportOptions>({
     alternateExportName: "", exportType: "", exportFormat: "", customOptions: { type: "FROM", value: "", range: [] }
@@ -114,14 +113,12 @@ export default function SheetExportModal() {
     }
   };
 
-  // console.log(exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)))
-
   const handleExport = (e: FormEvent) => {
     e.preventDefault();
     // @ts-ignore
     exportMap[exportOptions.exportFormat][exportOptions.exportType]();
   }
-  // console.log(documentFile)
+
   return (
     <form onSubmit={handleExport} className="flex flex-col gap-3 max-h-[97dvh] -mx-0.5 px-px overflow-y-auto">
       <h2 className="text-xl font-medium text-slate-800">Export</h2>
@@ -145,10 +142,9 @@ export default function SheetExportModal() {
                 initial={{ height: 0 }}
                 animate={{ height: "auto" }}
                 exit={{ height: 0 }}
-                // layout
                 transition={{
-                  duration: 0.4, // Adjust the duration of the animation
-                  ease: "easeInOut", // Choose the easing function
+                  duration: 0.4,
+                  ease: "easeInOut",
                 }}
                 className=""
               >
