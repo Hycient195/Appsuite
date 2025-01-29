@@ -48,7 +48,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
   const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Account Report.pdf`})
   const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` });
 
-  const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError } ] = api.commonApis.useSaveFileMutation();
+  const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError, data } ] = api.commonApis.useSaveFileMutation();
   const [ isExportModalOpen, setIsExportModalOpen ] = useState<boolean>(false);
   const [ isCreateModalOpen, setIsCreateModalOpen ] = useState<boolean>(false);
   const [ isImportModalOpen, setIsImportModalOpen ] = useState<boolean>(false);
@@ -115,6 +115,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
     }, 0);
   };
 
+  console.log(data)
   return (
     <BalanceSheetContextProvider financeTrackerInstance={financeTrackerInstance}>
       <DndProvider backend={HTML5Backend}>
@@ -137,7 +138,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
                 key={`page-${pageIndex}`}
                 data-page={pageIndex}
                 ref={(el: any) => {(pageRefs?.current as any)[pageIndex] = el}}
-                className=""
+                className="max-md:px-1.5"
               >
                 <span className="noExport max-md:ml-3 text-sm text-slate-700">Page {pageIndex+1}</span>
                 <BalanceSheetPage

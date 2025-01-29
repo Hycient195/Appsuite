@@ -1,5 +1,5 @@
 import { readFile } from "@/services/googleDriveService";
-import BalanceSheet from "./BalanceSheet";
+import FinanceTracker from "./FinanceTracker";
 import { cookies } from "next/headers";
 import { getNewAccessToken } from "@/utils/getRefreshToken";
 import { IFinanceTrackerDocument } from "../_types/types";
@@ -10,7 +10,7 @@ interface IProps {
   }>
 }
 
-export default async function BalanceSheetServerPage({ params }: IProps) {
+export default async function FinanceTrackerServerPage({ params }: IProps) {
   const appCookies = (await cookies());
   const isLoggedIn = !!appCookies.get("asAccessToken")?.value;
 
@@ -36,5 +36,5 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
     // csvString = {};
   }
 
-  return <BalanceSheet csvString={csvString} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
+  return <FinanceTracker csvString={csvString} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
 }

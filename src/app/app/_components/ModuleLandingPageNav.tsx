@@ -26,7 +26,7 @@ export default function ModuleLandingPageNav({ className, moduleName }: IProps) 
 
   return (
     <div
-      className={`!w-full z-[2] sticky top-0 pt-6  md:pt-8 lg:pt-12 px-3 ${className}`}
+      className={`!w-full z-[2] sticky top-0 pt-4  md:pt-8 lg:pt-12 px-3 ${className}`}
       
     >
       <motion.nav
@@ -35,6 +35,7 @@ export default function ModuleLandingPageNav({ className, moduleName }: IProps) 
       transition={{
         duration: 0.6, // Adjust the duration of the animation
         ease: "easeInOut", // Choose the easing function
+        // type: "spring",
         bounce: 0.5,
         stiffness: 50,
         bounceDamping: 0

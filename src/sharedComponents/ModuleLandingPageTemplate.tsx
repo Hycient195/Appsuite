@@ -52,7 +52,7 @@ export default function LandingPageTemplate({ titleText, moduleName, subTitleTex
     <div className="fle relative grid bg-white grid-cols-1 justify-center w-full min-h-dvh flex-col bg-[url(/images/home/hero-bg.png)] bg-contain bg-no-repeat bg-left-top">
       <ModuleLandingPageNav moduleName={moduleName} />       
 
-      <div className="flex flex-col self-center text-primary max-w-screen-md mx-auto px-3">
+      <div className="flex flex-col self-center text-primary max-w-screen-md mx-auto px-5">
         <div className=" aspect-square h-auto w-11 md:w-14 lg:w-20 text-xl rounded-full justify-center items-center flex bg-sky-100 self-start mt-28 ml-16 animate-float lg:text-4xl tracking-tighter leading-none text-center max-md:mt-10 max-md:ml-2.5">
           🎓
         </div>
