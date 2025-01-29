@@ -135,7 +135,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
 
           <a style={{ fontFamily: "sans-serif" }} href="https://app-suite.vercel.app" className="text-xs text-blue-600 mt-6">Powered by https://app-suite.vercel.app</a>
           <div className="line noExport" />
-          <div className={`mt-6 noExport flex [&>*]:grow flex-wrap gap-x-2.5 gap-y-2`}>
+          <div className={`mt-2 noExport flex [&>*]:grow flex-wrap gap-x-2.5 gap-y-2`}>
             <button className="px-4 py-1.5 max-md:basis-1 max-md:order-2 bg-white border border-red-600 text-red-600 font-semibold rounded" onClick={() => removePage(pageIndex)} >
               Delete Page
             </button>
@@ -145,12 +145,12 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
             >
               Add Page
             </button>
-            <div className="px-4 max-md:order-1 max-md:w-full py-2 cursor-pointer bg-primary flex gap-2 items-center justify-between text-white rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
-              <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "decreament")}} className="absolut left-2 top-0 bottom-0 my-auto w-4 h-4 aspect-square flex items-center justify-center bg-white text-primary font-bold rounded-full">
+            <div className="px-4 max-md:order-1 max-md:w-full py-2 cursor-pointer bg-white border border-primary text-primary flex gap-2 items-center justify-between rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
+              <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "decreament")}} className="absolut left-2 top-0 bottom-0 my-auto w-5 h-5 aspect-square flex items-center justify-center bg-white border border-primary text-primary font-bold rounded-full">
                 <MinusIcon className="!size-3.5" />
               </button>
-              <span>Add Row {page.rowsToAdd > 1 && <span className='text-sm'>{`(${page.rowsToAdd})`}</span>}</span>
-              <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "increament")}} className="absolut right-2 top-0 bottom-0 my-auto w-4 h-4 aspect-square flex items-center justify-center bg-white text-primary font-bold rounded-full">
+              <span className="font-semibold">Add Row {page.rowsToAdd > 1 && <span className='text-sm'>{`(${page.rowsToAdd})`}</span>}</span>
+              <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "increament")}} className="absolut right-2 top-0 bottom-0 my-auto w-5 h-5 aspect-square flex items-center justify-center bg-white border border-primary text-primary font-bold rounded-full">
                 <PlusIcon className="!size-3.5" />
               </button>
             </div>

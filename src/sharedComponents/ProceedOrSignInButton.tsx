@@ -21,7 +21,7 @@ export default function ProceedOrSignInButton({ href, text = "Start for free"}: 
   }
 
   return (
-    <button onClick={handleProceed} className="self-center font-bold px-7 text-center py-3 mt-10 max-w-full text-lg tracking-tigh flex items-center leading-tight text-white border border-gray-800 border-solid bg-primary min-h-[68px rounded-full shadow-[0px_5px_0px_rgba(31,41,55,1) w-ful md:w-[417px  max-md:px-10">
+    <button onClick={handleProceed} className="self-center font-semibold px-7 text-center py-3.5 mt-10 max-w-full text-lg tracking-tigh flex items-center leading-tight text-white border border-gray-800 border-solid bg-primary min-h-[68px rounded-full shadow-[0px_5px_0px_rgba(31,41,55,1) w-ful md:w-[417px  max-md:px-10">
      {text}
     </button>
   )

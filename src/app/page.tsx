@@ -58,8 +58,9 @@ const socialIcons = [
 
 export default function LandingPage() {
   return (
-    <div className="flex overflow-hidden flex-col pt-14 bg-[url(/images/home/hero-bg.png)] bg-contain bg-no-repeat bg-left-top">
+    <div className="flex overflow-hidden flex-col pt-8 bg-[url(/images/home/hero-bg.png)] bg-contain bg-no-repeat bg-left-top">
       <div className="flex flex-col self-center text-primary max-w-screen-md px-4">
+        
         <nav className="flex flex-wrap gap-10 justify-between items-center px-12 w-full text-base text-blue-100 whitespace-nowrap bg-primary min-h-[64px] rounded-[33px] max-md:px-5 max-md:max-w-full">
           <LogoAndTextWhite className='aspect-[4/1] w-auto h-7 lg:h-8' />
           <div className="flex self-stretch my-auto">
@@ -70,25 +71,25 @@ export default function LandingPage() {
           </div>
         </nav>
 
-        <div className="z-10 w-20 h-20 rounded-full justify-center items-center flex bg-sky-100 self-start mt-28 ml-16 animate-float text-4xl tracking-tighter leading-none text-center max-md:mt-10 max-md:ml-2.5">
+        <div className=" w-12 md:w-16 lg:w-18 text-xl md:text-3xl lg:text-4xl xl:text-4xl aspect-square h-auto rounded-full justify-center items-center flex bg-sky-100 self-start mt-28 ml-16 animate-float tracking-tighter leading-none text-center max-md:mt-10 max-md:ml-2.5">
           🎓
         </div>
         <div className="flex flex-wrap gap-1.5 self-end text-center max-md:mr-1.5">
-          <h1 className="flex-auto text-7xl tracking-tighter leading-[91px] max-md:max-w-full max-md:text-5xl max-md:leading-[1.8ch] ">
+          <h1 className="flex-auto text-7xl tracking-tighter leading-[1.7ch] max-md:max-w-full max-md:text-4xl max-md:leading-[1.8ch] ">
             All-in-One Tools for Smarter Organization
           </h1>
-          <div className="px-3 my-auto w-20 h-20 animate-float delay-150 text-4xl flex place-items-center justify-center tracking-tighter leading-none whitespace-nowrap bg-sky-100 min-h-[80px] rounded-[99px]">
+          <div className="w-12 md:w-16 lg:w-18 text-xl md:text-3xl lg:text-4xl xl:text-4xl aspect-square h-auto  my-auto animate-float delay-300 flex place-items-center justify-center tracking-tighter leading-none whitespace-nowrap bg-sky-100 rounded-full">
             🛠️
           </div>
         </div>
-        <div className="z-10 self-center animate-float delay-200 mt-0 text-4xl tracking-tighter leading-none text-center w-20 h-20 rounded-full justify-center items-center flex bg-sky-100">
+        <div className="w-12 md:w-16 lg:w-18 text-xl md:text-3xl lg:text-4xl xl:text-4xl aspect-square h-auto animate-float delay-500 mt-0 self-center stracking-tighter leading-none text-center rounded-full justify-center items-center flex bg-sky-100">
           💶
         </div>
-        <div className="mt-3.5 text-xl lg:text-2xl text-center text-slate-500 max-md:mr-1.5 max-md:max-w-full">
+        <div className="mt-3.5 md:text-lg lg:text-2xl text-center text-slate-500 max-md:mr-1.5 max-md:max-w-full">
           With a range of tools, AppSuite simplifies it all with seamless,
           intuitive features designed to keep you organized and in control
         </div>
-        <Link href="/sign-in" className="self-center font-bold px-7 text-center py-6 mt-10 max-w-full text-xl tracking-tight leading-tight text-white border border-gray-800 border-solid bg-primary min-h-[68px] rounded-full shadow-[0px_5px_0px_rgba(31,41,55,1)] w-full md:w-[417px]  max-md:px-10">
+        <Link href="/sign-in" className="self-center font-semibold px-7 text-center py-3.5 mt-10 max-w-full text- tracking-tigh flex items-center leading-tight text-white border border-gray-800 border-solid bg-primary min-h-[68px rounded-full shadow-[0px_5px_0px_rgba(31,41,55,1) w-ful md:w-[417px  max-md:px-10">
           Start for free
         </Link>
       </div>

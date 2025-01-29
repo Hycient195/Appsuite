@@ -3,7 +3,8 @@ interface IProps {
 }
 
 export default function BalanceSheetAppLayout({ children }: IProps) {
-  return <div className="w-full h-full grid">
-    {children}
-  </div>
+  // return <div className="w-full h-full grid">
+  //   {children}
+  // </div>
+  return children
 }
