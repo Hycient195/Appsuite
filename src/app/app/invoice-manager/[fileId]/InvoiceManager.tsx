@@ -139,17 +139,18 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
       </Teleport>
 
       <ModuleFileHeader
-        moduleName="Finance Tracker"
+        moduleName="Invoice Manager"
         isSaving={isSaving} isSavingError={saveFileIsError} isSavingSuccess={saveFileIsSuccess}
         fileName={globalState?.fileName as string} setFileName={(e) => setGlobalState({ ...globalState, fileName: e.target.value })} subtitle={""} handleInitiateCreateFile={() => ""}
         // handleExport={() => setIsExportModalOpen(true)} initiateImport={() => setIsImportModalOpen(true)}
         // undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}
       />
-
-      <DocumentPage onClick={() => isTemplatePaneOpen && setIsTemplatePaneOpen(false)} pageType="B3" ref={elementRef as any} className={`${isTemplatePaneOpen ? "basis-3/4" : "w-full"} h-max`}>
-        { TheTemplate &&  <TheTemplate templateId={globalState?.templateId} setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId}  /> }
-       
-      </DocumentPage>
+      <div className="overflow-x-auto">
+        <DocumentPage onClick={() => isTemplatePaneOpen && setIsTemplatePaneOpen(false)} pageType="B3" ref={elementRef as any} className={`${isTemplatePaneOpen ? "basis-3/4" : "w-full"} h-max`}>
+          { TheTemplate &&  <TheTemplate templateId={globalState?.templateId} setStateObject={setGlobalState} stateObject={globalState} controls={controls} isLoggedIn={isLoggedIn} fileId={params?.fileId}  /> }
+        </DocumentPage>
+      </div>
+      
 
       {
         isTemplatePaneOpen

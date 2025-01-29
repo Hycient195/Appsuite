@@ -74,7 +74,7 @@ export default function LandingPageTemplate({ titleText, moduleName, subTitleTex
       </div>
 
       <div id='features' className="flex overflow-hidden max-w-[100vw] flex-col pt-12 mt-11 w-full max-md:mt-10 max-md:max-w-full">
-        <div className="flex overflow-hidden  flex-col  w-full leading-none font-[146] max-md:max-w-full">
+        {/* <div className="flex overflow-hidden  flex-col  w-full leading-none font-[146] max-md:max-w-full">
           <div className="flex gap-8 min-h-[258px] animate-scroll-left bg-tes">
             {[ ...features, ...features ].map((feature, index) => (
               <FeatureCard key={index} {...feature} />
@@ -85,7 +85,7 @@ export default function LandingPageTemplate({ titleText, moduleName, subTitleTex
               <Image src="/images/home/module-1.png" fill alt='Module 1' />
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="flex flex-col justify-center  w-full  px-4 py-20 lg:py-28 ">
           <LogoAndText className='aspect-[4/1] h-auto w-full max-w-screen-lg mx-auto ' />
         </div>

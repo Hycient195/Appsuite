@@ -37,7 +37,7 @@ export default function BalanceSheetFiles() {
   return (
     <main className="h-full relative p-3 rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">
       <div className="">
-        <ModuleLandingPageNav className="lg:hidden !pt-0 pb-3" /> 
+        <ModuleLandingPageNav moduleName="Finance Tracker" className="lg:hidden !pt-0 pb-3" /> 
         <ModuleFilesHeader moduleName="Finance Tracker" subtitle="Track, manage and forecast your customers and orders." handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
       </div>
       

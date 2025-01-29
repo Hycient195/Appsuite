@@ -3,12 +3,12 @@
   "name": "Appsuite",
   "icons": [
     {
-      "src": "icons-192.png",
+      "src": "icon-192.png",
       "type": "icon/png",
       "sizes": "192x192"
     },
     {
-      "src": "icons-512.png",
+      "src": "icon-513.png",
       "type": "image/png",
       "sizes": "512x512"
     }
@@ -20,5 +20,18 @@
   "description": "A comprehensive suite of apps for productivity and organization.",
   "scope": "/",
   "orientation": "portrait",
-  "lang": "en-US"
+  "lang": "en-US",
+  "screenshots": [
+    {
+      "src": "screenshot-widest.png",
+      "type": "image/png",
+      "sizes": "2048x1024",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshot-mobile.png",
+      "type": "image/png",
+      "sizes": "1478x1392"
+    }
+  ]
 }

@@ -46,7 +46,7 @@ export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumN
   return (
     <main className="h-full relative p-3 rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">
       <div className="">
-        <ModuleLandingPageNav className="lg:hidden !pt-0 pb-3" /> 
+        <ModuleLandingPageNav moduleName={moduleName} className="lg:hidden !pt-0 pb-3" /> 
         <ModuleFilesHeader moduleName={moduleName} subtitle={moduleSubtitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
       </div>
       

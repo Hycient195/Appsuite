@@ -50,7 +50,7 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
     <section className="sticky -top-0 md:top- lg:-top-7 flex flex-col z-[3]">
       <div className="p-3.5 bg-primary lg:hidden flex flex-col gap-4">
         <div className="spread-out !gap-5 text-slate-100">
-          <div className="text-2xl text-slate-100 font-medium line-in">
+          <div className="text-xl font-helvetica text-slate-100 font-medium line-in">
             <LogoWhite className="!size-7" />
             {moduleName}
           </div>
