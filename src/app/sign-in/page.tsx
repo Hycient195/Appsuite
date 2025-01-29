@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { parseCookies, setCookie } from "nookies";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google"
-import { GoogleIcon, LogoIcon } from "@/sharedComponents/CustomIcons";
+import { GoogleIcon, LogoAndText, LogoIcon } from "@/sharedComponents/CustomIcons";
 import Link from "next/link";
 import { getNewAccessToken, getRefreshToken, IGetRefreshTokenResponse } from "@/utils/getRefreshToken";
 import { ILoggedInUser } from "@/types/shared.types";
@@ -98,10 +98,11 @@ const SignIn = () => {
         {/* <p className="absolute top-[3%] right-0">Having Problem? <Link to="/get-help" className="underline text-blue">Get Help</Link></p> */}
         
         <div  className="max-w-xl mx-auto flex flex-col gap-3 justify-center bg-white rounded-lg border p-[clamp(16px,4%,80px)]">
-        <div className="flex flex-row items-center mb-5 gap-2">
+          {/* <div className="flex flex-row items-center mb-5 gap-2">
             <LogoIcon />
             <h2 className="text-xl font-sans font-semibold tracking-wide">APP SUITE</h2>
-          </div>
+          </div> */}
+          <LogoAndText className="!w-32 h-auto aspect-[4.5/1] !mt-1" />
           <div className="line"></div>
           <h2 className="text-2xl text-slate-800 text-center">Sign in to AppSuite</h2>
           <p className="text-slate-500 text-center mt-4">Lightweight and precisely crafted software applications for custom workflows</p>
@@ -113,10 +114,10 @@ const SignIn = () => {
               <LoadingButton loading={isSigningIn} onClick={() => handleSignIn()} className="btn bg-primary text-white flex items-center gap-1"><span className="flex flex-row items-center gap-1"><GoogleIcon /> Sign in with google</span></LoadingButton>
               {/* <button onClick={getDummyRefreshTokenForPreviewWithoutSignIn} className="btn !shadow-none !drop-shadow-none bg-white border border-slate-300 text-slate-500">Preview without sign in</button> */}
               {/* <button onClick={iGet} className="btn !shadow-none !drop-shadow-none bg-white border border-slate-300 text-slate-500">Preview without sign in</button> */}
-              <p className="text-slate-400 text-center text-sm">Without signing in, all data would be lost when the page is refreshed</p>
+              {/* <p className="text-slate-400 text-center text-sm">Without signing in, all data would be lost when the page is refreshed</p> */}
             </div>
             <div className="line"></div>
-            <p className="top-[3%] text-center right-0 text-slate-600">Preview <Link href="/terms-of-service" className="underline text-blue">Terms of Service</Link> and <Link href="/privacy-policy" className="underline text-blue">Privacy Policy</Link></p>
+            <p className="top-[3%] mb-1 text-center right-0 text-slate-600">Preview <Link href="/terms-of-service" className="underline text-blue">Terms of Service</Link> and <Link href="/privacy-policy" className="underline text-blue">Privacy Policy</Link></p>
 
           </div>
         </div>

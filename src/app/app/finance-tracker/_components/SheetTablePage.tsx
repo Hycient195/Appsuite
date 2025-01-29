@@ -145,7 +145,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
             >
               Add Page
             </button>
-            <div className="px-4 max-md:order-1 max-md:w-full py-2 cursor-pointer bg-white border border-primary text-primary flex gap-2 items-center justify-between rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
+            <div className="px-4 max-md:order-1 max-md:w-full py-2 cursor-pointer bg-primary text-white flex gap-2 items-center justify-between rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
               <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "decreament")}} className="absolut left-2 top-0 bottom-0 my-auto w-5 h-5 aspect-square flex items-center justify-center bg-white border border-primary text-primary font-bold rounded-full">
                 <MinusIcon className="!size-3.5" />
               </button>
