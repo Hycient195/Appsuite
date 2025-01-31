@@ -1,11 +1,12 @@
 import { useModalContext } from "@/sharedComponents/CustomModal";
 import { FormSelect, FormText } from "@/sharedComponents/FormInputs";
 import { Radio } from "@mui/material";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useFinanceTrackerContext } from "../../_contexts/financeTrackerContext";
 import { handleUpdateStateProperty } from "@/utils/miscelaneous";
 import { Toast } from "@/sharedComponents/utilities/Toast";
+import { handleExportPDFOnServer } from "@/utils/exportPDFOnServer";
 
 export interface IFinanceTrackerExportOptions {
   alternateExportName: string, exportType: "CURRENT_PAGE"|"ALL_PAGES"|"CUSTOM"|""
@@ -18,6 +19,9 @@ export interface IFinanceTrackerExportOptions {
 export default function SheetExportModal() {
   const { handleModalClose, modalData, } = useModalContext<any>();
   const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useFinanceTrackerContext()
+
+  const selectedPagesRef = useRef<HTMLDivElement|null>(null);
+  const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   const [ exportOptions, setExportOptions ] = useState<IFinanceTrackerExportOptions>({
     alternateExportName: "", exportType: "", exportFormat: "", customOptions: { type: "FROM", value: "", range: [] }
@@ -59,7 +63,7 @@ export default function SheetExportModal() {
 
   const onUpperRangeBlur = () => {
     if (exportOptions?.customOptions?.range?.[1] && exportOptions?.customOptions?.range?.[0]) {
-      if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0])) || Number(exportOptions?.customOptions?.range?.[1]) >= pages?.length) {
+      if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0])) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
         handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.1");
         Toast("error", "Value out of range");
       }
@@ -67,7 +71,7 @@ export default function SheetExportModal() {
   };
 
   const onLowerRangeBlur = () => {
-    if (exportOptions?.customOptions?.range?.[0] && (Number(exportOptions?.customOptions?.range?.[0]) <= 0 || Number(exportOptions?.customOptions?.range?.[0]) >= (pages?.length - 1))) {
+    if (exportOptions?.customOptions?.range?.[0] && (Number(exportOptions?.customOptions?.range?.[0]) <= 0 || Number(exportOptions?.customOptions?.range?.[0]) > (pages?.length - 1))) {
       handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.0");
       Toast("error", "Value out of range");
     }
@@ -98,17 +102,46 @@ export default function SheetExportModal() {
     },
     PDF: {
       ALL_PAGES: () => {
-        modalData?.createPdf()
+        if (isIOSMobile) { // if device is an iphone or Ipad
+          handleExportPDFOnServer(modalData?.elementRef?.current); // render the PDF on the server
+        } else {
+          modalData?.createPdf();
+        }
       },
       CURRENT_PAGE: () => {
-        modalData?.createDocumentPDF(modalData?.currentPage, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`);
+        if (isIOSMobile) {
+          handleExportPDFOnServer(modalData?.singleDocumentRef?.current?.[modalData?.currentPage]);
+        } else {
+          modalData?.createDocumentPDF(modalData?.currentPage, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`);
+        }
       },
       CUSTOM: () => {
+       
+
+        let selectedPages:number[] = [];
+
         if (exportOptions.customOptions.type === "FROM") {
-
+          selectedPages = generateRange(exportOptions?.customOptions?.range?.map(x => (Number(x) - 1)) as [number, number])
         } else if (exportOptions.customOptions.type === "PAGES") {
-
+          selectedPages = exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1))
         }
+
+        const downloadSection = document.createElement("div");
+
+        modalData?.singleDocumentRef?.current
+        ?.filter((_: any, index: number) => selectedPages?.includes(index))
+        .forEach((item: any) => {
+          const clonedItem = item.cloneNode(true); // Clone the element with its children
+          downloadSection.appendChild(clonedItem);
+        });
+
+        if (isIOSMobile) {
+          handleExportPDFOnServer(downloadSection);
+        } else {
+          handleExportPDFOnServer(downloadSection);
+          // modalData?.createDocumentPDF(null, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`, downloadSection);
+        }
+
       }
     }
   };
@@ -167,6 +200,7 @@ export default function SheetExportModal() {
           }
         </AnimatePresence>
       </div>
+
       <div className="flex flex-col bg-white z-[30] gap-2">
         <p className="text-slate-500 mt-1  ">Choose the format you would like to export</p>
         <div className="flex flex-col bg-white gap-2 lg:gap-3">

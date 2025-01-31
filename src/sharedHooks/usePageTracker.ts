@@ -15,7 +15,7 @@ const usePageTracker = (totalPages: number) => {
           }
         });
       },
-      { threshold: 0.2 } // Fires when at least 60% of the page is visible
+      { threshold: 0.5 } // Fires when at least 60% of the page is visible
     );
     
     // console.log(currentPage)

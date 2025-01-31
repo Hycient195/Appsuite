@@ -39,12 +39,13 @@ const useGeneratePDF = ({ paperSize, orientation, fileName, getFileName }: PdfOp
   /** Function overloads */
   function createPdf(): void;
   function createPdf(index?: number, documentFileName?: string): void;
+  function createPdf(index?: number, documentFileName?: string, domNode?: HTMLElement): void;
   
-  function createPdf(index?: number, documentFileName?: string) {
+  function createPdf(index?: number, documentFileName?: string, domNode?: HTMLElement) {
     // setIsGenerating(true)
     // Handle for array of elements (multiple items)
     if (Array.isArray(elementRef.current)) {
-      const element = elementRef.current[index!]; // index is only valid for arrays
+      const element = elementRef.current[index!] ; // index is only valid for arrays
       if (element) {
         savePDF(element, {
           repeatHeaders: true,
@@ -56,11 +57,14 @@ const useGeneratePDF = ({ paperSize, orientation, fileName, getFileName }: PdfOp
       } 
     }
     // Handle for single element
-    else if (elementRef.current) {
-      savePDF(elementRef.current, {
+    else if (elementRef.current || domNode) {
+      // console.log(JSON.stringify(elementRef.current))
+      console.log(JSON.stringify(domNode))
+      // savePDF( (domNode ? domNode : elementRef.current) as HTMLElement, {
+      savePDF( domNode  as HTMLElement, {
         repeatHeaders: true,
         paperSize: paperSize,
-        fileName: getFileName ? getFileName() : fileName || 'Download.pdf',
+        fileName: getFileName ? getFileName(documentFileName) : fileName ?? 'Download.pdf',
         margin: 3,
         landscape: orientation === "landscape",
       });

@@ -20,6 +20,7 @@ import { AnimatePresence } from 'motion/react';
 import { IBalanceSheetPage, IFinanceTrackerDocument } from '../_types/types';
 import usePageTracker from '@/sharedHooks/usePageTracker';
 import SheetImportModal from './_components/ImportModal';
+import { handleExportPDFOnServer } from '@/utils/exportPDFOnServer';
 
 const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
   const params = useParams<any>();
@@ -160,7 +161,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
         </main>
       </DndProvider>
       <AnimatePresence>     
-        { isExportModalOpen && <CustomModal setIsModalOpen={setIsExportModalOpen} modalData={{ createDocumentPDF, createPdf, currentPage }}><SheetExportModal /></CustomModal> }
+        { isExportModalOpen && <CustomModal setIsModalOpen={setIsExportModalOpen} modalData={{ createDocumentPDF, createPdf, currentPage, elementRef, singleDocumentRef, }}><SheetExportModal /></CustomModal> }
         { isImportModalOpen && <CustomModal setIsModalOpen={setIsImportModalOpen} modalData={{ currentPage }}><SheetImportModal /></CustomModal> }
         { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
       </AnimatePresence>
