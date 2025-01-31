@@ -29,7 +29,7 @@ export const getRefreshToken = async ( codeResponse: CodeResponse ) => {
     code: codeResponse.code,
     client_id: process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID,
     client_secret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
-    redirect_uri: process.env.NODE_ENV === "production" ? "https://app-suite.vercel.app" : 'http://localhost:3000',
+    redirect_uri: process.env.NODE_ENV === "production" ? "https://www.myappsuite.com" : 'http://localhost:3000',
   };
 
   try {

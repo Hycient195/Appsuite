@@ -23,8 +23,7 @@ interface IBalanceSheetPageProps {
 }
 
 export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, resetCursorPosition, singleDocumentRef, tableContainerRef, tableWidth, tbodyRef, params }: IBalanceSheetPageProps) {
-  const { pages, setPages, handleCSVImport, handleInputChange, handleKeyDown, handleNumericInputBlur, inputRefs, insertRow, movePage, removePage, removeRow, updatePageSubtitle, updatePageTitle, updateRowsToAdd, addPage, } = useFinanceTrackerContext();
-  const fileId = useParams()?.fileId as string;
+  const { pages, setPages, handleInputChange, handleKeyDown, handleNumericInputBlur, inputRefs, insertRow, movePage, removePage, removeRow, updatePageSubtitle, updatePageTitle, updateRowsToAdd, addPage, } = useFinanceTrackerContext();
 
   const {
     isLoading, hasLogoOrSpinner
@@ -133,7 +132,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
             }
           />
 
-          <a style={{ fontFamily: "sans-serif" }} href="https://app-suite.vercel.app" className="text-xs text-blue-600 mt-6">Powered by https://app-suite.vercel.app</a>
+          <a style={{ fontFamily: "sans-serif" }} href="https://www.myappsuite.com" className="text-xs text-blue-600 mt-6">Powered by https://www.myappsuite.com</a>
           <div className="line noExport" />
           <div className={`mt-2 noExport flex [&>*]:grow flex-wrap gap-x-2.5 gap-y-2`}>
             <button className="px-4 py-1.5 max-md:basis-1 max-md:order-2 bg-white border border-red-600 text-red-600 font-semibold rounded" onClick={() => removePage(pageIndex)} >

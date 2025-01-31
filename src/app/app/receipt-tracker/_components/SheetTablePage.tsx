@@ -189,7 +189,7 @@ export default function SheetTablePage({
             </tbody>
             }
           />
-          <a style={{ fontFamily: "sans-serif" }} href="https://app-suite.vercel.app" className="text-xs text-blue-600 mt-6">Powered by https://app-suite.vercel.app</a>
+          <a style={{ fontFamily: "sans-serif" }} href="https://www.myappsuite.com" className="text-xs text-blue-600 mt-6">Powered by https://www.myappsuite.com</a>
           <div className="line noExport" />
           <div className={`mt-6 noExport flex [&>*]:grow flex-wrap gap-y-2 gap-x-2.5`}>
             <label htmlFor={`csv-import-${pageIndex}`} className="px-4 py-2 cursor-pointer text-center bg-rose-500 text-white rounded" >

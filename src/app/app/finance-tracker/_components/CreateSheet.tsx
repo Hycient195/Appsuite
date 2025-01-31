@@ -20,7 +20,7 @@ export default function CreateFinanceTrackerSheet() {
     title: "", description: "", templateLayout: "CLASSIC"
   })
 
-  const [ createFile, { isLoading, isSuccess, isError, data }] = api.commonApis.useCreateFileInFolderMutation();
+  const [ createFile, { isLoading, isSuccess, isError, data } ] = api.commonApis.useCreateFileInFolderMutation();
 
   const handleCreateFile = async (e: FormEvent) => {
     e.preventDefault();

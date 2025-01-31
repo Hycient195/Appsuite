@@ -34,9 +34,6 @@ export const useFinanceTracker = (fileName?: string) => {
   const [ documentFile, setDocumentFile ] = useState<IFinanceTrackerDocument>(defaultDocument);
   const [history, setHistory] = useState<IBalanceSheetPage[][]>([]);
   const [future, setFuture] = useState<IBalanceSheetPage[][]>([]);
-  const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
-  const [ tempHistoryStack, setTempHistoryStack ] = useState<IBalanceSheetPage[]|null>(null);
-
 
   const prevPagesRef = useRef(pages);
   const inputRefs = useRef<Map<string, HTMLInputElement | HTMLTextAreaElement | null>>(new Map());
@@ -193,23 +190,6 @@ export const useFinanceTracker = (fileName?: string) => {
     setFuture([]); // Clear future stack on new action
   };
 
-  // const updatePages = (updatedPages: IBalanceSheetPage[]) => {
-  //   setPages(updatedPages);
-  //   if (!tempHistoryStack) setTempHistoryStack(pages);
-
-  //   if (saveTimer) clearTimeout(saveTimer);
-  //   const newTimer = setTimeout(() => {
-  //     if (tempHistoryStack) {
-  //       setHistory([...history, tempHistoryStack]);
-  //       setFuture([]);
-  //     }
-  //     setTempHistoryStack(null);
-  //   }, 300);
-
-  //   setSaveTimer(newTimer);
-  // };
-
-
   const undo = () => {
     if (!canUndo) return;
     const lastState = history[history.length - 1];
@@ -298,11 +278,9 @@ export const useFinanceTracker = (fileName?: string) => {
       const pagesCopy = [ ...pages ];
       pagesCopy.splice(pageIndex, 1, ...convertToPages(csvData))
       setPages(pagesCopy);
-      // updatePages(pagesCopy)
     } else {
       const pagesData = convertToPages(csvData);
       setPages(pagesData);
-      // updatePages(pagesData)
     }   
   };
 
@@ -399,7 +377,6 @@ export const useFinanceTracker = (fileName?: string) => {
       setPages(updatedPages);
       prevPagesRef.current = updatedPages;
     }
-
   }, [pages, history, future, calculatePageBalances]);
 
 
