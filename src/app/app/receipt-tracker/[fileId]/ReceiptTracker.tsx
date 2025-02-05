@@ -19,8 +19,9 @@ import axios from 'axios';
 import { IReceiptTrackerPage, IReceiptTrackerTableRow } from '../_types/types';
 import SheetTableRow from '../_components/SheetTableRow';
 import SheetTablePage from '../_components/SheetTablePage';
+import { isLoggedIn } from '@/sharedConstants/common';
 
-const ReceiptTracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
+const ReceiptTracker: React.FC<{csvString: string, fileName: string, folderId: string, loadedSucessfully: boolean }> = ({ csvString, fileName, folderId, loadedSucessfully }) => {
 
   const params = useParams<any>();
 

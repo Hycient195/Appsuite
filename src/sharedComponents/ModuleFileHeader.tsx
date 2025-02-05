@@ -6,6 +6,10 @@ import sharedSlice from "@/redux/slices/shared.slice";
 import { useAppDispatch } from "@/redux/hooks/hooks";
 import { LinearProgress } from "@mui/material";
 import { format } from "date-fns";
+import api from "@/redux/api";
+import { TMimeTypes } from "@/types/shared.types";
+import { Toast } from "./utilities/Toast";
+import useAutoSave from "@/sharedHooks/useAutoSave";
 
 interface IProps {
   moduleName: string;
@@ -17,6 +21,8 @@ interface IProps {
   setFileName: ChangeEventHandler<HTMLTextAreaElement|HTMLInputElement>
   subtitle: string;
   handleInitiateCreateFile: () => void;
+  mimeType?: TMimeTypes;
+  folderId?: string;
   className?: string;
   handleImport?: ChangeEventHandler<HTMLInputElement>;
   initiateImport?: MouseEventHandler
@@ -28,10 +34,18 @@ interface IProps {
   modifiedTime?: string;
 }
 
-export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, isSavingSuccess, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, modifiedTime, className, ...props }: IProps) {
+export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, isSavingSuccess, mimeType, folderId, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, modifiedTime, className, ...props }: IProps) {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
 
+  const [ updateFileName, { isLoading: isUpdatingFileName, isSuccess: fileNameUpdateSuccess, isError: updateFileNameIsError } ] = api.commonApis.useRenameFolderAndPrimaryFileMutation();
+  useAutoSave({
+    autoSaveTrigger: fileName,
+    functionTrigger: updateFileName,
+    triggerFunctionArguments: { folderId: folderId as string, primaryFileMimeType: mimeType as TMimeTypes, newFileName: `${fileName}.${mimeType?.split("/")[1]}` },
+    shouleExecuteTrigger: (!!mimeType && !!folderId),
+    autoSaveInterval: 3000 
+  });
   const [ hasFired, sethasFired ] = useState<boolean>(false);
   const [ lastSync, setLastSync ] = useState("");
   
@@ -39,6 +53,14 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
   const handleShowMobileSideNav = () => {
     dispatch(sharedSlice.actions.showMobileSidebar());
   };
+
+  // useEffect(() => {
+  //   // console.log(folderId)
+  //   // console.log(mimeType)
+  //   // console.log(fileName)
+  //   // console.log(`${fileName}.${mimeType?.split("/")[1]}`)
+  //   if (mimeType && folderId) updateFileName({ folderId: folderId as string, primaryFileMimeType: mimeType, newFileName: `${fileName}.${mimeType?.split("/")[1]}` })
+  // }, [fileName]);
 
   useEffect(() => {
     if (modifiedTime) setLastSync(modifiedTime)
@@ -48,6 +70,12 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
     if (hasFired) handleShowMobileSideNav();
     sethasFired(false);
   }, [hasFired]);
+
+  useEffect(() => {
+    if (updateFileNameIsError || isSavingError) {
+      Toast("error", "Last update unsucessful");
+    }
+  }, [ updateFileNameIsError, isSavingError ])
 
   // const handleShowMobileSidebar = () => {
   //   dispatch(sharedSlice.actions.showSidebar());
@@ -78,7 +106,7 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
           <ChevronRight className="!size-4" />
           <span className="text-slate-500 capitalize">{pathname?.split("/")?.[2]?.replace(/-/ig, " ")}</span>
           <ChevronRight className="!size-4" />
-          <span className="text-slate-500 capitalize">{fileName}</span>
+          <span className="text-slate-500 capitalize">{fileName?.split(".")?.[0]}</span>
         </div>
         <div className="left flex flex-col max-md:items-cente gap-1 ">
           
@@ -100,8 +128,8 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
           {/* <button onClick={handleImport} className="btn text-primary bg-white border border-slate-200 0"><ImportIcon /> Import</button> */}
           <div className="flex flex-col gap-1 relative flex-wrap items-center md:items-end">
             <button onClick={handleInitiateCreateFile} className="btn w-max bg-primary text-white max-lg:hidden"><PlusIcon className="!size-5 !stroke-[2px]" /> Create New Sheet</button>
-            <p className="text-slate-400 text-sm">Last sync: <span className={`duration-500 ${isSavingSuccess ? "text-green-600" : isSavingError ? "text-red-500" : "text-slate-600"}`}>{lastSync ? format(new Date(lastSync), "MMM dd, yyyy, hh:mm:ss a") : "Untracked"}</span></p>
-            <LinearProgress color="inherit" className={`${!isSaving && "!hidden"} w-full text-primary !animate-fade-in !absolute -bottom-0.5 left-0`} />
+            <p className="text-slate-400 text-sm">Last sync: <span className={`duration-500 ${(isSavingSuccess||fileNameUpdateSuccess) ? "text-green-600" : (isSavingError||updateFileNameIsError) ? "text-red-500" : "text-slate-600"}`}>{lastSync ? format(new Date(lastSync), "MMM dd, yyyy, hh:mm:ss a") : "Untracked"}</span></p>
+            <LinearProgress color="inherit" className={`${!(isSaving || isUpdatingFileName) && "!hidden"} w-full text-primary !animate-fade-in !absolute -bottom-0.5 left-0`} />
           </div>
         </div>
       </div>

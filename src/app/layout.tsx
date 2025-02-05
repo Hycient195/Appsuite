@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 
 import ReduxProvider from "../_Providers/ReduxProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Analytics } from "@vercel/analytics/react"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,6 +38,7 @@ export default function RootLayout({
     <html lang="en">
       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID as string}>
         <ReduxProvider>
+          <Analytics />
           {/* <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} > */}
           <body className={`${geist.className}  antialiased bg-white`} >
             {children}

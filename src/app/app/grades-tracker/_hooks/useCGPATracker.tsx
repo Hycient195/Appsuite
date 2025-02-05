@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Papa from "papaparse";
-import { ICGPATrackerConfig, ICGPATrackerPage, ICGPATrackerRow, TGradeScales, TGradeTypes } from '../_types/types';
+import { ICGPATrackerConfig, ICGPATrackerPage, ICGPATrackerRow, IGradesTrackerDocument, TGradeScales, TGradeTypes } from '../_types/types';
 import { gradeValueMap } from '../_constants/gradeValue';
 
 const defaultRow: ICGPATrackerRow = {
@@ -24,11 +24,19 @@ export const defaultPage: ICGPATrackerPage = {
   imageUrl: ""
 };
 
+export const defaultDocument: IGradesTrackerDocument = {
+  templateLayout: "CLASSIC",
+  filename: "",
+  currentPage: 0
+}
+
 export const useCGPATracker = (fileName?: string) => {
   // const [ config, setConfig ] = useState<ICGPATrackerConfig>({ cgpaScale: gradeScale });
   const [pages, setPages] = useState<ICGPATrackerPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
   const [history, setHistory] = useState<ICGPATrackerPage[][]>([]);
   const [future, setFuture] = useState<ICGPATrackerPage[][]>([]);
+  const [ documentFile, setDocumentFile ] = useState<IGradesTrackerDocument>(defaultDocument);
+  
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
   const [ tempHistoryStack, setTempHistoryStack ] = useState<ICGPATrackerPage[]|null>(null);
 
@@ -526,6 +534,8 @@ export const useCGPATracker = (fileName?: string) => {
     updateRowsToAdd,
     setPages,
     updatePages,
+    documentFile,
+    setDocumentFile,
 
     handleNumericInputBlur,
     moveRow,

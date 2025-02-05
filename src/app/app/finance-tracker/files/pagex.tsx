@@ -12,28 +12,17 @@ import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
 import ModuleFilesHeader from "@/sharedComponents/ModuleFilesHeader";
 import EmptyFileList from "@/sharedComponents/emptyState/EmptyFileList";
 import CustomModal from "@/sharedComponents/CustomModal";
-// import ModuleLandingPageNav from "../../_components/ModuleLandingPageNav";
-// import CreateFinanceTrackerSheet from "../_components/CreateSheet";
+import ModuleLandingPageNav from "../../_components/ModuleLandingPageNav";
+import CreateFinanceTrackerSheet from "../_components/CreateSheet";
 import { AnimatePresence } from "motion/react";
 import { ClockTimeIcon, PenIcon, TickIcon, TrashIcon } from "@/sharedComponents/CustomIcons";
-// import DeleteFileModal from "../_components/DeleteFileModal";
+import DeleteFileModal from "../_components/DeleteFileModal";
 import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
 import { Toast } from "@/sharedComponents/utilities/Toast";
 import { splitInThousand } from "@/utils/miscelaneous";
-import ModuleLandingPageNav from "@/app/app/_components/ModuleLandingPageNav";
-import DeleteFileModal from "./DeleteFileModal";
-import { TMimeTypes } from "@/types/shared.types";
-import CreateFinanceTrackerSheet from "@/app/app/finance-tracker/_components/CreateSheet";
 
-interface IProps {
-  moduleName: string;
-  moduleEnumName: string;
-  fileListMimeType: TMimeTypes;
-  createFileModal?: React.ReactNode;
-  moduleSubtitle?: string;
-}
 
-export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumName, fileListMimeType, createFileModal }: IProps) {
+export default function BalanceSheetFiles() {
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFoldersWithPrimaryFileQuery();
@@ -42,14 +31,14 @@ export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumN
   const [ selectedFile, setSelectedFile ] = useState<Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0] | null>(null);
 
   useEffect(() => {
-    getFiles({ folderName: moduleEnumName, primaryFileMimeType: fileListMimeType });
+    getFiles({ folderName: "FINANCE_TRACKER", primaryFileMimeType: "application/json" });
   }, [ ]);
 
   return (
     <main className="h-full relative p-3 rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">
       <div className="">
-        <ModuleLandingPageNav moduleName={moduleName} className="lg:hidden !pt-0 pb-3" /> 
-        <ModuleFilesHeader moduleName={moduleName} subtitle={moduleSubtitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
+        <ModuleLandingPageNav moduleName="Finance Tracker" className="lg:hidden !pt-0 pb-3" /> 
+        <ModuleFilesHeader moduleName="Finance Tracker" subtitle="Track, manage and forecast your customers and orders." handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
       </div>
       
       <div className="file-list h-full grid">
@@ -80,13 +69,14 @@ export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumN
                       data?.length === 0
                       ? (
                         <TableEmpty colSpan={4} >
-                          <div className="flex justify-center min-h-[400px]">
-                            <EmptyFileList handleInitiateCreateSheet={() => setIsCreateModalOpen(true)} />
+                          <div className="flex flex-col gap-3">
+                            <p className="">No records to display. {!cookieAccessToken && "Sign in"}</p>
+                            <Link href={!cookieAccessToken ? "/sign-in" : "create"} className="btn bg-black/90 w-max mx-auto text-white">{!cookieAccessToken ? "Sign in" : "Create Sheet"}</Link>
                           </div>
                         </TableEmpty>
                       ) : (
                         data?.map((file, index) => (
-                          <TableRow key={`finance-tracker-file-${index}`} file={file} setIsDeleteModalOpen={setIsDeleteModalOpen} setSelectedFile={setSelectedFile} mimeType={fileListMimeType} />
+                          <TableRow key={`finance-tracker-file-${index}`} file={file} setIsDeleteModalOpen={setIsDeleteModalOpen} setSelectedFile={setSelectedFile} />
                         ))
                       )
                     )
@@ -103,7 +93,7 @@ export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumN
       </div>
       
       <AnimatePresence>
-        { (isCreateModalOpen && createFileModal) && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}>{createFileModal}</CustomModal> }
+        { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
         { isDeleteModalOpen && <CustomModal setIsModalOpen={setIsDeleteModalOpen} modalData={selectedFile}><DeleteFileModal /></CustomModal> }
       </AnimatePresence>
     </main>
@@ -112,12 +102,11 @@ export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumN
 
 interface ITableRowProps {
   file: Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0];
-  setIsDeleteModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDeleteModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   setSelectedFile: React.Dispatch<React.SetStateAction<Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0]|null>>
-  mimeType: TMimeTypes;
 }
 
-function TableRow({ file, setIsDeleteModalOpen, setSelectedFile, mimeType }: ITableRowProps) {
+function TableRow({ file, setIsDeleteModalOpen, setSelectedFile }: ITableRowProps) {
   const router = useRouter();
   const [ fileName, setFileName ] = useState<string>(file?.folderName?.replace(".csv", "") as string)
   const [ isEditing, setIsEditing ] = useState<boolean>(false);
@@ -139,7 +128,7 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile, mimeType }: ITa
     e.stopPropagation();
     inputRef.current?.focus();
     setIsEditing(true);
-    if (isEditing) updateFileName({ folderId: file.folderId as string, primaryFileMimeType: mimeType, newFileName: `${fileName}.${mimeType?.split("/")[1]}` });
+    if (isEditing) updateFileName({ folderId: file.folderId as string, primaryFileMimeType: "application/json", newFileName: `${fileName}.json` });
     // if (!isEditing) {
     //   inputRef.current?.focus();
     //   setIsEditing(true);

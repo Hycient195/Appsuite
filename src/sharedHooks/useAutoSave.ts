@@ -1,25 +1,27 @@
 import api from "@/redux/api";
 import { isLoggedIn } from "@/sharedConstants/common";
 import { IUpdateFileRequest, TMimeTypes } from "@/types/shared.types";
+import { MutationDefinition, TypedMutationTrigger } from "@reduxjs/toolkit/query/react";
 import { useEffect, useRef, useState } from "react";
 
-interface IProps {
-  fileId: string;
-  contentToSave: any;
-  contentMimeType: TMimeTypes;
+interface IProps<T> {
+  autoSaveTrigger: any;
+  functionTrigger: TypedMutationTrigger<(any|void), (any|void), any>
+  triggerFunctionArguments?: any;
   loadedSucessfully?: boolean;
+  shouleExecuteTrigger?: boolean
+  autoSaveInterval?: number
 }
 
-export default function useSaveDocument({ fileId, contentToSave, contentMimeType, loadedSucessfully = true }: IProps) {
+export default function useAutoSave<T>({ autoSaveTrigger, functionTrigger, triggerFunctionArguments, loadedSucessfully = true, shouleExecuteTrigger = true, autoSaveInterval = 3000 }: IProps<T>) {
   const isFirstRender = useRef(true);
 
   const [saveTimer, setSaveTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const [ saveFile, { isLoading: isSaving, isSuccess: saveFileIsSuccess, isError: saveFileIsError, data } ] = api.commonApis.useSaveFileMutation();
-
   const handleSaveFile = (saveType: IUpdateFileRequest["updateType"]) => {
-    if (contentToSave && isLoggedIn && loadedSucessfully) {
-      saveFile({ fileId, content: JSON.stringify(contentToSave), mimeType: contentMimeType, updateType: saveType })
+    if (loadedSucessfully && shouleExecuteTrigger) {
+      // @ts-ignore
+      functionTrigger(triggerFunctionArguments)
     }
   }
 
@@ -36,11 +38,11 @@ export default function useSaveDocument({ fileId, contentToSave, contentMimeType
         clearTimeout(saveTimer);
       }
       const newTimer = setTimeout(() => {
-        if (!isFirstRender.current && isLoggedIn && loadedSucessfully && !isFirstRender.current) {
+        if (loadedSucessfully && shouleExecuteTrigger) {
           handleSaveFile("autosave");
         }
         clearTimeout(newTimer);
-      }, 3000);
+      }, autoSaveInterval);
   
       setSaveTimer(newTimer);
     }
@@ -50,13 +52,5 @@ export default function useSaveDocument({ fileId, contentToSave, contentMimeType
         clearTimeout(newTimer);
       }
     };
-  }, [ contentToSave ]);
-
-  return {
-    handleSaveFile,
-    isSaving,
-    saveFileIsSuccess,
-    saveFileIsError,
-    saveResponse: data
-  }
+  }, [ autoSaveTrigger ]);
 }

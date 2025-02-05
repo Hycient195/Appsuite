@@ -19,8 +19,10 @@ import axios from 'axios';
 import LoadingButton from '@/sharedComponents/LoadingButton';
 import CGPATrackerPage from '../_components/SheetTablePage';
 import { FormSelect } from '@/sharedComponents/FormInputs';
+import { ICGPATrackerPage, IGradesTrackerDocument } from '../_types/types';
+import { isLoggedIn } from '@/sharedConstants/common';
 
-const CGPATracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSucessfully: boolean }> = ({ csvString, isLoggedIn, loadedSucessfully }) => {
+const CGPATracker: React.FC<{csvString: IGradesTrackerDocument, fileName: string, loadedSucessfully: boolean }> = ({ csvString, fileName, loadedSucessfully }) => {
 
   const params = useParams<any>();
 
@@ -79,13 +81,17 @@ const CGPATracker: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuces
     handleKeyDown,
     inputRefs,
     movePage,
-    updateCGPAScale
+    updateCGPAScale,
+    documentFile,
+    setDocumentFile
   } = useCGPATracker();
 
   /* Loading CSV file fetched from the server using SSR */
   useEffect(() => {
     if (csvString) {
-      loadCSVData(Papa.parse(csvString)?.data as string[][]);
+      setPages(csvString?.pages as ICGPATrackerPage[]);
+      setDocumentFile({ filename: fileName?.split(".")?.[0], templateLayout: csvString?.templateLayout });
+      // loadCSVData(Papa.parse(csvString)?.data as string[][]);
     } else {
       setPages([{ ...defaultPage }]);
     }

@@ -10,31 +10,35 @@ interface IProps {
   }>
 }
 
-export default async function FinanceTrackerServerPage({ params }: IProps) {
-  const appCookies = (await cookies());
-  const isLoggedIn = !!appCookies.get("asAccessToken")?.value;
+interface IResponse {
+  fileName: string;
+  fileId?: string,
+  folderId?: string;
+  content: IFinanceTrackerDocument
+}
 
-  let csvString: IFinanceTrackerDocument = {
-    templateLayout: "CLASSIC",
-    filename: "",
+export default async function FinanceTrackerServerPage({ params }: IProps) {
+  let response: IResponse = {
+    fileName: "",
+    content:  {
+      templateLayout: "CLASSIC",
+      filename: "",
+      pages: []
+    }
   };
   let loadedSucessfully = false;
 
   try {
-    // if (!isLoggedIn) {
-    //   const refreshToken = appCookies.get("asRefreshToken")?.value;
-    //   if (refreshToken && refreshToken !== "DUMMY_PREVIEW_REFRESH_TOKEN") {
-    //     const tokenResponse = (await getNewAccessToken(refreshToken as string));
-    //     appCookies.set("asAccessToken", tokenResponse?.access_token as string, { maxAge: (60*60)})
-    //   }
-    // }
-    csvString = (await readFile((await params).fileId)) as IFinanceTrackerDocument;
-    // console.log(csvString)
+    response = (await readFile((await params).fileId)) as IResponse;
     loadedSucessfully = true;
   } catch (error) {
-    console.log(`Error fetching balance sheet`, error);
-    // csvString = {};
+    console.log(`Error fetching Finance Tracker sheet`, error);
   }
 
-  return <FinanceTracker csvString={csvString} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
+  return <FinanceTracker
+    csvString={typeof response.content === "string" ? JSON.parse(response.content) : response.content}
+    fileName={response.fileName}
+    folderId={response.folderId as string}
+    loadedSucessfully={loadedSucessfully}
+  />
 }

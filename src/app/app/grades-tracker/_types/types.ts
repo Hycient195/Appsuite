@@ -21,6 +21,14 @@ export interface ICGPATrackerPage {
   imageUrl?: string;
 }
 
+export interface IGradesTrackerDocument {
+  templateLayout?: "CLASSIC" | "MODERN";
+  filename: string;
+  description?: string;
+  currentPage?: number;
+  pages?: ICGPATrackerPage[]
+}
+
 export interface ICGPATrackerConfig {
   cgpaScale: TGradeScales
 }

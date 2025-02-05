@@ -67,14 +67,28 @@ export async function createFile ({appName, fileName, content, mimeType}: ICreat
   });
 };
 
-export async function readFile (fileId: string) {
+export async function readFile(fileId: string) {
   const driveService = await getDriveService();
+
+  // Get file metadata including name
+  const fileMetadata = await driveService.files.get({
+    fileId,
+    fields: "name, parents",
+  });
+
+  // Get file content
   const response = await driveService.files.get({
     fileId,
-    alt: 'media',
+    alt: "media",
   });
-  return response.data;
-};
+
+  return {
+    fileId,
+    fileName: fileMetadata.data.name,
+    folderId: fileMetadata.data.parents ? fileMetadata.data.parents[0] : null,
+    content: response.data,
+  };
+}
 
 export async function updateFile (fileId: string, content: string, mimeType: string, updateType: ("autosave"|"versionedSave")) {
   const driveService = await getDriveService();

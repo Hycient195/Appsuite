@@ -132,16 +132,13 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
             }
           />
 
-          <a style={{ fontFamily: "sans-serif" }} href="https://www.myappsuite.com" className="text-xs text-blue-600 mt-6">Powered by myappsuite.com</a>
+          <a style={{ fontFamily: "sans-serif" }} href="https://www.myappsuite.com" className="text-xs text-blue-700 w-max mt-6">Powered by myappsuite.com</a>
           <div className="line noExport" />
           <div className={`mt-2 noExport flex [&>*]:grow flex-wrap gap-x-2.5 gap-y-2`}>
             <button className="px-4 py-1.5 max-md:basis-1 max-md:order-2 bg-white border border-red-600 text-red-600 font-semibold rounded" onClick={() => removePage(pageIndex)} >
               Delete Page
             </button>
-            <button
-              className="px-4 py-1.5 max-md:basis-1 max-md:order-3 bg-white border-emerald-600 text-emerald-600 border font-semibold rounded"
-              onClick={() => addPage(pageIndex)}
-            >
+            <button className="px-4 py-1.5 max-md:basis-1 max-md:order-3 bg-white border-emerald-600 text-emerald-600 border font-semibold rounded" onClick={() => addPage(pageIndex)}>
               Add Page
             </button>
             <div className="px-4 max-md:order-1 max-md:w-full py-2 cursor-pointer bg-primary text-white flex gap-2 items-center justify-between rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>

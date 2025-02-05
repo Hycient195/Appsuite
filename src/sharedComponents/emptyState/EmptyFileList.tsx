@@ -17,8 +17,8 @@ export default function EmptyFileList({ handleInitiateCreateSheet }: IProps) {
         </svg>
       </div>
       <p className="text-slate-900 text-ls font-medium">No Records to Display</p>
-      <p className="text-slate-500">{ isLoggedIn ? "Create a new sheet" : "Sign in"}</p>
-      <Link href={isLoggedIn ? "" : "/sign-in"} onClick={handleAction} className="btn bg-primary text-white mt-2">{ isLoggedIn ? <><PlusIcon /> Create New Sheet</> : "Sign In"} </Link>
+      {/* <p className="text-slate-500">{ isLoggedIn ? "Create a new sheet" : "Sign in"}</p> */}
+      <Link href={isLoggedIn ? "" : "/sign-in"} onClick={handleAction} className="btn bg-primary text-white mt-2">{ isLoggedIn ? <><PlusIcon /> Create New File</> : "Sign In"} </Link>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { readFile } from "@/services/googleDriveService";
 import CGPATracker from "./CGPATracker";
-import { cookies } from "next/headers";
+import { IGradesTrackerDocument } from "../_types/types";
 
 interface IProps {
   params: Promise<{
@@ -8,20 +8,34 @@ interface IProps {
   }>
 }
 
-export default async function BalanceSheetServerPage({ params }: IProps) {
-  const appCookies = (await cookies());
-  const isLoggedIn = !!appCookies.get("asAccessToken")?.value;
+interface IResponse {
+  fileName: string;
+  fileId?: string,
+  folderId?: string;
+  content: IGradesTrackerDocument
+}
 
-  let csvString = "";
+export default async function BalanceSheetServerPage({ params }: IProps) {
+  let response: IResponse = {
+    fileName: "",
+    content:  {
+      templateLayout: "CLASSIC",
+      filename: "",
+      pages: []
+    }
+  };
   let loadedSucessfully = false;
 
   try {
-    csvString = (await readFile((await params).fileId)) as string;
+    response = (await readFile((await params).fileId)) as IResponse;
     loadedSucessfully = true;
   } catch (error) {
-    console.log(`Error fetching balance sheet`, error);
-    csvString = "";
+    console.log(`Error fetching Grades Tracker sheet`, error);
   }
 
-  return <CGPATracker csvString={csvString} isLoggedIn={isLoggedIn} loadedSucessfully={loadedSucessfully} />
+  return <CGPATracker
+    csvString={typeof response.content === "string" ? JSON.parse(response.content) : response.content}
+    fileName={response.fileName}
+    loadedSucessfully={loadedSucessfully}
+  />
 }

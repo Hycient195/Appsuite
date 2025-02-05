@@ -19,14 +19,16 @@ import { useThemeContext } from "../_contexts/themeContext"
 import { comprehensiveInvoice, defaultGlobalInvoice } from "../_templates/globalDummyData"
 import useSaveDocument from "@/sharedHooks/useSaveDocument"
 import ModuleFileHeader from "@/sharedComponents/ModuleFileHeader"
+import { isLoggedIn } from "@/sharedConstants/common"
 
 interface IProps {
   loadedSucessfully: boolean;
-  isLoggedIn: boolean;
+  fileName: string;
+  folderId: string;
   jsonData: IGlobalInvoice;
 }
 
-export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData }: IProps) {
+export default function InvoiceManager({ loadedSucessfully, fileName, folderId, jsonData }: IProps) {
   const params = useParams<any>();
 
   const { setTheme } = useThemeContext();
@@ -40,7 +42,7 @@ export default function InvoiceManager({ loadedSucessfully, isLoggedIn, jsonData
   })
 
   const controls = useInvoiceManager(globalState, setGlobalState);
-  const { handleSaveFile, saveFileIsError, saveFileIsSuccess, isSaving } = useSaveDocument({ fileId: params?.fileId, contentMimeType: "application/json", contentToSave: globalState, isLoggedIn, loadedSucessfully });
+  const { handleSaveFile, saveFileIsError, saveFileIsSuccess, isSaving } = useSaveDocument({ fileId: params?.fileId, contentMimeType: "application/json", contentToSave: globalState, loadedSucessfully });
   const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "B3", fileName: `${jsonData?.fileName}.pdf`})
 
 

@@ -18,6 +18,14 @@ export interface IReceiptTrackerPage {
   imageUrl?: string;
 }
 
+export interface IReceiptTrackerDocument {
+  templateLayout?: "CLASSIC" | "MODERN";
+  filename: string;
+  description?: string;
+  currentPage?: number;
+  pages?: IReceiptTrackerPage[]
+}
+
 export interface IBalanceSheetFile {
   id: string;
   name: string;
