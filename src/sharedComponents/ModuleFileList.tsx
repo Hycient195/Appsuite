@@ -172,29 +172,30 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile, mimeType }: ITa
       <td className="cursor-pointer">
         <div className="line-in  w-ma">
           <Checkbox onClick={(e) => e.stopPropagation()} className="!p-0" />
-          <div onClick={(e) => e.stopPropagation()} className="flex  flex-col w-ful">
+          <div onClick={(e) => { isEditing ? e.stopPropagation() : () => ""}} className="flex  flex-col w-ful">
             <ResponsiveTextInput
               type="text"
               value={fileName}
               ref={inputRef}
-              onClick={(e) => e.stopPropagation()}
-              onFocus={() => setIsEditing(true)}
+              disabled={!isEditing}
+              // onClick={(e) => e.stopPropagation()}
+              // onFocus={() => setIsEditing(true)}
               // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
               onChange={(e) => { setFileName(e.target.value)}}
               className="w-max text-slate-800 max-md:text-sm max-md:leading-[1.6ch]  leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
             />
-            <div className="text-xs flex flex-row gap-2">
+            <div className="text-xs flex flex-row gap-2 lg:hidden">
               <span className="">Jan 6 2024</span>
               <span className="">{splitInThousand(file?.primaryFile?.size as string)} Kb</span>
             </div>
           </div>
-          { isEditing && <button onClick={(e) => { e.stopPropagation(), inputRef.current?.focus(), handleEdit(e)}} className="z-[3] text-green-600 rounded-full h-5 w-5 flex items-center justify-center ring-2 ring-green-500">
+            { isEditing && <button onClick={(e) => { e.stopPropagation(), inputRef.current?.focus(), handleEdit(e)}} className="z-[3] text-green-600 rounded-full h-5 w-5 flex items-center justify-center ring-2 ring-green-500">
             { isUpdatingFile ? <CircularProgress size={14} /> : <TickIcon className="!size-5" /> }
           </button>}
         </div>
       </td>
-      <td className="max-md:hidden">Jan 6 2024</td>
-      <td className="max-md:hidden">{splitInThousand(file?.primaryFile?.size as string)} Kb</td>
+      <td className="max-md:hidden text-sm">Jan 6 2024</td>
+      <td className="max-md:hidden text-sm">{splitInThousand(file?.primaryFile?.size as string)} Kb</td>
       <td>
         <div className="flex flex-row items-center gap-1.5 md:gap-2">
           <button onClick={(e) => { e.stopPropagation(), handleEdit(e)}} className=""><PenIcon className="size-5 lg:size-6" /></button>

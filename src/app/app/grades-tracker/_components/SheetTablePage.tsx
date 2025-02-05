@@ -1,68 +1,29 @@
-import { SaveLoadingSpinner } from "@/sharedComponents/CustomIcons";
+import { MinusIcon, PlusIcon, SaveLoadingSpinner } from "@/sharedComponents/CustomIcons";
 import DraggablePage from "@/sharedComponents/DraggablePage";
 import ResizableTable from "@/sharedComponents/ResizableTable";
 import { formatDateInput, replaceJSXRecursive, splitInThousand, splitInThousandForTextInput } from "@/utils/miscelaneous";
 import Image from "next/image";
 import { ICGPATrackerPage } from "../_types/types";
 import useHandlePageLogoActions from "@/sharedHooks/useHandlePageLogoActions";
+import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
+import { isLoggedIn } from "@/sharedConstants/common";
+import { useGradesTrackerContext } from "../_contexts/gradesTrackerContext";
 
 
-interface IBalanceSheetPageProps {
-  isLoggedIn: boolean;
-  pages: ICGPATrackerPage[]
-  setPages: React.Dispatch<React.SetStateAction<ICGPATrackerPage[]>>;
-  pageIndex: number;
+interface IGradesTrackerProps {
   page: ICGPATrackerPage;
-  movePage: (sourceIndex: number, destinationIndex: number) => void;
-  updatePageTitle: (title: string, pageIndex: number) => void;
-  updatePageSubtitle: (subTitle: string, pageIndex: number) => void;
-  insertRow: (pageIndex: number, rowIndex: number, rowsToAdd?: number) => void;
-  removeRow: (pageIndex: number, rowIndex: number) => void;
-  updateRowsToAdd: (pageIndex: number, action: "increament" | "decreament") => void;
-  handleInputChange: (
-    pageIndex: number,
-    rowIndex: number,
-    field: "courseCode" | "courseTitle" | "unitLoad" | "grade",
-    value: string
-  ) => void;
-  handleKeyDown: (
-    e: React.KeyboardEvent,
-    pageIndex: number,
-    rowIndex: number,
-    field: "courseCode" | "courseTitle" | "unitLoad" | "grade"
-  ) => void;
-  // handleNumericInputBlur: (
-  //   pageIndex: number,
-  //   rowIndex: number,
-  //   field: "courseCode" | "credit",
-  //   e: React.FocusEvent<HTMLInputElement>
-  // ) => void;
-  handleCSVImport: (e: React.ChangeEvent<HTMLInputElement>, pageIndex: number) => void;
-  downloadPageCSV: (pageIndex: number) => void;
-  createDocumentPDF: (pageIndex: number, title: string) => void;
-  removePage: (pageIndex: number) => void;
-  redo: () => void;
-  undo: () => void;
-  canRedo: boolean;
-  canUndo: boolean;
-  tableWidth: number;
-  cursorPositionRef: React.MutableRefObject<number | null>;
-  resetCursorPosition: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  inputRefs: React.MutableRefObject<Map<string, HTMLInputElement | HTMLTextAreaElement|null>>;
-  tbodyRef: React.RefObject<HTMLTableSectionElement>;
+  pageIndex: number;
+  singleDocumentRef: React.MutableRefObject<HTMLDivElement[] | null>;
   tableContainerRef: React.RefObject<HTMLDivElement>;
-  singleDocumentRef: React.MutableRefObject<HTMLDivElement[]|null>;
-  addPage: (arg: any) => void
+  tableWidth: number;
+  tbodyRef: React.RefObject<HTMLTableSectionElement>;
   params: any;
 }
 
-export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, canUndo, createDocumentPDF, cursorPositionRef, downloadPageCSV, handleCSVImport, handleInputChange, handleKeyDown, inputRefs, insertRow, movePage, page, pageIndex, redo, removePage, removeRow, resetCursorPosition, singleDocumentRef, tableContainerRef, tableWidth, tbodyRef, undo, updatePageSubtitle, updatePageTitle, updateRowsToAdd, addPage, params }: IBalanceSheetPageProps) {
+export default function CGPATrackerPage({ page, pageIndex, singleDocumentRef, tableContainerRef, tableWidth, tbodyRef, params }: IGradesTrackerProps) {
+  const { pages, setPages, handleInputChange, handleKeyDown, inputRefs, insertRow, movePage, removePage, removeRow, updatePageSubtitle, updatePageTitle, updateRowsToAdd, addPage } = useGradesTrackerContext()
   const {
-    isLoading, isDragging, imageSrc,
-    handleRemoveLogo, handleRemovePage,
-    handleReceiptDragOver, handleReceiptDragEnter,
-    handleReceiptDragLeave, handleReceiptDrop,
-    handleUploadLogo, hasLogoOrSpinner
+    isLoading, hasLogoOrSpinner
   } = useHandlePageLogoActions<ICGPATrackerPage>({ isLoggedIn: isLoggedIn, page: page, pageIndex: pageIndex, pages: pages, params: params, removePage: removePage, setPages: setPages })
 
   return (
@@ -98,7 +59,8 @@ export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, 
                 </label>
               )
             } */}
-            <div className="titles grid !max-w-[800px] w-full mx-auto">
+
+            {/* <div className="titles grid !max-w-[800px] w-full mx-auto">
               <div className="relative h-max !max-w-[800px] w-full mx-auto bg-ts">
                 <p style={{ fontFamily: "sans-serif"}} className="invisib !max-w-[800px] text-black w-full mx-auto py-1 text-2xl border- border-white outline-none font-bold w-ful text-center">{replaceJSXRecursive(page.title, { "\n": <br />})}<span className="invisible">.</span></p>
                 <textarea style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ TITLE HERE... ]' autoFocus className="noExport !max-w-[800px] w-full mx-auto text-2xl py-1 resize-none absolute h-full !overflow-visible no-scrollbar top-0 left-0 right-0 outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
@@ -108,7 +70,14 @@ export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, 
                 <p style={{ fontFamily: "sans-serif"}} className="text-center  py-1 border- border-white invisibl outline-none text-lg text-black/80 font-semibold w-full">{page.subTitle}<span className="invisible">.</span></p>
                 <textarea style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ SUBTITLE; eg. FROM PERIOD OF 1ST <MONTH> <YEAR> TO 30TH <MONTH> <YEAR>... ]' className={` noExport text-center py-1 resize-none absolute !overflow-visible no-scrollbar left-0 top-0 outline-none border- border-zinc-300/80 text-lg text-black/80 font-semibold h-full w-full`} />
               </div>
+            </div> */}
+
+            <div className="titles grid !max-w-[800px] w-full mx-auto justify-center">
+              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ ..TITLE HERE.. ]' className="!max-w-[800px] text-2xl outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
+              <div className="mb-1 noExport" />
+              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' className="!max-w-[800px] mb-1 text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
             </div>
+
           </div>
          
           <div className={`mb-3 ${!hasLogoOrSpinner ? "noExport" : ""}`} />
@@ -204,61 +173,27 @@ export default function CGPATrackerPage({ isLoggedIn, pages, setPages, canRedo, 
             </tbody>
             }
           />
+
+          <a style={{ fontFamily: "sans-serif" }} href="https://www.myappsuite.com" className="text-xs text-blue-700 w-max !mt-4">Powered by myappsuite.com</a>
           <div className="line noExport" />
-          <div className={`mt-6 noExport flex [&>*]:grow flex-wrap gap-x-2.5 gap-y-2`}>
-            <label htmlFor={`csv-import-${pageIndex}`} className="px-4 py-2 cursor-pointer text-center bg-rose-500 text-white rounded" >
-              Load CSV
-              <input id={`csv-import-${pageIndex}`} type="file" accept=".csv"  className='hidden' name={`${pageIndex}`} onChange={(e) => handleCSVImport(e, pageIndex)} />
-            </label>
-            {/* {
-              !imageSrc
-              ? (
-                <label htmlFor={`add-logo-${pageIndex}`}  className="px-4 py-2 cursor-pointer text-center bg-violet-500 text-white rounded" >
-                  Add Logo
-                  <input id={`add-logo-${pageIndex}`} type="file" accept="image/jpeg, image/jpg, image/png" className='hidden' name={`${pageIndex}`} onChange={(e) => handleUploadLogo(e.target.files![0], pageIndex)} />
-                </label>
-              ) : (
-                <LoadingButton loading={isLoading.deleting || isLoading.removingPage} className="!px-4 !py-2 bg-violet-500 text-white !rounded" onClick={() => handleRemoveLogo(page?.imageUrl?.split("<||>")[0] as string)} >
-                  Remove Logo
-                </LoadingButton>
-              )
-            } */}
-           
-            <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => downloadPageCSV(pageIndex)}>
-              Download CSV
+          <div className={`mt-2 noExport flex [&>*]:grow flex-wrap gap-x-2.5 gap-y-2`}>
+            <button className="px-4 py-1.5 max-md:basis-1 max-md:order-2 bg-white border border-red-600 text-red-600 font-semibold rounded" onClick={() => removePage(pageIndex)} >
+              Delete Page
             </button>
-            <button className="px-4 py-2 bg-green-500  text-white rounded" onClick={() => createDocumentPDF(pageIndex, page.title)} >
-              Download PDF
+            <button className="px-4 py-1.5 max-md:basis-1 max-md:order-3 bg-white border-emerald-600 text-emerald-600 border font-semibold rounded" onClick={() => addPage(pageIndex)}>
+              Add Page
             </button>
-            <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => handleRemovePage(pageIndex)} >
-              Remove Page
-            </button>
-            <button className="px-4 py-2 disabled:bg-gray-300 disabled:cursor-not-allowed bg-gray-500 text-white rounded" onClick={redo} disabled={!canRedo} >
-              Redo
-            </button>
-            <button className="px-4 py-2 disabled:bg-gray-300 disabled:cursor-not-allowed bg-gray-500 text-white rounded" onClick={undo} disabled={!canUndo} >
-              Undo
-            </button>
-            <div className="px-4 py-2 cursor-pointer bg-blue-500 flex gap-2 items-center justify-between text-white rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
-              <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "decreament")}} className="absolut left-2 top-0 bottom-0 my-auto w-3.5 h-3.5 aspect-square flex items-center justify-center bg-white text-blue-500 font-bold rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-3">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
-                </svg>
+            <div className="px-4 max-md:order-1 max-md:w-full py-2 cursor-pointer bg-primary text-white flex gap-2 items-center justify-between rounded relative" onClick={() => insertRow(pageIndex, page.rows.length, page.rowsToAdd)}>
+              <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "decreament")}} className="absolut left-2 top-0 bottom-0 my-auto w-5 h-5 aspect-square flex items-center justify-center bg-white border border-primary text-primary font-bold rounded-full">
+                <MinusIcon className="!size-3.5" />
               </button>
-              <span>Add Row {page.rowsToAdd > 1 && <span className='text-sm'>{`(${page.rowsToAdd})`}</span>}</span>
-              <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "increament")}} className="absolut right-2 top-0 bottom-0 my-auto w-3.5 h-3.5 aspect-square flex items-center justify-center bg-white text-blue-500 font-bold rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-3">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
+              <span className="font-semibold">Add Row {page.rowsToAdd > 1 && <span className='text-sm'>{`(${page.rowsToAdd})`}</span>}</span>
+              <button onClick={(e) => {e.stopPropagation(); updateRowsToAdd(pageIndex, "increament")}} className="absolut right-2 top-0 bottom-0 my-auto w-5 h-5 aspect-square flex items-center justify-center bg-white border border-primary text-primary font-bold rounded-full">
+                <PlusIcon className="!size-3.5" />
               </button>
             </div>
-            <button
-              className="px-4 py-2 bg-emerald-500 text-white rounded"
-              onClick={() => addPage(pageIndex)}
-            >
-              Insert Page Below
-            </button>
           </div>
+
         </div>
       </div>
       <div className="mb-8 noExport" /> {/** Margin for preview */}

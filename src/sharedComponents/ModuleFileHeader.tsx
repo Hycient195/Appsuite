@@ -32,9 +32,10 @@ interface IProps {
   canRedo?: boolean
   canUndo?: boolean;
   modifiedTime?: string;
+  extraControls?: React.ReactNode
 }
 
-export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, isSavingSuccess, mimeType, folderId, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, modifiedTime, className, ...props }: IProps) {
+export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, isSavingSuccess, mimeType, folderId, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, modifiedTime, extraControls, className, ...props }: IProps) {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
 
@@ -121,6 +122,7 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
             { handleImport && <label htmlFor="import-input" className="line-in cursor-pointer"><ImportIcon className="!size-4" /> <input onChange={handleImport} id="import-input" className="hidden" type="file" /> Import</label> }
             { initiateImport && <button onClick={initiateImport} className="line-in cursor-pointer"><ImportIcon className="!size-4" /> Import</button> }
             <button onClick={props.handleExport} className="line-in"><ImportIcon className="!size-4" /> Export</button>
+            {extraControls}
           </div>
           {/* <p className="text-slate-500 max-md:text-sm">{subtitle}</p> */}
         </div>

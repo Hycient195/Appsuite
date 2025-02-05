@@ -1,5 +1,5 @@
 import { readFile } from "@/services/googleDriveService";
-import CGPATracker from "./CGPATracker";
+import CGPATracker from "./GradesTracker";
 import { IGradesTrackerDocument } from "../_types/types";
 
 interface IProps {
@@ -19,6 +19,7 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
   let response: IResponse = {
     fileName: "",
     content:  {
+      cgpaScale: "OVER5",
       templateLayout: "CLASSIC",
       filename: "",
       pages: []
@@ -35,7 +36,8 @@ export default async function BalanceSheetServerPage({ params }: IProps) {
 
   return <CGPATracker
     csvString={typeof response.content === "string" ? JSON.parse(response.content) : response.content}
-    fileName={response.fileName}
+    folderId={response?.folderId as string}
+    fileName={response?.fileName}
     loadedSucessfully={loadedSucessfully}
   />
 }

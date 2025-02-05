@@ -11,7 +11,7 @@ interface IProps {
   modalClassName?: string;
   children: React.ReactNode;
   isModalOpen?: boolean;
-  setIsModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModalOpen?: React.Dispatch<React.SetStateAction<boolean>> | ((arg: boolean) => void);
   modalData?: any
 }
 
@@ -80,7 +80,7 @@ import React, { createContext, useContext, ReactNode } from 'react';
 
 interface ModalContextType<T> {
   isModalOpen?: boolean;
-  setIsModalOpen?: React.Dispatch<React.SetStateAction<boolean>>
+  setIsModalOpen?: React.Dispatch<React.SetStateAction<boolean>> | ((arg: boolean) => void)
   handleModalClose: () => void;
   modalData?: T;
 }

@@ -17,12 +17,13 @@ export interface ICGPATrackerPage {
   gradePointAverage: string;
   cummulativeGradePointAverage: string
   rowsToAdd: number;
-  cgpaScale?: TGradeScales
+  // cgpaScale?: TGradeScales
   imageUrl?: string;
 }
 
 export interface IGradesTrackerDocument {
   templateLayout?: "CLASSIC" | "MODERN";
+  cgpaScale: TGradeScales
   filename: string;
   description?: string;
   currentPage?: number;
