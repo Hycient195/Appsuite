@@ -59,14 +59,14 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                   {page.rows.map((row, rowIndex) => (
                     <tr style={{ fontFamily: "sans-serif"}} key={rowIndex} className={`relative lg:[&>*]:hover:-translate-x- group/row hover:cursor-pointer group-has-[button.remove-btn]:hover:[&_div.remove-hover]:!hidden`}>
                       <td  className="  items-center relative ">
-                        <div style={{ width: `${tableWidth}px`}} className="bg-transparen bg-green-500 opacity-0 hover:opacity-100 !border-none group/line absolute z-[2] left-[-1px] bottom-0 translate-y-[4px] cursor-pointer h-1 rounded">
+                        <div style={{ width: `${tableWidth}px`}} className="bg-transparen max-lg:hidden bg-green-500 opacity-0 hover:opacity-100 !border-none group/line absolute z-[2] left-[-1px] bottom-0 translate-y-[4px] cursor-pointer h-1 rounded">
                           <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="bg-green-500 hidden duration-300 group-hover/line:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-2 items-center justify-center font-semibold">+</button>
                         </div>
                         <input
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-date`, el)}}
                           type="text"
                           value={row.date}
-                          className='w-full h-full px-1 text-right focus:outline focus:outline-2 disabled:placeholder-transparent focus:outline-zinc-400 font-medium'
+                          className='w-full h-full px-1 text-right focus:outline focus:outline-2 disabled:placeholder-transparent lg:placeholder:text-transparent focus:outline-zinc-400 font-medium'
                           onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value)), cursorPositionRef.current = e.target.selectionStart, resetCursorPosition(e) }}
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "date")}
                           placeholder="Date"
@@ -78,7 +78,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-narration`, el)}}
                           value={row.narration}
                           rows={1}
-                          className={`w-full ${(row.narration === "BALANCE BROUGHT FORWARD" && rowIndex === 0) ? "text-zinc-400 disabled:placeholder-transparent font-sans tracking-wide font-bold" : "font-medium"} absolute px-2 items-center resize-none h-full p-1 left-0 top-0 text-left bg-transparent focus:outline !overflow-visible no-scrollbar focus:outline-2 focus:outline-zinc-400`}
+                          className={`w-full ${(row.narration === "BALANCE BROUGHT FORWARD" && rowIndex === 0) ? "text-zinc-400 font-sans tracking-wide font-bold" : "font-medium"} disabled:placeholder-transparent lg:placeholder:text-transparent absolute px-2 items-center resize-none h-full p-1 left-0 top-0 text-left bg-transparent focus:outline !overflow-visible no-scrollbar focus:outline-2 focus:outline-zinc-400`}
                           onChange={e => handleInputChange(pageIndex, rowIndex, 'narration', e.target.value)}
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "narration")}
                           placeholder="Narration"
@@ -87,7 +87,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                       <td className="flex items-center">
                         <input
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-credit`, el)}}
-                          className='w-full h-full px-1 text-right text-red-600 focus:outline disabled:placeholder-transparent focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+                          className='w-full h-full px-1 text-right text-red-600 focus:outline disabled:placeholder-transparent lg:placeholder:text-transparent focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
                           value={splitInThousandForTextInput(row.debit === "0" ? "" : row.debit)}
                           disabled={(!!row.credit&&row.credit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
                           onChange={e => handleInputChange(pageIndex, rowIndex, 'debit', e.target.value?.replace(/[^0-9.]/g, ""))}
@@ -99,7 +99,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                       <td className="items-center" >
                         <input
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-debit`, el)}}
-                          className='w-full h-full px-1 text-right text-green-600 focus:outline focus:outline-2 disabled:placeholder:text-transparent focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+                          className='w-full h-full px-1 text-right text-green-600 focus:outline focus:outline-2 disabled:placeholder:text-transparent lg:placeholder:text-transparent focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
                           value={splitInThousandForTextInput(row.credit === "0" ? "" : row.credit)}
                           disabled={(!!row.debit&&row.debit!=="0") || row.narration === "BALANCE BROUGHT FORWARD"}
                           onChange={e => handleInputChange(pageIndex, rowIndex, 'credit', e.target.value?.replace(/[^0-9.]/g, ""))}

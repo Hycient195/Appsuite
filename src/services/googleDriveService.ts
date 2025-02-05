@@ -78,14 +78,23 @@ export async function readFile (fileId: string) {
 
 export async function updateFile (fileId: string, content: string, mimeType: string, updateType: ("autosave"|"versionedSave")) {
   const driveService = await getDriveService();
-  return driveService.files.update({
+  const response = await driveService.files.update({
     fileId,
     media: {
       mimeType: mimeType,
       body: content,
     },
-    keepRevisionForever: (updateType === "versionedSave") ? true : false
+    keepRevisionForever: updateType === "versionedSave",
+    fields: "modifiedTime, name, mimeType", // Request additional fields
   });
+
+  return {
+    fileId,
+    name: response.data.name, // File name
+    mimeType: response.data.mimeType, // MIME type
+    modifiedTime: response.data.modifiedTime, // Last modified timestamp
+    updateType,
+  };
 };
 
 export async function updateFileName(fileId: string, fileName: string) {

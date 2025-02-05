@@ -4,7 +4,7 @@ import { ICreateFileRequest, IFileVersions, ILoggedInUser, IRenameFolderAndPrima
 import { IBalanceSheetFile } from "@/app/app/finance-tracker/_types/types";
 import { parseCookies, setCookie } from "nookies";
 import { getNewAccessToken } from "@/utils/getRefreshToken";
-import { getFoldersWithPrimaryFile } from "@/services/googleDriveService";
+import { getFoldersWithPrimaryFile, updateFile } from "@/services/googleDriveService";
 // import { parseCookies } from "nookies";
 
 
@@ -131,20 +131,20 @@ const api = createApi({
       providesTags: () => [{ type: "files" }]
     }),
 
-    saveFile: builder.mutation<any, IUpdateFileRequest>({
+    saveFile: builder.mutation<Awaited<ReturnType<typeof updateFile>>, IUpdateFileRequest>({
       query: (formData) => ({
         url: "api/google-drive/file",
         method: "PATCH",
-        body: formData
-      })
+        body: formData,
+      }),
     }),
 
     updateFileName: builder.mutation<any, { fileId: string, fileName: string }>({
       query: (formData) => ({
         url: "api/google-drive/folder",
         method: "POST",
-        body: formData
-      })
+        body: formData,
+      }),
     }),
 
     renameFolderAndPrimaryFile: builder.mutation<any, IRenameFolderAndPrimaryFileRequest>({

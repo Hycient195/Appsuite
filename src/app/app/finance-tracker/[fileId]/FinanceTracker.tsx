@@ -78,6 +78,8 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
     }
   }
 
+  console.log(data)
+
   /* Autosave page change tracker debounce effect */
   useEffect(() => {
     // Skip the effect on the first render
@@ -132,6 +134,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, isLoggedIn: bo
             fileName={documentFile?.filename} setFileName={(e) => setDocumentFile({ ...documentFile, filename: e.target.value })} subtitle={pages?.[0]?.subTitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)}
             handleExport={() => setIsExportModalOpen(true)} initiateImport={() => setIsImportModalOpen(true)}
             undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}
+            modifiedTime={data?.modifiedTime as string}
           />
           <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
             {(pages).map((page, pageIndex) => (

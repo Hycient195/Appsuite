@@ -28,8 +28,8 @@ const UserSchema = new Schema<IUserModelDocument>({
   verified_email: { type: Boolean, required: true },
   name: { type: String, required: true },
   given_name: { type: String, required: true },
-  family_name: { type: String, required: true },
-  picture: { type: String, required: true },
+  family_name: { type: String, required: false },
+  picture: { type: String, required: false },
   modules: {
     FINANCE_TRACKER: { preferences: { type: Schema.Types.Mixed, default: {} } },
     INVOICE_GENERATOR: { preferences: { type: Schema.Types.Mixed, default: {} } },

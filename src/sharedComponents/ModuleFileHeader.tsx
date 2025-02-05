@@ -5,6 +5,7 @@ import { ResponsiveTextInput } from "./FormInputs";
 import sharedSlice from "@/redux/slices/shared.slice";
 import { useAppDispatch } from "@/redux/hooks/hooks";
 import { LinearProgress } from "@mui/material";
+import { format } from "date-fns";
 
 interface IProps {
   moduleName: string;
@@ -23,19 +24,25 @@ interface IProps {
   redo?: () => void;
   undo?: () => void;
   canRedo?: boolean
-  canUndo?: boolean
+  canUndo?: boolean;
+  modifiedTime?: string;
 }
 
-export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, isSavingSuccess, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, className, ...props }: IProps) {
+export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, isSavingSuccess, fileName, setFileName, subtitle, handleImport, initiateImport, handleInitiateCreateFile, modifiedTime, className, ...props }: IProps) {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
 
-    const [hasFired, sethasFired] = useState<boolean>(false);
+  const [ hasFired, sethasFired ] = useState<boolean>(false);
+  const [ lastSync, setLastSync ] = useState("");
   
 
   const handleShowMobileSideNav = () => {
     dispatch(sharedSlice.actions.showMobileSidebar());
   };
+
+  useEffect(() => {
+    if (modifiedTime) setLastSync(modifiedTime)
+  }, [ modifiedTime ])
 
   useEffect(() => {
     if (hasFired) handleShowMobileSideNav();
@@ -93,12 +100,12 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
           {/* <button onClick={handleImport} className="btn text-primary bg-white border border-slate-200 0"><ImportIcon /> Import</button> */}
           <div className="flex flex-col gap-1 relative flex-wrap items-center md:items-end">
             <button onClick={handleInitiateCreateFile} className="btn w-max bg-primary text-white max-lg:hidden"><PlusIcon className="!size-5 !stroke-[2px]" /> Create New Sheet</button>
-            <p className="text-slate-400 text-sm">Last sync: <span className={`duration-500 ${isSavingSuccess ? "text-green-600" : isSavingError ? "text-red-500" : "text-slate-600"}`}>3rd December 2024, 15:00:00</span></p>
+            <p className="text-slate-400 text-sm">Last sync: <span className={`duration-500 ${isSavingSuccess ? "text-green-600" : isSavingError ? "text-red-500" : "text-slate-600"}`}>{lastSync ? format(new Date(lastSync), "MMM dd, yyyy, hh:mm:ss a") : "Untracked"}</span></p>
             <LinearProgress color="inherit" className={`${!isSaving && "!hidden"} w-full text-primary !animate-fade-in !absolute -bottom-0.5 left-0`} />
           </div>
         </div>
       </div>
     </section>
-    
+
   )
 }
