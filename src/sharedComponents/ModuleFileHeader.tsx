@@ -86,9 +86,9 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
     <section className="sticky top-0 md:landscape:-top-14 md:top- lg:-top-7 flex flex-col z-[3]">
       <div className="p-3.5 bg-primary lg:hidden flex flex-col gap-4">
         <div className="spread-out !gap-5 text-slate-100">
-          <div className="text-xl font-helvetica text-slate-100 font-semibold line-in">
+          <div className="text-xl font-helvetica text-slate-100  line-in">
             <LogoWhite className="!size-7" />
-            <span className="-mb-1">{moduleName}</span>
+            <span className="-mb-1 font-semibold">{moduleName}</span>
           </div>
           <button onClick={() => sethasFired(true)} className=""><HamburgerIcon className="!size-7" /></button>
         </div>
@@ -115,7 +115,7 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
             <input placeholder="[ Document Title ]" className="text-primary text-2xl bg-transparent font-semibold lg:mt-2 focus:ring-0 focus:outline-none" value={fileName} onChange={setFileName} />
           </div>
           {/* <h1 className="text-primary text-2xl font-semibold mt-3 max-md:hidden">{fileName}</h1> */}
-          <div className="overflow-x-auto overflow-y-hidden w-full">
+          <div className="overflow-x-auto no-scrollbar overflow-y-hidden w-full">
             <div className="line-in text-slate-700 lg:mt-2 !gap-4 text-sm w-max">
               <button onClick={props.undo} disabled={!props.canUndo} className={`line-in disabled:text-slate-400`}><UndoIcon className="!size-5" /> Undo</button>
               <button onClick={props.redo} disabled={!props.canRedo} className="line-in disabled:text-slate-400"><RedoIcon className="!size-5" /> Redo</button>
