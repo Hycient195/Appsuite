@@ -34,14 +34,14 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
       <div
         key={pageIndex}
         ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el }}
-        className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative mb-8 w-full max-w-[1080px] md:rounded mx-auto px-3 md:px-4 pt-5 lg:pt-8 pb-6 xl:pb-8`}
+        className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative  mb-8 w-full max-w-[1080px] md:rounded mx-auto px-3 md:px-4 pt-5 lg:pt-8 pb-6 xl:pb-8`}
       >
         <div className="noExport absolute h-full w-full left-0 top-0 border  border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
-        <div ref={tableContainerRef} className="max-w-screen-lg relative  mx-auto grid">
+        <div ref={tableContainerRef} className="max-w-screen-lg relative  mx-auto grid ">
           {/* <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}> */}
           <div className={` table-top grid gap-3 `}>
             {/* <PageImage className="md:absolute" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={pages} setFormData={setPages} imageProperty={page?.imageUrl as string} propertyKey={`${pageIndex}.imageUrl`} /> */}
-            <div className="titles grid !max-w-[800px] w-full mx-auto justify-center">
+            <div className="titles grid !max-w-[800px] w-full mx-auto justify-center ">
               <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ ..TITLE HERE.. ]' autoFocus className="!max-w-[800px] text-2xl outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
               <div className="mb-1 noExport" />
               <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' className="!max-w-[800px] mb-1 text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />

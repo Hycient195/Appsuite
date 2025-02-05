@@ -28,7 +28,7 @@ interface IProps {
   disabled?: boolean;
   required?: boolean;
   style?: CSSProperties;
-  ref?: MutableRefObject<TElementTypes>|LegacyRef<TElementTypes>|RefObject<TElementTypes>|undefined
+  ref?: MutableRefObject<TElementTypes>|LegacyRef<TElementTypes>|RefObject<TElementTypes>|undefined|any
   icon?: JSX.Element|React.ReactNode;
   iconPosition?: ("left"|"right")
 }

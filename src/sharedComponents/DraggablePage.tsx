@@ -43,7 +43,7 @@ const DraggablePage: React.FC<IProps> = ({ pageIndex, movePage, children, ref })
       // ref={(el: HTMLDivElement) => {(containerRef.current as HTMLDivElement) = el; (ref!.current as HTMLDivElement) = el }}
       // ref={ref as any}
       style={{ opacity: isDragging ? 0.5 : 1 }}
-      className="relative w-full max-w-[1080px] mx-auto"
+      className="relative w-full max-w-[1080px] mx-auto "
     >
       {children}
       

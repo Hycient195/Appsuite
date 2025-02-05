@@ -22,7 +22,6 @@ import { MenuItem, Select } from '@mui/material';
 import GradesTrackerExportModal from '../_components/ExportModal';
 
 const CGPATracker: React.FC<{csvString: IGradesTrackerDocument, folderId: string, fileName: string, loadedSucessfully: boolean }> = ({ csvString, folderId, fileName, loadedSucessfully }) => {
-
   const params = useParams<any>();
 
   const tableContainerRef = useRef<HTMLTableRowElement|null>(null);
@@ -50,6 +49,7 @@ const CGPATracker: React.FC<{csvString: IGradesTrackerDocument, folderId: string
   const [ modals, setModals ] = useState({ export: false, import: false, create: false });
 
   const gradesTrackerInstance = useGradesTracker();
+  
   const {
     pages,
     undo,
@@ -104,7 +104,7 @@ const CGPATracker: React.FC<{csvString: IGradesTrackerDocument, folderId: string
         </Teleport>
         <main className=" w-full border-zinc-200 relative">
           <ModuleFileHeader
-            moduleName="Finance Tracker"
+            moduleName="Grades Tracker"
             mimeType='application/json'
             folderId={folderId}
             isSaving={isSaving} isSavingError={saveFileIsError} isSavingSuccess={saveFileIsSuccess}
@@ -114,7 +114,7 @@ const CGPATracker: React.FC<{csvString: IGradesTrackerDocument, folderId: string
             modifiedTime={saveResponse?.modifiedTime as string}
             extraControls={
               <>
-                <div className="line-in">
+                <div className="line-in !gap-1">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4"><path d="M10 32h28l4 8H6z"/><path stroke-linecap="round" d="M16 40v4m8-32v20"/><path d="M17 4h14v8H17z"/><path stroke-linecap="round" d="M32 40v4"/></g></svg>
                   <div className="relative">
                     <Select

@@ -18,7 +18,7 @@ export interface IFinanceTrackerExportOptions {
 
 export default function GradesTrackerExportModal() {
   const { handleModalClose, modalData, } = useModalContext<any>();
-  const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useGradesTrackerContext()
+  const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useGradesTrackerContext();
 
   const selectedPagesRef = useRef<HTMLDivElement|null>(null);
   const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);

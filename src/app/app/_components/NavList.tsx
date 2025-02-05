@@ -11,9 +11,10 @@ interface IProps {
   setRoutesState?: React.Dispatch<React.SetStateAction<Array<INavRoute>>>
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>
   className?: string;
+  reorderable?: boolean
 }
 
-export const NavList = ({ route, setIsOpen, className, setRoutesState }: IProps) => {
+export const NavList = ({ route, setIsOpen, className, setRoutesState, reorderable }: IProps) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const pathname = usePathname();
@@ -50,9 +51,11 @@ export const NavList = ({ route, setIsOpen, className, setRoutesState }: IProps)
                  && (
                   <>
                     <p className="text-base font-medium mr-auto">{item.text}</p>
-                    <div onClick={(e) => e.stopPropagation()}  className="reorder-handle p-2 text-slate-600 hover:text-slate-300 duration-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"><circle cx="5.5" cy="2.5" r=".75"/><circle cx="5.5" cy="8" r=".75"/><circle cx="5.5" cy="13.5" r=".75"/><circle cx="10.496" cy="2.5" r=".75"/><circle cx="10.496" cy="8" r=".75"/><circle cx="10.496" cy="13.5" r=".75"/></g></svg>
-                    </div>
+                    { reorderable &&
+                      <div onClick={(e) => e.stopPropagation()}  className="reorder-handle p-2 text-slate-600 hover:text-slate-300 duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"><circle cx="5.5" cy="2.5" r=".75"/><circle cx="5.5" cy="8" r=".75"/><circle cx="5.5" cy="13.5" r=".75"/><circle cx="10.496" cy="2.5" r=".75"/><circle cx="10.496" cy="8" r=".75"/><circle cx="10.496" cy="13.5" r=".75"/></g></svg>
+                      </div>
+                    }
                   </>
                  )
               }

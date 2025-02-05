@@ -5,7 +5,7 @@ import { formatDateInput, replaceJSXRecursive, splitInThousand, splitInThousandF
 import Image from "next/image";
 import { ICGPATrackerPage } from "../_types/types";
 import useHandlePageLogoActions from "@/sharedHooks/useHandlePageLogoActions";
-import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
+import { FormSelect, ResponsiveTextInput } from "@/sharedComponents/FormInputs";
 import { isLoggedIn } from "@/sharedConstants/common";
 import { useGradesTrackerContext } from "../_contexts/gradesTrackerContext";
 
@@ -29,9 +29,9 @@ export default function CGPATrackerPage({ page, pageIndex, singleDocumentRef, ta
   return (
     <DraggablePage pageIndex={pageIndex} movePage={movePage}>   
 
-      <div key={pageIndex} ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el}} className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative  w-full  max-w-[1080px] md:rounded mx-auto max-md:px-2 px-6 pt-8 pb-6 xl:pb-8 `}>
+      <div key={pageIndex} ref={(el: HTMLDivElement) => {(singleDocumentRef.current as HTMLDivElement[])[pageIndex] = el}} className={`${isLoading.removingPage ? "bg-red-600/60 animate-pulse" : "bg-white"} relative  w-full  max-w-[1080px] md:rounded mx-auto px-2 md:px-4 lg:px-6 pt-8 pb-6 xl:pb-8 `}>
         <div className="noExport absolute h-full w-full left-0 top-0 border border-zinc-300 md:rounded" /> {/** Border for preview and not export */}
-        <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto">
+        <div ref={tableContainerRef} className="max-w-screen-lg relative mx-auto ">
           <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}>
             {/* {
               (isLoading.uploading || isLoading.deleting || isLoading.removingPage || page?.imageUrl)
@@ -120,20 +120,30 @@ export default function CGPATrackerPage({ page, pageIndex, singleDocumentRef, ta
                       <td className="flex items-center">
                         <input
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-credit`, el)}}
-                          className='w-full h-full px-1 text-center  focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+                          className='w-full h-full px-1 text-center  focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
                           value={row.unitLoad}
+                          type="number"
                           onChange={e => handleInputChange(pageIndex, rowIndex, 'unitLoad', e.target.value?.replace(/[^0-9.]/g, ""))}
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "unitLoad")}
                         />
                       </td>
-                      <td className="items-center" >
+                      <td className="items-center relative" >
                         <input
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-courseCode`, el)}}
-                          className='w-full h-full px-1 text-center focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+                          className='w-full h-full px-1 text-center absolute top-0 left-0 focus:outline focus:outline-2 focus:outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
                           value={row?.grade}
                           maxLength={1}
                           onChange={e => handleInputChange(pageIndex, rowIndex, 'grade', e.target.value?.replace(/[^A-F]/ig, "")?.toUpperCase())}
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "grade")}
+                        />
+                        <FormSelect
+                          ref={(el: any) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-courseCode`, el)}}
+                          inputClassName='w-full noExport !h-full px-1 text-center [&_*]:!py-1 focus:outline [&_*]:!text-slate-900 [&_*]:!border-none focus:[&_*]:!ring-0 focus:[&_*]:outline- focus:!outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+                          value={row?.grade}
+                          options={[ {text: "A", value: "A"}, {text: "B", value: "B"}, {text: "C", value: "C"}, {text: "D", value: "D"}, {text: "E", value: "E"}, {text: "F", value: "F"}, ]}
+                          // maxLength={1}
+                          onChange={e => handleInputChange(pageIndex, rowIndex, 'grade', e.target.value?.replace(/[^A-F]/ig, "")?.toUpperCase())}
+                          // onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "grade")}
                         />
                       </td>
                       

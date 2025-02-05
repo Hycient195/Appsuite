@@ -71,7 +71,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
     }
   }, []);
 
-  console.log(folderId)
+  // console.log(folderId)
 
   const resetCursorPosition = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
