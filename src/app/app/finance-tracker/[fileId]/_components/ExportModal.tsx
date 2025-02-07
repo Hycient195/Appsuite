@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { useFinanceTrackerContext } from "../../_contexts/financeTrackerContext";
 import { handleUpdateStateProperty } from "@/utils/miscelaneous";
 import { Toast } from "@/sharedComponents/utilities/Toast";
-import { handleExportPDFOnServer } from "@/utils/exportPDFOnServer";
 import api from "@/redux/api";
 import LoadingButton from "@/sharedComponents/LoadingButton";
 
@@ -22,8 +21,6 @@ export default function SheetExportModal() {
   const { handleModalClose, modalData, } = useModalContext<any>();
   const { pages, downloadCSVFile, downloadJSONFile, documentFile } = useFinanceTrackerContext()
   const [ exportPDFOnServer, { isLoading, isError, error } ] = api.commonApis.useExportPdfOnServerMutation();
-
-  console.log(error)
 
   const selectedPagesRef = useRef<HTMLDivElement|null>(null);
   const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -128,7 +125,6 @@ export default function SheetExportModal() {
         }
       },
       CUSTOM: () => {
-       
         let selectedPages:number[] = [];
 
         if (exportOptions.customOptions.type === "FROM") {
@@ -173,7 +169,7 @@ export default function SheetExportModal() {
   };
 
   useEffect(() => {
-    if (isError) Toast("error", "Unablt to export file");
+    if (isError) Toast("error", "Unable to export file");
   }, [ isError ]);
 
   const handleExport = (e: FormEvent) => {

@@ -204,6 +204,8 @@ const api = createApi({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ html: htmlContent }),
           });
+
+          console.log(response)
     
           if (!response.ok) {
             return { error: { message: "PDF export failed" } };

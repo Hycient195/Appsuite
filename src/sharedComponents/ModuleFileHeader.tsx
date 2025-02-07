@@ -1,5 +1,5 @@
 import { usePathname } from "next/navigation";
-import { ChevronRight, HamburgerIcon, HouseIcon, ImportIcon, LogoAndTextWhite, LogoWhite, PlusIcon, RedoIcon, UndoIcon } from "./CustomIcons";
+import { ChevronRight, ExportIcon, HamburgerIcon, HouseIcon, ImportIcon, LogoAndTextWhite, LogoWhite, PlusIcon, RedoIcon, UndoIcon } from "./CustomIcons";
 import { ChangeEventHandler, MouseEventHandler, useEffect, useState } from "react";
 import { ResponsiveTextInput } from "./FormInputs";
 import sharedSlice from "@/redux/slices/shared.slice";
@@ -117,11 +117,11 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
           {/* <h1 className="text-primary text-2xl font-semibold mt-3 max-md:hidden">{fileName}</h1> */}
           <div className="overflow-x-auto no-scrollbar overflow-y-hidden w-full">
             <div className="line-in text-slate-700 lg:mt-2 !gap-4 text-sm w-max">
-              <button onClick={props.undo} disabled={!props.canUndo} className={`line-in disabled:text-slate-400`}><UndoIcon className="!size-5" /> Undo</button>
-              <button onClick={props.redo} disabled={!props.canRedo} className="line-in disabled:text-slate-400"><RedoIcon className="!size-5" /> Redo</button>
-              { handleImport && <label htmlFor="import-input" className="line-in cursor-pointer"><ImportIcon className="!size-4" /> <input onChange={handleImport} id="import-input" className="hidden" type="file" /> Import</label> }
-              { initiateImport && <button onClick={initiateImport} className="line-in cursor-pointer"><ImportIcon className="!size-4" /> Import</button> }
-              <button onClick={props.handleExport} className="line-in"><ImportIcon className="!size-4" /> Export</button>
+              <button onClick={props.undo} disabled={!props.canUndo} className={`line-in !gap-1 disabled:text-slate-400`}><UndoIcon className="!size-5" /> Undo</button>
+              <button onClick={props.redo} disabled={!props.canRedo} className="line-in !gap-1 disabled:text-slate-400"><RedoIcon className="!size-5" /> Redo</button>
+              { handleImport && <label htmlFor="import-input" className="line-in !gap-1 cursor-pointer"><ImportIcon className="!size-4" /> <input onChange={handleImport} id="import-input" className="hidden" type="file" /> Import</label> }
+              { initiateImport && <button onClick={initiateImport} className="line-in !gap-1 cursor-pointer"><ImportIcon className="!size-4" /> Import</button> }
+              <button onClick={props.handleExport} className="line-in !gap-1"><ExportIcon className="!size-4" /> Export</button>
               {extraControls}
             </div>
           </div>
