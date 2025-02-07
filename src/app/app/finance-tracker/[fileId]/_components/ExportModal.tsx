@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useFinanceTrackerContext } from "../../_contexts/financeTrackerContext";
 import { handleUpdateStateProperty } from "@/utils/miscelaneous";
 import { Toast } from "@/sharedComponents/utilities/Toast";
+import { handleExportPDFOnServer } from "@/utils/exportPDFOnServer";
 import api from "@/redux/api";
 import LoadingButton from "@/sharedComponents/LoadingButton";
 
@@ -179,7 +180,7 @@ export default function SheetExportModal() {
   }
 
   return (
-    <form onSubmit={handleExport} className="flex flex-col gap-3 max-h-[97dvh] -mx-0.5 px-px overflow-y-auto">
+    <form onSubmit={handleExport} className="flex flex-col gap-3 max-h-[97dvh] -mx-1 px-[2px] overflow-y-auto">
       <h2 className="text-xl font-medium text-slate-800">Export</h2>
       <p className="text-slate-500">What are you exporting?</p>
       <div className="flex flex-col">
@@ -212,9 +213,10 @@ export default function SheetExportModal() {
                   {
                     exportOptions.customOptions.type === "FROM" ?
                     (
-                      <div className="grid grid-cols-2 gap-2">
-                        <FormText required onBlur={onLowerRangeBlur} value={exportOptions?.customOptions.range?.[0]} name={`customOptions.range.0`} onChange={(e) => handleRangeInput(e, "customOptions.range.0")} type="number" placeholder="from" />
-                        <FormText required onBlur={onUpperRangeBlur} value={exportOptions?.customOptions.range?.[1]} name={`customOptions.range.1`} onChange={(e) => handleRangeInput(e, "customOptions.range.1")} type="number" placeholder="to" />
+                      <div className="grid grid-cols-[1fr_max-content_1fr] items-center gap-2">
+                        <FormText required onBlur={onLowerRangeBlur} value={exportOptions?.customOptions.range?.[0]} name={`customOptions.range.0`} onChange={(e) => handleRangeInput(e, "customOptions.range.0")} type="number" />
+                          <span className="text-slate-700">to</span>
+                        <FormText required onBlur={onUpperRangeBlur} value={exportOptions?.customOptions.range?.[1]} name={`customOptions.range.1`} onChange={(e) => handleRangeInput(e, "customOptions.range.1")} type="number" />
                       </div>
                     ) : (
                       <FormText required value={exportOptions?.customOptions.value} name={`customOptions.value`} onChange={handlePagesInput} onBlur={handlePagesBlur} placeholder="Page numbers separated by commas (,)" inputClassName="max-md:placeholder:!text-sm" />

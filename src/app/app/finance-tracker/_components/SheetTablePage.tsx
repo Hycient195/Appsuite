@@ -64,10 +64,11 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                         </div>
                         <input
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-date`, el)}}
-                          type="text"
+                          type="date"
                           value={row.date}
                           className='w-full h-full px-1 text-right focus:outline focus:outline-2 disabled:placeholder-transparent lg:placeholder:text-transparent focus:outline-zinc-400 font-medium'
-                          onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value)), cursorPositionRef.current = e.target.selectionStart, resetCursorPosition(e) }}
+                          // onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value)), cursorPositionRef.current = e.target.selectionStart, resetCursorPosition(e) }}
+                          onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', e.target.value) }}
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "date")}
                           placeholder="Date"
                         />
@@ -94,6 +95,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "credit")}
                           onBlur={(e) => handleNumericInputBlur(pageIndex, rowIndex, "debit", e)}
                           placeholder="Debit"
+                          inputMode="decimal"
                         />
                       </td>
                       <td className="items-center" >
@@ -106,6 +108,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "debit")}
                           onBlur={(e) => handleNumericInputBlur(pageIndex, rowIndex, "credit", e)}
                           placeholder="Credit"
+                          inputMode="decimal"
                         />
                       </td>
                       <td className={`peer/test  px-1 relative !bg-tes md text-right flex justify-end text-black/80 items-center ${parseFloat(row.balance) < 0 && "text-red-600"} ${(rowIndex === 0 && row?.narration === "BALANCE BROUGHT FORWARD") ? "!font-bold" : "font-medium"}`}>
