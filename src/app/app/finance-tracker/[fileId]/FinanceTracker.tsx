@@ -42,8 +42,6 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
     })
   }
 
-  console.log(csvString)
-
   const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Account Report.pdf`})
   const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` });
 
@@ -71,8 +69,6 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
     }
   }, []);
 
-  // console.log(folderId)
-
   const resetCursorPosition = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
     const arr = [3,6]
@@ -82,7 +78,6 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
     }, 0);
   };
 
-  // console.log(saveResponse)
   return (
     <BalanceSheetContextProvider financeTrackerInstance={financeTrackerInstance}>
       <DndProvider backend={HTML5Backend}>

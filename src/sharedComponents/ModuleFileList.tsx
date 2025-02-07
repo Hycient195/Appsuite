@@ -30,15 +30,17 @@ interface IProps {
   moduleEnumName: string;
   fileListMimeType: TMimeTypes;
   createFileModal?: React.ReactNode;
+  importFileModal?: React.ReactNode;
   moduleSubtitle?: string;
 }
 
-export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumName, fileListMimeType, createFileModal }: IProps) {
+export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumName, fileListMimeType, createFileModal, importFileModal }: IProps) {
   const cookieAccessToken = parseCookies().asAccessToken;
 
   const [ getFiles, { data, isLoading } ] = api.commonApis.useLazyGetFoldersWithPrimaryFileQuery();
   const [ isCreateModalOpen, setIsCreateModalOpen ] = useState<boolean>(false);
   const [ isDeleteModalOpen, setIsDeleteModalOpen ] = useState<boolean>(false);
+  const [ isImportFileModalOpen, setIsImportFileModalOpen ] = useState<boolean>(false);
   const [ selectedFile, setSelectedFile ] = useState<Awaited<ReturnType<typeof getFoldersWithPrimaryFile>>[0] | null>(null);
 
   useEffect(() => {
@@ -46,16 +48,16 @@ export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumN
   }, [ ]);
 
   return (
-    <main className="h-full relative p-3 rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">
+    <main className="h-full relative p-  rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">
       <div className="">
-        <ModuleLandingPageNav moduleName={moduleName} className="lg:hidden !pt-0 pb-3" /> 
-        <ModuleFilesHeader moduleName={moduleName} subtitle={moduleSubtitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
+        {/* <ModuleLandingPageNav moduleName={moduleName} className="lg:hidden !pt-0 pb-3" />  */}
+        <ModuleFilesHeader moduleName={moduleName} handleInitiateImport={() => setIsImportFileModalOpen(true)} subtitle={moduleSubtitle} handleInitiateCreateFile={() => setIsCreateModalOpen(true)} />
       </div>
       
       <div className="file-list h-full grid">
-        <div className="bg-white border-[12px]  border-white shadow min-h-full w-full  max-h-[50vh] overflow-y-auto ring-1 ring-zinc-200 rounded-md">
+        <div className="bg-white border-[12px]  border-white md:shadow min-h-full w-full  max-h-[50vh] overflow-y-auto md:ring-1 ring-zinc-200 md:rounded-md">
           <table cellPadding={8} className=" w-full">
-            <thead  className="head sticky top-0 w-ful z-[1] bg-white text-slate-500">
+            <thead  className="head sticky top-0 w-ful z-[1] [&_*]:bg-white text-slate-500">
               <tr className=" w-ful text-sm font-medium">
                 <td className="cell">
                   <div className="line-in">
@@ -104,6 +106,7 @@ export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumN
       
       <AnimatePresence>
         { (isCreateModalOpen && createFileModal) && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}>{createFileModal}</CustomModal> }
+        { (isImportFileModalOpen && importFileModal) && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}>{importFileModal}</CustomModal> }
         { isDeleteModalOpen && <CustomModal setIsModalOpen={setIsDeleteModalOpen} modalData={selectedFile}><DeleteFileModal /></CustomModal> }
       </AnimatePresence>
     </main>
@@ -168,22 +171,23 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile, mimeType }: ITa
   }, [ fileNameUpdateSuccess, updateFileNameIsError ]);
   console.log(fileName)
   return (
-    <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed cursor-pointer text-slate-500 odd:bg-slate-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
+    <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed text-slate-500 odd:bg-slate-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
       <td className="cursor-pointer">
         <div className="line-in  w-ma">
           <Checkbox onClick={(e) => e.stopPropagation()} className="!p-0" />
-          <div onClick={(e) => { isEditing ? e.stopPropagation() : () => ""}} className="flex  flex-col w-ful">
+          <div onClick={(e) => { if(isEditing) e.stopPropagation() }} className="flex  flex-col w-ful">
             <ResponsiveTextInput
               type="text"
               value={fileName}
               ref={inputRef}
-              disabled={!isEditing}
+              // disabled={!isEditing}
               // onClick={(e) => e.stopPropagation()}
               // onFocus={() => setIsEditing(true)}
               // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
               onChange={(e) => { setFileName(e.target.value)}}
-              className="w-max text-slate-800 max-md:text-sm max-md:leading-[1.6ch]  leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
+              className="w-max text-slate-800 max-md:text-sm max-md:leading-[1.6ch] cursor-pointer focus:cursor-text leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
             />
+            {/* {JSON.stringify(isEditing)} */}
             <div className="text-xs flex flex-row gap-2 lg:hidden">
               <span className="">Jan 6 2024</span>
               <span className="">{splitInThousand(file?.primaryFile?.size as string)} Kb</span>
