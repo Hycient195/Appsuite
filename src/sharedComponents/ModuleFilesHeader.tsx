@@ -46,8 +46,8 @@ export default function ModuleFilesHeader({ moduleName, subtitle, handleInitiate
         { subtitle && <p className="text-slate-500 max-md:text-sm max-lg:hidden">{subtitle}</p> }
       </div>
       <div className="right line-in gap-3 w-max bg-tes max-lg:ml-auto">
-        { handleInitiateImport && <button onClick={handleInitiateImport} className="btn text-primary bg-white lg:border border-slate-200 0"><ImportIcon /> Import</button>}
-        <button onClick={handleInitiateCreateFile} className="btn bg-primary max-lg:border max-lg:border-slate-400 text-white"><PlusIcon className="!size-5 !stroke-[2px]" /> Create New File</button>
+        { handleInitiateImport && <button onClick={handleInitiateImport} className="btn text-primary max-md:!py-2 bg-white lg:border border-slate-200 0"><ImportIcon /> Import</button>}
+        <button onClick={handleInitiateCreateFile} className="btn bg-primary max-lg:border max-md:!py-2 max-lg:border-slate-400 text-white"><PlusIcon className="!size-5 !stroke-[2px]" /> Create New File</button>
       </div>
     </section>
   )

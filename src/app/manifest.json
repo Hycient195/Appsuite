@@ -19,7 +19,7 @@
   "background_color": "#FFFFFF",
   "description": "A comprehensive suite of apps for productivity and organization.",
   "scope": "/",
-  "orientation": "portrait",
+  "orientation": "any",
   "lang": "en-US",
   "screenshots": [
     {

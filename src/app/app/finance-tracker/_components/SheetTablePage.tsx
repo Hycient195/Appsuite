@@ -66,7 +66,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-date`, el)}}
                           type="date"
                           value={row.date}
-                          className='w-full h-full px-1 text-right focus:outline focus:outline-2 disabled:placeholder-transparent lg:placeholder:text-transparent focus:outline-zinc-400 font-medium'
+                          className='w-full h-full bg-white px-1 text-right focus:outline focus:outline-2 disabled:placeholder-transparent lg:placeholder:text-transparent focus:outline-zinc-400 font-medium'
                           // onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', formatDateInput(e.target.value)), cursorPositionRef.current = e.target.selectionStart, resetCursorPosition(e) }}
                           onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', e.target.value) }}
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "date")}
