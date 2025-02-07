@@ -63,7 +63,6 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
     updateImageUrl,
     handleCSVImport,
     generateCSVData,
-    downloadAllPagesCSV,
     loadCSVData,
     setPages,
   } = financeTrackerInstance;
@@ -203,13 +202,13 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
               <div className={`flex flex-wrap max-md:px-4 noExport flex-row gap-3 lg:gap-4 justify-end`}>
                 <button
                   className="px-4 py-2 bg-green-500 text-white rounded"
-                  onClick={downloadAllPagesCSV}
+                  // onClick={downloadAllPagesCSV}
                 >
                   Download All Pages as CSV
                 </button>
                 <button
                   className="px-4 py-2 bg-amber-500 text-white rounded"
-                  onClick={createPdf}
+                  // onClick={createPdf}
                 >
                   Download All Pages as PDF
                 </button>

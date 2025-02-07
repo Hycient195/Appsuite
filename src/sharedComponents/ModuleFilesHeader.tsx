@@ -26,7 +26,7 @@ export default function ModuleFilesHeader({ moduleName, subtitle, handleInitiate
   }, [hasFired]);
 
   return (
-    <section className="min-w-full w-f md:-mx-3 lg:mx-0 md:-mt-3 max-md:-mb-3 lg:mt-0 flex max-lg:place-self-stretch lg:justify-between place-self-cente spread-ou max-lg:bg-primary max-lg:p-3 px-2 gap-3 max-md:text-center max-md:justify-center flex-wrap">
+    <section className="min-w-full w-f md:-mx-3 lg:mx-0 md:-mt-3 max-md:-mb-3 lg:mt-0 flex max-lg:place-self-stretch lg:justify-between place-self-cente spread-ou max-lg:bg-primary max-lg:p-3 max-lg:px-4 px-2 gap-3 max-md:text-center max-md:justify-center flex-wrap">
       <div className="spread-out !gap-5 text-slate-100 lg:hidden py-2 w-full">
         <div className="text-xl font-helveti text-slate-100  line-in">
           <LogoWhite className="!size-7" />

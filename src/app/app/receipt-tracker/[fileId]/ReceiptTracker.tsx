@@ -204,7 +204,7 @@ const ReceiptTracker: React.FC<{csvString: string, fileName: string, folderId: s
             </button>
             <button
               className="px-4 py-2 bg-amber-500 text-white rounded"
-              onClick={createPdf}
+              // onClick={createPdf}
             >
               Download All Pages as PDF
             </button>

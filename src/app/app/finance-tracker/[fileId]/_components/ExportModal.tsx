@@ -1,7 +1,7 @@
 import { useModalContext } from "@/sharedComponents/CustomModal";
 import { FormSelect, FormText } from "@/sharedComponents/FormInputs";
 import { Radio } from "@mui/material";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useFinanceTrackerContext } from "../../_contexts/financeTrackerContext";
 import { handleUpdateStateProperty } from "@/utils/miscelaneous";
@@ -20,7 +20,7 @@ export interface IFinanceTrackerExportOptions {
 
 export default function SheetExportModal() {
   const { handleModalClose, modalData, } = useModalContext<any>();
-  const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useFinanceTrackerContext()
+  const { pages, downloadCSVFile, downloadJSONFile, documentFile } = useFinanceTrackerContext()
   const [ exportPDFOnServer, { isLoading, isError, error } ] = api.commonApis.useExportPdfOnServerMutation();
 
   console.log(error)
@@ -33,7 +33,7 @@ export default function SheetExportModal() {
   });
   
   const exportTypes = [ { text: `Current Page (page ${modalData?.currentPage + 1})`, value: "CURRENT_PAGE", }, { text: `All Pages (${pages?.length} page${pages?.length>1?"s":""})`, value: "ALL_PAGES", }, { text: "Custom", value: "CUSTOM", }, ]
-  const exportFormats = [ { text: "CSV", value: "CSV", }, { text: "PDF", value: "PDF", } ];
+  const exportFormats = [  { text: "PDF", value: "PDF", }, { text: "CSV", value: "CSV", }, { text: "JSON", value: "JSON"} ];
 
   const generateRange = ([ start, end ]: [number, number]): number[] => {
     return Array.from({ length: end - start + 1 }, (_, index) => start + index);
@@ -92,16 +92,19 @@ export default function SheetExportModal() {
   const exportMap = {
     CSV: {
       ALL_PAGES: () => {
-        downloadAllPagesCSV();
+        downloadCSVFile({ fileName: exportOptions?.alternateExportName || documentFile?.filename });
       },
       CURRENT_PAGE: () => {
-        downloadPageCSV(modalData?.currentPage)
+        // downloadPageCSV(modalData?.currentPage, exportOptions?.alternateExportName || documentFile?.filename)
+        downloadCSVFile({ pageNumberOrNumbers: modalData?.currentPage, fileName: exportOptions?.alternateExportName || documentFile?.filename })
       },
       CUSTOM: () => {
         if (exportOptions.customOptions.type === "FROM") {
-          downloadCustomPagesCSV(generateRange(exportOptions?.customOptions?.range?.map(x => (Number(x) - 1)) as [number, number]));
+          // downloadCSVFile(generateRange(exportOptions?.customOptions?.range?.map(x => (Number(x) - 1)) as [number, number]), exportOptions?.alternateExportName || documentFile?.filename);
+          downloadCSVFile({ pageNumberOrNumbers: generateRange(exportOptions?.customOptions?.range?.map(x => (Number(x) - 1)) as [number, number]), fileName: exportOptions?.alternateExportName || documentFile?.filename });
         } else if (exportOptions.customOptions.type === "PAGES") {
-          downloadCustomPagesCSV(exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)));
+          // downloadCSVFile(exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)), exportOptions?.alternateExportName || documentFile?.filename);
+          downloadCSVFile({ pageNumberOrNumbers: exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)), fileName: exportOptions?.alternateExportName || documentFile?.filename });
         }
       }
     },
@@ -111,7 +114,8 @@ export default function SheetExportModal() {
           // exportPDFOnServer(modalData?.elementRef?.current); // render the PDF on the server
           exportPDFOnServer({ exportNode: modalData?.elementRef?.current, fileName: exportOptions?.alternateExportName || documentFile?.filename }); // render the PDF on the server
         } else {
-          modalData?.createPdf();
+          // modalData?.createPdf(null, modalData?.elementRef?.current, );
+          modalData?.createPdf({domNode: modalData?.elementRef?.current, documentFileName: exportOptions?.alternateExportName || documentFile?.filename });
         }
       },
       CURRENT_PAGE: () => {
@@ -119,12 +123,12 @@ export default function SheetExportModal() {
           // exportPDFOnServer(modalData?.singleDocumentRef?.current?.[modalData?.currentPage]);
           exportPDFOnServer({ exportNode: modalData?.singleDocumentRef?.current?.[modalData?.currentPage], fileName: exportOptions?.alternateExportName || documentFile?.filename });
         } else {
-          modalData?.createDocumentPDF(modalData?.currentPage, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`);
+          // modalData?.createDocumentPDF(modalData?.currentPage, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`);
+          modalData?.createDocumentPDF({index: modalData?.currentPage, documentFileName: exportOptions?.alternateExportName || documentFile?.filename });
         }
       },
       CUSTOM: () => {
        
-
         let selectedPages:number[] = [];
 
         if (exportOptions.customOptions.type === "FROM") {
@@ -150,8 +154,27 @@ export default function SheetExportModal() {
         }
 
       }
+    },
+    JSON: {
+      ALL_PAGES: () => {
+        downloadJSONFile({ fileName: exportOptions?.alternateExportName || documentFile?.filename });
+      },
+      CURRENT_PAGE: () => {
+        downloadJSONFile({ pageNumberOrNumbers: modalData?.currentPage, fileName: exportOptions?.alternateExportName || documentFile?.filename })
+      },
+      CUSTOM: () => {
+        if (exportOptions.customOptions.type === "FROM") {
+          downloadJSONFile({ pageNumberOrNumbers: generateRange(exportOptions?.customOptions?.range?.map(x => (Number(x) - 1)) as [number, number]), fileName: exportOptions?.alternateExportName || documentFile?.filename });
+        } else if (exportOptions.customOptions.type === "PAGES") {
+          downloadJSONFile({ pageNumberOrNumbers: exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)), fileName: exportOptions?.alternateExportName || documentFile?.filename });
+        }
+      }
     }
   };
+
+  useEffect(() => {
+    if (isError) Toast("error", "Unablt to export file");
+  }, [ isError ]);
 
   const handleExport = (e: FormEvent) => {
     e.preventDefault();
@@ -221,7 +244,7 @@ export default function SheetExportModal() {
           }
         </div>
      </div>
-      <FormText value={exportOptions?.alternateExportName} onChange={(e) => setExportOptions({ ...exportOptions, alternateExportName: e.target.value })} labelText="Specify an alternate export name (optional)" />
+      <FormText value={exportOptions?.alternateExportName} onChange={(e) => setExportOptions({ ...exportOptions, alternateExportName: e.target.value })} placeholder={documentFile?.filename} labelText="Specify an alternate export name (optional)" />
       <div className="grid grid-cols-2 gap-3 mt-1">
         <button onClick={handleModalClose} type="button" className="btn-large bg-white border border-zinc-200 text-primary">Cancel</button>
         <LoadingButton loading={isLoading} type="submit" disabled={!exportOptions?.exportType || !exportOptions?.exportFormat} className="btn-large bg-primary text-white disabled:bg-zinc-300 disabled:cursor-not-allowed">Export</LoadingButton>

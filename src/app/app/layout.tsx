@@ -129,7 +129,7 @@ function AppLayout({ children }: IProps) {
         }
       </AnimatePresence>
       
-      <div className="w-full relative bg-gray-100 !overflow-scroll min-h-[100dvh] max-h-[100dvh] ">
+      <div className="w-full relative bg-slate-100 !overflow-scroll min-h-[100dvh] max-h-[100dvh] ">
         {/* <DashboardNav /> */}
         <div className="md:has-[main]:p-3 xl:has-[main]:p-4 [&>*]:max-w-[3000px] [&>*]:mx-auto h-full">
           {children}

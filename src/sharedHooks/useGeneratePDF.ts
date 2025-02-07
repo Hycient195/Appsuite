@@ -35,13 +35,8 @@ interface PdfOptions {
 
 const useGeneratePDF = ({ paperSize, orientation, fileName, getFileName }: PdfOptions) => {
   const elementRef = useRef<(HTMLElement | null)[] | HTMLElement | null>([]);
-
-  /** Function overloads */
-  function createPdf(): void;
-  function createPdf(index?: number, documentFileName?: string): void;
-  function createPdf(index?: number, documentFileName?: string, domNode?: HTMLElement): void;
   
-  function createPdf(index?: number, documentFileName?: string, domNode?: HTMLElement) {
+  function createPdf({ index, domNode, documentFileName }:  {index?: number, domNode?: HTMLElement, documentFileName?: string }) {
     // setIsGenerating(true)
     // Handle for array of elements (multiple items)
     if (Array.isArray(elementRef.current)) {
@@ -50,7 +45,7 @@ const useGeneratePDF = ({ paperSize, orientation, fileName, getFileName }: PdfOp
         savePDF(element, {
           repeatHeaders: true,
           paperSize: paperSize,
-          fileName: getFileName ? getFileName(documentFileName) : fileName || 'Downloadw.pdf', // Dynamic file name
+          fileName: getFileName ? getFileName(documentFileName) : documentFileName || fileName || 'Download.pdf', // Dynamic file name
           margin: 3,
           landscape: orientation === "landscape",
         });
@@ -59,12 +54,12 @@ const useGeneratePDF = ({ paperSize, orientation, fileName, getFileName }: PdfOp
     // Handle for single element
     else if (elementRef.current || domNode) {
       // console.log(JSON.stringify(elementRef.current))
-      console.log(JSON.stringify(domNode))
+      // console.log(JSON.stringify(domNode))
       // savePDF( (domNode ? domNode : elementRef.current) as HTMLElement, {
-      savePDF( domNode  as HTMLElement, {
+      savePDF( domNode ? domNode : elementRef.current as HTMLElement, {
         repeatHeaders: true,
         paperSize: paperSize,
-        fileName: getFileName ? getFileName(documentFileName) : fileName ?? 'Download.pdf',
+        fileName: getFileName ? getFileName(documentFileName) : documentFileName || fileName || 'Download.pdf',
         margin: 3,
         landscape: orientation === "landscape",
       });

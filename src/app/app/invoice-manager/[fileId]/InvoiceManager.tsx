@@ -133,7 +133,7 @@ export default function InvoiceManager({ loadedSucessfully, fileName, folderId, 
           />
         </li>
         <li className="-order-1">
-          <button onClick={createPdf} className="btn !py-2.5 bg-primary/90 text-white">Download</button>
+          <button onClick={() => createPdf({ documentFileName: globalState?.fileName })} className="btn !py-2.5 bg-primary/90 text-white">Download</button>
         </li>
         <li className="-order-2">
           <button onClick={() => setIsTemplatePaneOpen(!isTemplatePaneOpen)} className="btn !py-2.5 bg-slate-500 text-white">Switch Template</button>

@@ -182,7 +182,7 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile, mimeType }: ITa
               type="text"
               value={fileName}
               ref={inputRef}
-              // disabled={!isEditing}
+              readOnly={!isEditing}
               // onClick={(e) => e.stopPropagation()}
               // onFocus={() => setIsEditing(true)}
               // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}

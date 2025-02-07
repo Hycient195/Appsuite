@@ -336,21 +336,66 @@ export const useFinanceTracker = (fileName?: string) => {
     return pages;
   }
 
-  const downloadPageCSV = (pageIndex: number) => {
-    const page = pages[pageIndex];
-    const csvData = generateCSVData(page);
-    pages[pageIndex].title
-    downloadCSV(csvData, pages[pageIndex].title ? `${pages[pageIndex].title}.csv` : `balance_sheet_page_${pageIndex + 1}.csv`);
+  // const downloadPageCSV = (pageIndex: number, fileName?: string) => {
+  //   const page = pages[pageIndex];
+  //   const csvData = generateCSVData(page);
+  //   pages[pageIndex].title
+  //   downloadCSV(csvData,fileName ? `${fileName?.split(".")?.[0]}.csv` : `sheet_${pageIndex + 1}.csv`);
+  // };
+
+  // const downloadAllPagesCSV = (fileName?: string) => {
+  //   const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+  //   downloadCSV(csvData, fileName ? `${fileName?.split(".")?.[0]}.csv` : 'sheet.csv');
+  // };
+
+  // const downloadCustomPagesCSV = (pageIndexes: number[], fileName?: string) => {
+  //   const csvData = pages?.filter((_, index) => pageIndexes.includes(index)).map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+  //   downloadCSV(csvData, fileName ? `${fileName?.split(".")?.[0]}.csv` : 'sheet.csv');
+  // };
+
+  const downloadCSVFile = ({ pageNumberOrNumbers, fileName }: { pageNumberOrNumbers?: number|number[], fileName?: string }) => {
+    let csvData: string;
+    
+    if (typeof pageNumberOrNumbers === "number") {
+      // Single page download
+      const page = pages[pageNumberOrNumbers];
+      csvData = generateCSVData(page);
+      fileName = fileName ? `${fileName.split(".")[0]}.csv` : `sheet_${pageNumberOrNumbers + 1}.csv`;
+    } else if (Array.isArray(pageNumberOrNumbers)) {
+      // Custom pages download
+      csvData = pages
+        .filter((_, index) => pageNumberOrNumbers.includes(index))
+        .map((page) => generateCSVData(page))
+        .join("\n,,,,\n,,,,\n");
+      fileName = fileName ? `${fileName.split(".")[0]}.csv` : "sheet.csv";
+    } else {
+      // All pages download
+      csvData = pages.map((page) => generateCSVData(page)).join("\n,,,,\n,,,,\n");
+      fileName = fileName ? `${fileName.split(".")[0]}.csv` : "sheet.csv";
+    }
+  
+    downloadCSV(csvData, fileName);
   };
 
-  const downloadAllPagesCSV = () => {
-    const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-    downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
-  };
-
-  const downloadCustomPagesCSV = (pageIndexes: number[]) => {
-    const csvData = pages?.filter((_, index) => pageIndexes.includes(index)).map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-    downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
+  const downloadJSONFile = ({ pageNumberOrNumbers, fileName }: { pageNumberOrNumbers?: number|number[], fileName?: string }) => {
+    let jsonData: string;
+    
+    if (typeof pageNumberOrNumbers === "number") {
+      // Single page download
+      const page = pages[pageNumberOrNumbers];
+      jsonData = JSON.stringify(page);
+      fileName = fileName ? `${fileName.split(".")[0]}.json` : `sheet_${pageNumberOrNumbers + 1}.json`;
+    } else if (Array.isArray(pageNumberOrNumbers)) {
+      // Custom pages download
+      jsonData = JSON.stringify(pages.filter((_, index) => pageNumberOrNumbers.includes(index)))
+      fileName = fileName ? `${fileName.split(".")[0]}.json` : "page.json";
+    } else {
+      // All pages download
+      jsonData = JSON.stringify(pages);
+      fileName = fileName ? `${fileName.split(".")[0]}.json` : "page.json";
+    }
+  
+    downloadJSON(jsonData, fileName);
   };
 
   const generateCSVData = (page: IBalanceSheetPage) => {
@@ -363,6 +408,16 @@ export const useFinanceTracker = (fileName?: string) => {
 
   const downloadCSV = (csvData: string, filename: string) => {
     const blob = new Blob([csvData], { type: 'text/csv' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const downloadJSON = (csvData: string, filename: string) => {
+    const blob = new Blob([csvData], { type: 'application/json' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = filename;
@@ -463,9 +518,12 @@ export const useFinanceTracker = (fileName?: string) => {
     importCSV,
     loadCSVData,
     generateCSVData,
-    downloadPageCSV,
-    downloadCustomPagesCSV,
-    downloadAllPagesCSV,
+    
+    // downloadPageCSV,
+    // downloadCustomPagesCSV,
+    // downloadAllPagesCSV,
+    downloadCSVFile,
+    downloadJSONFile,
     handleInputChange,
     updateRowsToAdd,
     setPages,
