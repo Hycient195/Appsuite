@@ -42,7 +42,7 @@ const useGeneratePDF = ({ paperSize, orientation, fileName, getFileName }: PdfOp
     if (Array.isArray(elementRef.current)) {
       const element = elementRef.current[index!] ; // index is only valid for arrays
       if (element) {
-        savePDF(element, {
+        savePDF( domNode ? domNode : element, {
           repeatHeaders: true,
           paperSize: paperSize,
           fileName: getFileName ? getFileName(documentFileName) : documentFileName || fileName || 'Download.pdf', // Dynamic file name

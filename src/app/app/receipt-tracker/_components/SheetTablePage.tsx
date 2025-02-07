@@ -29,7 +29,11 @@ interface IProps {
   page: IReceiptTrackerPage
   handleCSVImport: (event: ChangeEvent<HTMLInputElement>, pageIndex?: number) => void
   downloadPageCSV: (pageIndex: number) => void
-  createDocumentPDF: (index?: number, documentFileName?: string) => void
+  createDocumentPDF: ({ index, domNode, documentFileName }: {
+    index?: number;
+    domNode?: HTMLElement;
+    documentFileName?: string;
+  }) => void
   removePage: (pageIndex: number) => void
   updateRowsToAdd: (pageNumber: number, action: ("increament" | "decreament" | null), defaltValue?: number) => void
   addPage: (afterPageIndex: number) => void
@@ -199,7 +203,7 @@ export default function SheetTablePage({
             <button className="px-4 py-2 bg-amber-500 text-white rounded" onClick={() => downloadPageCSV(pageIndex)}>
               Download CSV
             </button>
-            <button className="px-4 py-2 bg-green-500  text-white rounded" onClick={() => createDocumentPDF(pageIndex, page.title)} >
+            <button className="px-4 py-2 bg-green-500  text-white rounded" onClick={() => createDocumentPDF({ index: pageIndex, documentFileName: page?.title })} >
               Download PDF
             </button>
             <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => handleRemovePage(pageIndex)} >
