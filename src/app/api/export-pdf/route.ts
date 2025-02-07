@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     if (!html) {
       return NextResponse.json({ message: "No HTML content provided" }, { status: 400 });
     }
-    console.log(html)
+    // console.log(html)
     // Inject TailwindCSS styles into the HTML
     const fullHTML = `
       <!DOCTYPE html>

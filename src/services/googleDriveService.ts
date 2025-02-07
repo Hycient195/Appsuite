@@ -137,7 +137,7 @@ export async function getAllFilesInFolder (folderId: string) {
   const driveService = await getDriveService();
   const response = await driveService.files.list({
     q: `'${folderId}' in parents`,
-    fields: 'files(id, name, mimeType, size)',
+    fields: 'files(id, name, mimeType, size, modifiedTime, modifiedByMeTime)',
   });
   return response.data.files;
 };
@@ -347,7 +347,7 @@ export async function getFoldersWithPrimaryFile(folderName: string, primaryFileM
       subfolders.map(async (subfolder) => {
         const primaryFileResponse = await driveService.files.list({
           q: `'${subfolder.id}' in parents and mimeType='${primaryFileMimeType}'`,
-          fields: 'files(id, name, mimeType, size)',
+          fields: 'files(id, name, mimeType, size, modifiedTime, modifiedByMeTime)',
           pageSize: 1, // Get only the first matching file
         });
 

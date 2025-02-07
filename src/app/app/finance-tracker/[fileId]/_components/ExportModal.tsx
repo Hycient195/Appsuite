@@ -7,6 +7,8 @@ import { useFinanceTrackerContext } from "../../_contexts/financeTrackerContext"
 import { handleUpdateStateProperty } from "@/utils/miscelaneous";
 import { Toast } from "@/sharedComponents/utilities/Toast";
 import { handleExportPDFOnServer } from "@/utils/exportPDFOnServer";
+import api from "@/redux/api";
+import LoadingButton from "@/sharedComponents/LoadingButton";
 
 export interface IFinanceTrackerExportOptions {
   alternateExportName: string, exportType: "CURRENT_PAGE"|"ALL_PAGES"|"CUSTOM"|""
@@ -19,6 +21,9 @@ export interface IFinanceTrackerExportOptions {
 export default function SheetExportModal() {
   const { handleModalClose, modalData, } = useModalContext<any>();
   const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useFinanceTrackerContext()
+  const [ exportPDFOnServer, { isLoading, isError, error } ] = api.commonApis.useExportPdfOnServerMutation();
+
+  console.log(error)
 
   const selectedPagesRef = useRef<HTMLDivElement|null>(null);
   const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -54,7 +59,7 @@ export default function SheetExportModal() {
       .map((num) => num.trim()) // Remove spaces
       .filter((num) => num !== "0" && num !== "") // Remove "0" and empty values
       .map(Number) // Convert to numbers
-      .filter((num) => num < pages?.length) // Remove numbers greater than maxLimit
+      .filter((num) => num <= pages?.length) // Remove numbers greater than maxLimit
       .filter((num, index, self) => self.indexOf(num) === index) // Remove duplicates
       .sort((a, b) => a - b) // Optional: Sort numbers in ascending order
       .join(",");
@@ -71,7 +76,7 @@ export default function SheetExportModal() {
   };
 
   const onLowerRangeBlur = () => {
-    if (exportOptions?.customOptions?.range?.[0] && (Number(exportOptions?.customOptions?.range?.[0]) <= 0 || Number(exportOptions?.customOptions?.range?.[0]) > (pages?.length - 1))) {
+    if (exportOptions?.customOptions?.range?.[0] && (Number(exportOptions?.customOptions?.range?.[0]) <= 0 || Number(exportOptions?.customOptions?.range?.[0]) > (pages?.length))) {
       handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.0");
       Toast("error", "Value out of range");
     }
@@ -103,14 +108,16 @@ export default function SheetExportModal() {
     PDF: {
       ALL_PAGES: () => {
         if (isIOSMobile) { // if device is an iphone or Ipad
-          handleExportPDFOnServer(modalData?.elementRef?.current); // render the PDF on the server
+          // exportPDFOnServer(modalData?.elementRef?.current); // render the PDF on the server
+          exportPDFOnServer({ exportNode: modalData?.elementRef?.current, fileName: exportOptions?.alternateExportName || documentFile?.filename }); // render the PDF on the server
         } else {
           modalData?.createPdf();
         }
       },
       CURRENT_PAGE: () => {
         if (isIOSMobile) {
-          handleExportPDFOnServer(modalData?.singleDocumentRef?.current?.[modalData?.currentPage]);
+          // exportPDFOnServer(modalData?.singleDocumentRef?.current?.[modalData?.currentPage]);
+          exportPDFOnServer({ exportNode: modalData?.singleDocumentRef?.current?.[modalData?.currentPage], fileName: exportOptions?.alternateExportName || documentFile?.filename });
         } else {
           modalData?.createDocumentPDF(modalData?.currentPage, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`);
         }
@@ -136,9 +143,9 @@ export default function SheetExportModal() {
         });
 
         if (isIOSMobile) {
-          handleExportPDFOnServer(downloadSection);
+          exportPDFOnServer({ exportNode: downloadSection, fileName: exportOptions?.alternateExportName || documentFile?.filename });
         } else {
-          handleExportPDFOnServer(downloadSection);
+          exportPDFOnServer({ exportNode: downloadSection, fileName: exportOptions?.alternateExportName || documentFile?.filename});
           // modalData?.createDocumentPDF(null, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`, downloadSection);
         }
 
@@ -217,7 +224,7 @@ export default function SheetExportModal() {
       <FormText value={exportOptions?.alternateExportName} onChange={(e) => setExportOptions({ ...exportOptions, alternateExportName: e.target.value })} labelText="Specify an alternate export name (optional)" />
       <div className="grid grid-cols-2 gap-3 mt-1">
         <button onClick={handleModalClose} type="button" className="btn-large bg-white border border-zinc-200 text-primary">Cancel</button>
-        <button type="submit" disabled={!exportOptions?.exportType || !exportOptions?.exportFormat} className="btn-large bg-primary text-white disabled:bg-zinc-300 disabled:cursor-not-allowed">Export</button>
+        <LoadingButton loading={isLoading} type="submit" disabled={!exportOptions?.exportType || !exportOptions?.exportFormat} className="btn-large bg-primary text-white disabled:bg-zinc-300 disabled:cursor-not-allowed">Export</LoadingButton>
       </div>
     </form>
   )

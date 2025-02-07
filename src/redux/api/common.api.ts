@@ -192,6 +192,39 @@ const api = createApi({
       })
     }),
 
+    exportPdfOnServer: builder.mutation<void, { exportNode: HTMLElement | null, fileName: string }>({
+      queryFn: async ({ exportNode, fileName }) => {
+        if (!exportNode) return { error: { message: "No export node provided" } };
+    
+        const htmlContent = exportNode.outerHTML;
+    
+        try {
+          const response = await fetch("/api/export-pdf", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ html: htmlContent }),
+          });
+    
+          if (!response.ok) {
+            return { error: { message: "PDF export failed" } };
+          }
+    
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = fileName ? `${fileName?.split(".")[0]}.pdf` : "export.pdf";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+    
+          return { data: undefined }; // Returning void
+        } catch (error) {
+          return { error: { message: "An error occurred while exporting PDF" } };
+        }
+      },
+    }),
+
   })
 })
 

@@ -83,7 +83,7 @@ export default function ModuleFileHeader({ moduleName, isSaving, isSavingError, 
   // }
 
   return (
-    <section className="sticky top-0 md:landscape:-top-14 md:top- lg:-top-7 flex flex-col z-[3]">
+    <section className="sticky top-0 md:landscape:-top-14 lg:landscape:-top-7 md:top- lg:-top-7 flex flex-col z-[3]">
       <div className="p-3.5 bg-primary lg:hidden flex flex-col gap-4">
         <div className="spread-out !gap-5 text-slate-100">
           <div className="text-xl font-helvetica text-slate-100  line-in">

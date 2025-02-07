@@ -54,7 +54,7 @@ export default function GradesTrackerExportModal() {
       .map((num) => num.trim()) // Remove spaces
       .filter((num) => num !== "0" && num !== "") // Remove "0" and empty values
       .map(Number) // Convert to numbers
-      .filter((num) => num < pages?.length) // Remove numbers greater than maxLimit
+      .filter((num) => num <= pages?.length) // Remove numbers greater than maxLimit
       .filter((num, index, self) => self.indexOf(num) === index) // Remove duplicates
       .sort((a, b) => a - b) // Optional: Sort numbers in ascending order
       .join(",");
@@ -71,7 +71,7 @@ export default function GradesTrackerExportModal() {
   };
 
   const onLowerRangeBlur = () => {
-    if (exportOptions?.customOptions?.range?.[0] && (Number(exportOptions?.customOptions?.range?.[0]) <= 0 || Number(exportOptions?.customOptions?.range?.[0]) > (pages?.length - 1))) {
+    if (exportOptions?.customOptions?.range?.[0] && (Number(exportOptions?.customOptions?.range?.[0]) <= 0 || Number(exportOptions?.customOptions?.range?.[0]) > (pages?.length))) {
       handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.0");
       Toast("error", "Value out of range");
     }

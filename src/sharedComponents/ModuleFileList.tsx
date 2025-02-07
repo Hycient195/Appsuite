@@ -47,6 +47,8 @@ export default function ModuleFileList({ moduleName, moduleSubtitle, moduleEnumN
     getFiles({ folderName: moduleEnumName, primaryFileMimeType: fileListMimeType });
   }, [ ]);
 
+  console.log(data)
+
   return (
     <main className="h-full relative p-  rounded-md grid grid-rows-[max-content_1fr] gap-3 lg:gap-4">
       <div className="">
@@ -169,7 +171,7 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile, mimeType }: ITa
     }
     if (updateFileNameIsError) Toast("error", `Unable to update file name ${file?.primaryFile?.fileName}`);
   }, [ fileNameUpdateSuccess, updateFileNameIsError ]);
-  console.log(fileName)
+
   return (
     <tr onClick={() => router.push(file?.primaryFile?.fileId as string)} className="border-b border-dashed text-slate-500 odd:bg-slate-100 border-b-zinc-300 duration-300 hover:bg-green-100" >
       <td className="cursor-pointer">
@@ -185,10 +187,10 @@ function TableRow({ file, setIsDeleteModalOpen, setSelectedFile, mimeType }: ITa
               // onFocus={() => setIsEditing(true)}
               // onBlur={() => (!isUpdatingFile || isEditing) && setIsEditing(false)}
               onChange={(e) => { setFileName(e.target.value)}}
-              className="w-max text-slate-800 max-md:text-sm max-md:leading-[1.6ch] cursor-pointer focus:cursor-text leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full"
+              className={`${isEditing && "ring-1 ring-slate-500"} w-max text-slate-800 max-md:text-sm max-md:leading-[1.6ch] cursor-pointer focus:cursor-text leading-[1.8ch] text-ellipsis line-clamp-2 bg pr-2 outline-none h-full`}
             />
             {/* {JSON.stringify(isEditing)} */}
-            <div className="text-xs flex flex-row gap-2 lg:hidden">
+            <div className="text-xs flex flex-row gap-2 md:hidden">
               <span className="">Jan 6 2024</span>
               <span className="">{splitInThousand(file?.primaryFile?.size as string)} Kb</span>
             </div>
