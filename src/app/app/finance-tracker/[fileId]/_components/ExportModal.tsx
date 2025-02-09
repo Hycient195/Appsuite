@@ -65,8 +65,8 @@ export default function SheetExportModal() {
   };
 
   const onUpperRangeBlur = () => {
-    if (exportOptions?.customOptions?.range?.[1] && exportOptions?.customOptions?.range?.[0]) {
-      if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0])) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
+    if (exportOptions?.customOptions?.range?.[1]) {
+      if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0]??"0")) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
         handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.1");
         Toast("error", "Value out of range");
       }
@@ -86,7 +86,7 @@ export default function SheetExportModal() {
       handleUpdateStateProperty(exportOptions, setExportOptions, value, propertyKey);
     }
   }
-
+ 
   const exportMap = {
     CSV: {
       ALL_PAGES: () => {
@@ -146,7 +146,9 @@ export default function SheetExportModal() {
         if (isIOSMobile) {
           exportPDFOnServer({ exportNode: downloadSection, fileName: exportOptions?.alternateExportName || documentFile?.filename });
         } else {
-          exportPDFOnServer({ exportNode: downloadSection, fileName: exportOptions?.alternateExportName || documentFile?.filename});
+          modalData?.createDocumentPDF({ indexes: selectedPages, documentFileName: exportOptions?.alternateExportName || documentFile?.filename });
+
+          // exportPDFOnServer({ exportNode: downloadSection, fileName: exportOptions?.alternateExportName || documentFile?.filename});
           // modalData?.createDocumentPDF(null, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`, downloadSection);
         }
 

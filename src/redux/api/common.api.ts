@@ -192,20 +192,21 @@ const api = createApi({
       })
     }),
 
-    exportPdfOnServer: builder.mutation<void, { exportNode: HTMLElement | null, fileName: string }>({
+    exportPdfOnServer: builder.mutation<any, { exportNode: HTMLElement | null, fileName: string }>({
       queryFn: async ({ exportNode, fileName }) => {
         if (!exportNode) return { error: { message: "No export node provided" } };
     
         const htmlContent = exportNode.outerHTML;
     
         try {
+          // const response = await fetch("/api/export-pdf", {
           const response = await fetch("/api/export-pdf", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ html: htmlContent }),
           });
 
-          console.log(response)
+          // console.log(response)
     
           if (!response.ok) {
             return { error: { message: "PDF export failed" } };
@@ -220,7 +221,7 @@ const api = createApi({
           a.click();
           document.body.removeChild(a);
     
-          return { data: undefined }; // Returning void
+          return { data: { message: "Download sucessful!"} }; // Returning void
         } catch (error) {
           return { error: { message: "An error occurred while exporting PDF" } };
         }

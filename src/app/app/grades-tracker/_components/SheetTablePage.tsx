@@ -72,15 +72,15 @@ export default function CGPATrackerPage({ page, pageIndex, singleDocumentRef, ta
               </div>
             </div> */}
 
-            <div className="titles grid !max-w-[800px] w-full mx-auto justify-center">
+            <div className="titles grid !max-w-[800px] w-full mx-auto justify-center mb-2">
               <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ ..TITLE HERE.. ]' className="!max-w-[800px] text-2xl outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
               <div className="mb-1 noExport" />
-              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' className="!max-w-[800px] mb-1 text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
+              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' className="!max-w-[800px] text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
             </div>
 
           </div>
          
-          <div className={`mb-3 ${!hasLogoOrSpinner ? "noExport" : ""}`} />
+          {/* <div className={`mb-3 ${!hasLogoOrSpinner ? "noExport" : ""}`} /> */}
           <ResizableTable
             headers={["S/N", "COURSE CODE", "COURSE TITLE", "UNIT LOAD", "GRADE", "GRADE POINT"]}
             minCellWidth={100}
@@ -136,15 +136,17 @@ export default function CGPATrackerPage({ page, pageIndex, singleDocumentRef, ta
                           onChange={e => handleInputChange(pageIndex, rowIndex, 'grade', e.target.value?.replace(/[^A-F]/ig, "")?.toUpperCase())}
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "grade")}
                         />
-                        <FormSelect
-                          ref={(el: any) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-courseCode`, el)}}
-                          inputClassName='w-full noExport !h-full px-1 text-center [&_*]:!py-1 focus:outline [&_*]:!text-slate-900 [&_*]:!border-none focus:[&_*]:!ring-0 focus:[&_*]:outline- focus:!outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
-                          value={row?.grade}
-                          options={[ {text: "A", value: "A"}, {text: "B", value: "B"}, {text: "C", value: "C"}, {text: "D", value: "D"}, {text: "E", value: "E"}, {text: "F", value: "F"}, ]}
-                          // maxLength={1}
-                          onChange={e => handleInputChange(pageIndex, rowIndex, 'grade', e.target.value?.replace(/[^A-F]/ig, "")?.toUpperCase())}
-                          // onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "grade")}
-                        />
+                        <div className="h-full w-full noExport">
+                          <FormSelect
+                            ref={(el: any) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-courseCode`, el)}}
+                            inputClassName='w-full !h-full px-1 text-center [&_*]:!py-1 focus:outline [&_*]:!text-slate-900 [&_*]:!border-none focus:[&_*]:!ring-0 focus:[&_*]:outline- focus:!outline-zinc-400 disabled:bg-zinc-50 disabled:cursor-not-allowed font-medium'
+                            value={row?.grade}
+                            options={[ {text: "A", value: "A"}, {text: "B", value: "B"}, {text: "C", value: "C"}, {text: "D", value: "D"}, {text: "E", value: "E"}, {text: "F", value: "F"}, ]}
+                            // maxLength={1}
+                            onChange={e => handleInputChange(pageIndex, rowIndex, 'grade', e.target.value?.replace(/[^A-F]/ig, "")?.toUpperCase())}
+                            // onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "grade")}
+                          />
+                        </div>
                       </td>
                       
                       <td className={`peer/test  px-1 relative text-center flex justify-center text-black/80 items-center`}>

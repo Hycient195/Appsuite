@@ -14,7 +14,7 @@ const defaultRow: ICGPATrackerRow = {
 export const defaultPage: ICGPATrackerPage = {
   title: "",
   subTitle: "",
-  rows: [{ ...defaultRow }], // Create a fresh copy for each default page
+  rows: [{ ...defaultRow }],
   totalUnitLoad: "0",
   totalGradePoint: "0",
   gradePointAverage: "0",
@@ -410,22 +410,43 @@ export const useGradesTracker = (fileName?: string) => {
     return pages;
   }
 
-  const downloadPageCSV = (pageIndex: number) => {
-    const page = pages[pageIndex];
-    const csvData = generateCSVData(page);
-    pages[pageIndex].title
-    downloadCSV(csvData, pages[pageIndex].title ? `${pages[pageIndex].title}.csv` : `balance_sheet_page_${pageIndex + 1}.csv`);
+  const downloadCSVFile = ({ pageNumberOrNumbers, fileName }: { pageNumberOrNumbers?: number|number[], fileName?: string }) => {
+    let csvData: string;
+    
+    if (typeof pageNumberOrNumbers === "number") {
+      // Single page download
+      const page = pages[pageNumberOrNumbers];
+      csvData = generateCSVData(page);
+      fileName = fileName ? `${fileName.split(".")[0]}.csv` : `sheet_${pageNumberOrNumbers + 1}.csv`;
+    } else if (Array.isArray(pageNumberOrNumbers)) {
+      // Custom pages download
+      csvData = pages?.filter((_, index) => pageNumberOrNumbers.includes(index)).map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+      fileName = fileName ? `${fileName.split(".")[0]}.csv` : "sheet.csv";
+    } else {
+      // All pages download
+      csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+      fileName = fileName ? `${fileName.split(".")[0]}.csv` : "sheet.csv";
+    }
+  
+    downloadCSV(csvData, fileName);
   };
 
-  const downloadAllPagesCSV = () => {
-    const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-    downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
-  };
+  // const downloadPageCSV = (pageIndex: number) => {
+  //   const page = pages[pageIndex];
+  //   const csvData = generateCSVData(page);
+  //   pages[pageIndex].title
+  //   downloadCSV(csvData, pages[pageIndex].title ? `${pages[pageIndex].title}.csv` : `balance_sheet_page_${pageIndex + 1}.csv`);
+  // };
 
-  const downloadCustomPagesCSV = (pageIndexes: number[]) => {
-    const csvData = pages?.filter((_, index) => pageIndexes.includes(index)).map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
-    downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
-  };
+  // const downloadAllPagesCSV = () => {
+  //   const csvData = pages.map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+  //   downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
+  // };
+
+  // const downloadCustomPagesCSV = (pageIndexes: number[]) => {
+  //   const csvData = pages?.filter((_, index) => pageIndexes.includes(index)).map((page) => generateCSVData(page)).join('\n,,,,\n,,,,\n');
+  //   downloadCSV(csvData, pages[0]?.title ? `${pages[0]?.title}.csv` : 'balance_sheet_all_pages.csv');
+  // };
 
   const generateCSVData = (page: ICGPATrackerPage) => {
     const rowsCSV = page.rows
@@ -534,14 +555,15 @@ export const useGradesTracker = (fileName?: string) => {
     canUndo,
     canRedo,
     updateImageUrl,
-    downloadCustomPagesCSV,
+    downloadCSVFile,
+    // downloadCustomPagesCSV,
 
     handleCSVImport,
     importCSV,
     loadCSVData,
     generateCSVData,
-    downloadPageCSV,
-    downloadAllPagesCSV,
+    // downloadPageCSV,
+    // downloadAllPagesCSV,
     handleInputChange,
     updateRowsToAdd,
     setPages,

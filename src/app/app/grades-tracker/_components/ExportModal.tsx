@@ -1,12 +1,14 @@
 import { useModalContext } from "@/sharedComponents/CustomModal";
 import { FormSelect, FormText } from "@/sharedComponents/FormInputs";
 import { Radio } from "@mui/material";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { handleUpdateStateProperty } from "@/utils/miscelaneous";
 import { Toast } from "@/sharedComponents/utilities/Toast";
 import { handleExportPDFOnServer } from "@/utils/exportPDFOnServer";
 import { useGradesTrackerContext } from "../_contexts/gradesTrackerContext";
+import api from "@/redux/api";
+import LoadingButton from "@/sharedComponents/LoadingButton";
 
 export interface IFinanceTrackerExportOptions {
   alternateExportName: string, exportType: "CURRENT_PAGE"|"ALL_PAGES"|"CUSTOM"|""
@@ -18,10 +20,11 @@ export interface IFinanceTrackerExportOptions {
 
 export default function GradesTrackerExportModal() {
   const { handleModalClose, modalData, } = useModalContext<any>();
-  const { downloadAllPagesCSV, downloadPageCSV, pages, downloadCustomPagesCSV, documentFile } = useGradesTrackerContext();
+  const { pages, downloadCSVFile, documentFile } = useGradesTrackerContext();
+  const [ exportPDFOnServer, { isLoading, isError, error } ] = api.commonApis.useExportPdfOnServerMutation();
 
-  const selectedPagesRef = useRef<HTMLDivElement|null>(null);
-  const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  // const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isIOSMobile = true
 
   const [ exportOptions, setExportOptions ] = useState<IFinanceTrackerExportOptions>({
     alternateExportName: "", exportType: "", exportFormat: "", customOptions: { type: "FROM", value: "", range: [] }
@@ -62,8 +65,8 @@ export default function GradesTrackerExportModal() {
   };
 
   const onUpperRangeBlur = () => {
-    if (exportOptions?.customOptions?.range?.[1] && exportOptions?.customOptions?.range?.[0]) {
-      if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0])) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
+    if (exportOptions?.customOptions?.range?.[1]) {
+      if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0]??"0")) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
         handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.1");
         Toast("error", "Value out of range");
       }
@@ -83,40 +86,41 @@ export default function GradesTrackerExportModal() {
       handleUpdateStateProperty(exportOptions, setExportOptions, value, propertyKey);
     }
   }
-
+ 
   const exportMap = {
     CSV: {
       ALL_PAGES: () => {
-        downloadAllPagesCSV();
+        downloadCSVFile({ fileName: exportOptions?.alternateExportName || documentFile?.filename });
       },
       CURRENT_PAGE: () => {
-        downloadPageCSV(modalData?.currentPage)
+        downloadCSVFile({ pageNumberOrNumbers: modalData?.currentPage, fileName: exportOptions?.alternateExportName || documentFile?.filename })
       },
       CUSTOM: () => {
         if (exportOptions.customOptions.type === "FROM") {
-          downloadCustomPagesCSV(generateRange(exportOptions?.customOptions?.range?.map(x => (Number(x) - 1)) as [number, number]));
+          downloadCSVFile({ pageNumberOrNumbers: generateRange(exportOptions?.customOptions?.range?.map(x => (Number(x) - 1)) as [number, number]), fileName: exportOptions?.alternateExportName || documentFile?.filename });
         } else if (exportOptions.customOptions.type === "PAGES") {
-          downloadCustomPagesCSV(exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)));
+          downloadCSVFile({ pageNumberOrNumbers: exportOptions.customOptions.value.split(",")?.map(x => (Number(x) - 1)), fileName: exportOptions?.alternateExportName || documentFile?.filename });
         }
       }
     },
     PDF: {
       ALL_PAGES: () => {
         if (isIOSMobile) { // if device is an iphone or Ipad
-          handleExportPDFOnServer(modalData?.elementRef?.current); // render the PDF on the server
+          // handleExportPDFOnServer(modalData?.elementRef?.current); // render the PDF on the server
+          exportPDFOnServer({ exportNode: modalData?.elementRef?.current, fileName: exportOptions?.alternateExportName || documentFile?.filename }); // render the PDF on the server
         } else {
-          modalData?.createPdf();
+          modalData?.createPdf({ domNode: modalData?.elementRef?.current, documentFileName: exportOptions?.alternateExportName || documentFile?.filename });
         }
       },
       CURRENT_PAGE: () => {
         if (isIOSMobile) {
-          handleExportPDFOnServer(modalData?.singleDocumentRef?.current?.[modalData?.currentPage]);
+          // handleExportPDFOnServer(modalData?.singleDocumentRef?.current?.[modalData?.currentPage]);
+          exportPDFOnServer({ exportNode: modalData?.singleDocumentRef?.current?.[modalData?.currentPage], fileName: exportOptions?.alternateExportName || documentFile?.filename });
         } else {
-          modalData?.createDocumentPDF(modalData?.currentPage, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`);
+          modalData?.createDocumentPDF({index: modalData?.currentPage, documentFileName: exportOptions?.alternateExportName || documentFile?.filename });
         }
       },
       CUSTOM: () => {
-       
 
         let selectedPages:number[] = [];
 
@@ -127,7 +131,6 @@ export default function GradesTrackerExportModal() {
         }
 
         const downloadSection = document.createElement("div");
-
         modalData?.singleDocumentRef?.current
         ?.filter((_: any, index: number) => selectedPages?.includes(index))
         .forEach((item: any) => {
@@ -136,12 +139,10 @@ export default function GradesTrackerExportModal() {
         });
 
         if (isIOSMobile) {
-          handleExportPDFOnServer(downloadSection);
+          exportPDFOnServer({ exportNode: downloadSection, fileName: exportOptions?.alternateExportName || documentFile?.filename });
         } else {
-          handleExportPDFOnServer(downloadSection);
-          // modalData?.createDocumentPDF(null, exportOptions?.alternateExportName ?? `${pages?.[0]?.title}`, downloadSection);
+          modalData?.createDocumentPDF({ indexes: selectedPages, documentFileName: exportOptions?.alternateExportName || documentFile?.filename });
         }
-
       }
     }
   };
@@ -151,6 +152,10 @@ export default function GradesTrackerExportModal() {
     // @ts-ignore
     exportMap[exportOptions.exportFormat][exportOptions.exportType]();
   }
+
+  useEffect(() => {
+    if (isError) Toast("error", "Unable to export file");
+  }, [ isError ]);
 
   return (
     <form onSubmit={handleExport} className="flex flex-col gap-3 max-h-[97dvh] -mx-0.5 px-px overflow-y-auto">
@@ -186,9 +191,10 @@ export default function GradesTrackerExportModal() {
                   {
                     exportOptions.customOptions.type === "FROM" ?
                     (
-                      <div className="grid grid-cols-2 gap-2">
-                        <FormText required onBlur={onLowerRangeBlur} value={exportOptions?.customOptions.range?.[0]} name={`customOptions.range.0`} onChange={(e) => handleRangeInput(e, "customOptions.range.0")} type="number" placeholder="from" />
-                        <FormText required onBlur={onUpperRangeBlur} value={exportOptions?.customOptions.range?.[1]} name={`customOptions.range.1`} onChange={(e) => handleRangeInput(e, "customOptions.range.1")} type="number" placeholder="to" />
+                      <div className="grid grid-cols-[1fr_max-content_1fr] items-center gap-2">
+                        <FormText required onBlur={onLowerRangeBlur} value={exportOptions?.customOptions.range?.[0]} name={`customOptions.range.0`} onChange={(e) => handleRangeInput(e, "customOptions.range.0")} type="number"/>
+                          <span className="text-slate-700">to</span>
+                        <FormText required onBlur={onUpperRangeBlur} value={exportOptions?.customOptions.range?.[1]} name={`customOptions.range.1`} onChange={(e) => handleRangeInput(e, "customOptions.range.1")} type="number"/>
                       </div>
                     ) : (
                       <FormText required value={exportOptions?.customOptions.value} name={`customOptions.value`} onChange={handlePagesInput} onBlur={handlePagesBlur} placeholder="Page numbers separated by commas (,)" inputClassName="max-md:placeholder:!text-sm" />
@@ -214,10 +220,10 @@ export default function GradesTrackerExportModal() {
           }
         </div>
      </div>
-      <FormText value={exportOptions?.alternateExportName} onChange={(e) => setExportOptions({ ...exportOptions, alternateExportName: e.target.value })} labelText="Specify an alternate export name (optional)" />
+      <FormText value={exportOptions?.alternateExportName} onChange={(e) => setExportOptions({ ...exportOptions, alternateExportName: e.target.value })} placeholder={documentFile?.filename} labelText="Specify an alternate export name (optional)" />
       <div className="grid grid-cols-2 gap-3 mt-1">
         <button onClick={handleModalClose} type="button" className="btn-large bg-white border border-zinc-200 text-primary">Cancel</button>
-        <button type="submit" disabled={!exportOptions?.exportType || !exportOptions?.exportFormat} className="btn-large bg-primary text-white disabled:bg-zinc-300 disabled:cursor-not-allowed">Export</button>
+        <LoadingButton loading={isLoading} type="submit" disabled={!exportOptions?.exportType || !exportOptions?.exportFormat} className="btn-large bg-primary text-white disabled:bg-zinc-300 disabled:cursor-not-allowed">Export</LoadingButton>
       </div>
     </form>
   )

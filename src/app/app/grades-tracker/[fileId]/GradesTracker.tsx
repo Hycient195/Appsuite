@@ -20,9 +20,12 @@ import CreateGradesTrackerSheet from '../_components/CreateSheet';
 import GradesTrackerImportModal from '../_components/ImportModal';
 import { MenuItem, Select } from '@mui/material';
 import GradesTrackerExportModal from '../_components/ExportModal';
+import { useAppDispatch } from '@/redux/hooks/hooks';
+import sharedSlice from '@/redux/slices/shared.slice';
 
 const CGPATracker: React.FC<{csvString: IGradesTrackerDocument, folderId: string, fileName: string, loadedSucessfully: boolean }> = ({ csvString, folderId, fileName, loadedSucessfully }) => {
   const params = useParams<any>();
+  const dispatch = useAppDispatch();
 
   const tableContainerRef = useRef<HTMLTableRowElement|null>(null);
   const tbodyRef = useRef<HTMLTableSectionElement|null>(null);
@@ -73,6 +76,13 @@ const CGPATracker: React.FC<{csvString: IGradesTrackerDocument, folderId: string
       setDocumentFile({ filename: fileName?.split(".")?.[0], cgpaScale: csvString?.cgpaScale, templateLayout: csvString?.templateLayout });
     } else {
       setPages([{ ...defaultPage }]);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(sharedSlice.actions.peekSidebar());
+    return () => {
+      dispatch(sharedSlice.actions.showSidebar());
     }
   }, []);
 
@@ -136,7 +146,7 @@ const CGPATracker: React.FC<{csvString: IGradesTrackerDocument, folderId: string
             }
           />
 
-          <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] bg-zinc-100 mx-auto">
+          <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] bg-slate-100 mx-auto">
             {(pages).map((page, pageIndex) => (
               <div
                 key={`page-${pageIndex}`}

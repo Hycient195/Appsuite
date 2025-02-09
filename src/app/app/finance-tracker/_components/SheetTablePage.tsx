@@ -41,14 +41,14 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
           {/* <div className={`${hasLogoOrSpinner ? "grid-cols-[90px_1fr_90px]" : "grid-cols-1"} table-top grid gap-3`}> */}
           <div className={` table-top grid gap-3 `}>
             {/* <PageImage className="md:absolute" width={80} placeholder="Add/drop Logo" fileId={fileId} formData={pages} setFormData={setPages} imageProperty={page?.imageUrl as string} propertyKey={`${pageIndex}.imageUrl`} /> */}
-            <div className="titles grid !max-w-[800px] w-full mx-auto justify-center ">
+            <div className="titles grid !max-w-[800px] w-full mx-auto justify-center mb-2">
               <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.title} onChange={(e) => updatePageTitle(e.target.value, pageIndex)} placeholder='[ ..TITLE HERE.. ]' className="!max-w-[800px] text-2xl outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
               <div className="mb-1 noExport" />
-              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' className="!max-w-[800px] mb-1 text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
+              <ResponsiveTextInput style={{ fontFamily: "sans-serif" }} value={page.subTitle} onChange={(e) => updatePageSubtitle(e.target.value, pageIndex)} placeholder='[ ..SUBTITLE HERE.. ]' className="!max-w-[800px] text-lg outline-none border- border-zinc-300/80 font-bold w-ma w-ful text-center" />
             </div>
           </div>
          
-          <div className={`mb-1 md:mb-3 ${!hasLogoOrSpinner ? "noExport" : ""}`} />
+          {/* <div className={`mb-1 md:mb-3 ${!hasLogoOrSpinner ? "noExport" : ""}`} /> */}
           <ResizableTable
             headers={["DATE", "NARRATION", "DEBIT", "CREDIT", "BALANCE"]}
             minCellWidth={100}

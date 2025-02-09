@@ -1,6 +1,6 @@
 "use client"
 
-import React, { LegacyRef, useLayoutEffect, useRef, useState } from 'react';
+import React, { LegacyRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { defaultPage, useFinanceTracker } from '../_hooks/useFinanceTracker';
 import useGeneratePDF from '@/sharedHooks/useGeneratePDF';
 import { DndProvider } from 'react-dnd';
@@ -19,12 +19,15 @@ import { IBalanceSheetPage, IFinanceTrackerDocument } from '../_types/types';
 import usePageTracker from '@/sharedHooks/usePageTracker';
 import SheetImportModal from './_components/ImportModal';
 import useSaveDocument from '@/sharedHooks/useSaveDocument';
+import sharedSlice from '@/redux/slices/shared.slice';
+import { useAppDispatch } from '@/redux/hooks/hooks';
 
 const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: string, folderId: string, loadedSucessfully: boolean }> = ({ csvString, fileName, folderId, loadedSucessfully }) => {
   const params = useParams<any>();
   const tableContainerRef = useRef<HTMLTableRowElement|null>(null);
   const tbodyRef = useRef<HTMLTableSectionElement|null>(null);
   const cursorPositionRef = useRef<number | null>(null);
+  const dispatch = useAppDispatch();
 
   const [ tableWidth, setTableWidth ] = useState(2);
 
@@ -66,6 +69,13 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
       setDocumentFile({ filename: fileName?.split(".")?.[0], templateLayout: csvString?.templateLayout });
     } else {
       setPages([{ ...defaultPage }]);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(sharedSlice.actions.peekSidebar());
+    return () => {
+      dispatch(sharedSlice.actions.showSidebar());
     }
   }, []);
 
