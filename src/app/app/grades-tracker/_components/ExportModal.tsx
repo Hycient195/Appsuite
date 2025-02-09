@@ -23,8 +23,8 @@ export default function GradesTrackerExportModal() {
   const { pages, downloadCSVFile, documentFile } = useGradesTrackerContext();
   const [ exportPDFOnServer, { isLoading, isError, error } ] = api.commonApis.useExportPdfOnServerMutation();
 
-  // const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const isIOSMobile = true
+  const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  // const isIOSMobile = true
 
   const [ exportOptions, setExportOptions ] = useState<IFinanceTrackerExportOptions>({
     alternateExportName: "", exportType: "", exportFormat: "", customOptions: { type: "FROM", value: "", range: [] }
@@ -66,7 +66,7 @@ export default function GradesTrackerExportModal() {
 
   const onUpperRangeBlur = () => {
     if (exportOptions?.customOptions?.range?.[1]) {
-      if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0]??"0")) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
+      if((Number(exportOptions?.customOptions?.range?.[1]) < Number(exportOptions?.customOptions?.range?.[0]??"0")) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
         handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.1");
         Toast("error", "Value out of range");
       }
@@ -208,7 +208,7 @@ export default function GradesTrackerExportModal() {
       </div>
 
       <div className="flex flex-col bg-white z-[30] gap-2">
-        <p className="text-slate-500 mt-1  ">Choose the format you would like to export</p>
+        <p className="text-slate-500 mt-1">Choose the format you would like to export</p>
         <div className="flex flex-col bg-white gap-2 lg:gap-3">
           {
             exportFormats.map((each) => (
@@ -219,7 +219,7 @@ export default function GradesTrackerExportModal() {
             ))
           }
         </div>
-     </div>
+      </div>
       <FormText value={exportOptions?.alternateExportName} onChange={(e) => setExportOptions({ ...exportOptions, alternateExportName: e.target.value })} placeholder={documentFile?.filename} labelText="Specify an alternate export name (optional)" />
       <div className="grid grid-cols-2 gap-3 mt-1">
         <button onClick={handleModalClose} type="button" className="btn-large bg-white border border-zinc-200 text-primary">Cancel</button>

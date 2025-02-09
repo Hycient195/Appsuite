@@ -23,8 +23,9 @@ export default function SheetExportModal() {
   const { pages, downloadCSVFile, downloadJSONFile, documentFile } = useFinanceTrackerContext()
   const [ exportPDFOnServer, { isLoading, isError, error } ] = api.commonApis.useExportPdfOnServerMutation();
 
-  const selectedPagesRef = useRef<HTMLDivElement|null>(null);
   const isIOSMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  // const isIOSMobile = true
+  
 
   const [ exportOptions, setExportOptions ] = useState<IFinanceTrackerExportOptions>({
     alternateExportName: "", exportType: "", exportFormat: "", customOptions: { type: "FROM", value: "", range: [] }
@@ -66,7 +67,7 @@ export default function SheetExportModal() {
 
   const onUpperRangeBlur = () => {
     if (exportOptions?.customOptions?.range?.[1]) {
-      if((Number(exportOptions?.customOptions?.range?.[1]) <= Number(exportOptions?.customOptions?.range?.[0]??"0")) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
+      if((Number(exportOptions?.customOptions?.range?.[1]) < Number(exportOptions?.customOptions?.range?.[0]??"0")) || Number(exportOptions?.customOptions?.range?.[1]) > pages?.length) {
         handleUpdateStateProperty(exportOptions, setExportOptions, "", "customOptions.range.1");
         Toast("error", "Value out of range");
       }
