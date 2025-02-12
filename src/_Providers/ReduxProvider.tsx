@@ -2,7 +2,9 @@
 
 import store from "@/redux/store/store";
 import ToastProvider from "@/sharedComponents/utilities/ToastContainer";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { Provider } from "react-redux";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 interface IProps {
   children: React.ReactNode
@@ -12,7 +14,9 @@ export default function ReduxProvider ({ children }: IProps) {
   return (
     <Provider store={store}>
       <ToastProvider>
-        {children}
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en">
+          {children}
+        </LocalizationProvider>
       </ToastProvider>
     </Provider>
   )

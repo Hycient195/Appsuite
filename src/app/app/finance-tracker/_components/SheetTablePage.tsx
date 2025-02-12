@@ -9,6 +9,9 @@ import PageImage from "@/sharedComponents/PageImage";
 import { useParams } from "next/navigation";
 import { MinusIcon, PlusIcon } from "@/sharedComponents/CustomIcons";
 import { ResponsiveTextInput } from "@/sharedComponents/FormInputs";
+import { MobileDatePicker } from "@mui/x-date-pickers"
+import dayjs from "dayjs";
+import { format, parse } from "date-fns";
 
 interface IBalanceSheetPageProps {
   cursorPositionRef: React.MutableRefObject<number | null>;
@@ -62,7 +65,16 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                         <div style={{ width: `${tableWidth}px`}} className="bg-transparen max-lg:hidden bg-green-500 opacity-0 hover:opacity-100 !border-none group/line absolute z-[2] left-[-1px] bottom-0 translate-y-[4px] cursor-pointer h-1 rounded">
                           <button onClick={() => insertRow(pageIndex, rowIndex+1)} className="bg-green-500 hidden duration-300 group-hover/line:flex animate-fade-in [animation-duration:200ms] h-5 w-5 rounded-full absolute top-0 bottom-0 my-auto -right-2 items-center justify-center font-semibold">+</button>
                         </div>
-                        <input
+                        <MobileDatePicker
+                          format="DD-MM-YYYY"
+                          ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-date`, el)}}
+                          value={dayjs(parse(row?.date, "dd-MM-yyyy", new Date()))}
+                          className='w-full [&_*]:!border-0 [&>*>*]:!py-1 [&_*]:!text-center [&>*>*]:!pl-1 [&_*]:!pr-1 h-full bg-white focus:outline focus:outline-2 disabled:placeholder-transparent lg:placeholder:text-transparent focus:outline-zinc-400 font-medium'
+                          onChange={(e: any) => { handleInputChange(pageIndex, rowIndex, 'date', format(new Date(e), "dd-MM-yyyy")) }}
+                          // onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "date")}
+                        />
+                        
+                        {/* <input
                           ref={(el) => {inputRefs.current.set(`${pageIndex}-${rowIndex}-date`, el)}}
                           type="date"
                           value={row.date}
@@ -71,7 +83,7 @@ export default function BalanceSheetPage({ cursorPositionRef, page, pageIndex, r
                           onChange={e => { handleInputChange(pageIndex, rowIndex, 'date', e.target.value) }}
                           onKeyDown={(e) => handleKeyDown(e, pageIndex, rowIndex, "date")}
                           placeholder="Date"
-                        />
+                        /> */}
                       </td>
                       <td className="  items-center relative">
                         <p className='w-full h-full p-1 px-2 !m-0 invisible font-medium'>.{row.narration}</p> {/* Placeholder to hold textarea height autoresize */}

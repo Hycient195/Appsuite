@@ -36,7 +36,7 @@ export const useFinanceTracker = (fileName?: string) => {
   const [future, setFuture] = useState<IBalanceSheetPage[][]>([]);
 
   const prevPagesRef = useRef(pages);
-  const inputRefs = useRef<Map<string, HTMLInputElement | HTMLTextAreaElement | null>>(new Map());
+  const inputRefs = useRef<Map<string, HTMLInputElement | HTMLTextAreaElement | HTMLDivElement | null>>(new Map());
 
   const updateImageUrl = (url: string, pageIndex: number) => {
     const pageCopy = [...pages];
