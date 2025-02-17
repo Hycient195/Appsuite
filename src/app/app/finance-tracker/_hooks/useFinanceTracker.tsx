@@ -6,6 +6,7 @@ import { useCancelableDebounce } from '@/sharedHooks/useCancellableDebounce';
 const defaultRow: IRow = {
   date: '',
   narration: '',
+  category: "",
   credit: "",
   debit: "",
   balance: "",
@@ -20,18 +21,22 @@ export const defaultPage: IBalanceSheetPage = {
   finalBalance: "0",
   rowsToAdd: 1,
   imageUrl: "",
-  templateLayout: "CLASSIC"
+  templateLayout: "CLASSIC",
+  pageCategoryTotal: { debit: {}, credit: {} }, // Initialize pageCategoryTotal
 };
 
 export const defaultDocument: IFinanceTrackerDocument = {
   templateLayout: "CLASSIC",
   filename: "",
-  currentPage: 0
+  currentPage: 0,
+  categories: { debit: [], credit: [ ] },
 }
 
 export const useFinanceTracker = (fileName?: string) => {
   const [pages, setPages] = useState<IBalanceSheetPage[]>([{ ...defaultPage, title: fileName??defaultPage.title, rows: [{ ...defaultRow }] }]);
   const [ documentFile, setDocumentFile ] = useState<IFinanceTrackerDocument>(defaultDocument);
+  const [categoryTotals, setCategoryTotals] = useState<{ debit: Record<string, number>, credit: Record<string, number> }>({ debit: {}, credit: {} });
+
   const [history, setHistory] = useState<IBalanceSheetPage[][]>([]);
   const [future, setFuture] = useState<IBalanceSheetPage[][]>([]);
 
@@ -101,7 +106,8 @@ export const useFinanceTracker = (fileName?: string) => {
     for (let i = 0; i < rowsToAdd; i++) {
       if (page?.rows?.length > 1) {
         const previousBalance = (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex - 1].balance : "0";
-        page.rows.splice(rowIndex + i, 0, { ...defaultRow, balance: previousBalance, date: (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex-1].date.slice(2,10) : ""});
+        // page.rows.splice(rowIndex + i, 0, { ...defaultRow, balance: previousBalance, date: (page.rows.length > 0 && rowIndex > 0) ? page.rows[rowIndex-1].date.slice(2,10) : ""});
+        page.rows.splice(rowIndex + i, 0, { ...defaultRow, balance: previousBalance });
       } else {
         page.rows.push({ ...defaultRow });
       }
@@ -129,6 +135,16 @@ export const useFinanceTracker = (fileName?: string) => {
     (row[field as keyof IRow] as string | number) =  value;
     page.rows[rowIndex] = row;
     calculatePageTotals(page);
+    updatedPages[pageIndex] = page;
+    updatePages(updatedPages);
+  };
+
+  const changeCategory = (pageIndex: number, rowIndex: number, category: string) => {
+    const updatedPages = [...pages];
+    const page = { ...updatedPages[pageIndex], rows: [...updatedPages[pageIndex].rows] };
+    const row = { ...page.rows[rowIndex] };
+    row.category = category;
+    page.rows[rowIndex] = row;
     updatedPages[pageIndex] = page;
     updatePages(updatedPages);
   };
@@ -172,23 +188,81 @@ export const useFinanceTracker = (fileName?: string) => {
     let totalCredit = 0;
     let totalDebit = 0;
     let finalBalance = 0;
-
+    const pageCategoryTotal: { debit: Record<string, number>, credit: Record<string, number> } = { debit: {}, credit: {} };
+  
     page.rows.forEach(row => {
       totalCredit += !isNaN(parseFloat(row.credit as unknown as string)) ? parseFloat(row.credit?.replace(/,/ig,"") as unknown as string) : 0;
       totalDebit += !isNaN(parseFloat(row.debit as unknown as string)) ? parseFloat(row.debit?.replace(/,/ig,"") as unknown as string) : 0;
       finalBalance = !isNaN(parseFloat(row.balance as unknown as string)) ? parseFloat(row.balance?.replace(/,/ig,"") as unknown as string) : 0;
+  
+      const categoryType = ((!!row.credit && row.credit !== "0") ? "credit" : "debit") as keyof typeof pageCategoryTotal;
+      const category = row.category as string;
+      const amount = parseFloat(row[categoryType]);
+  
+      if (category) {
+        if (!pageCategoryTotal[categoryType][category]) {
+          pageCategoryTotal[categoryType][category] = 0;
+        }
+        pageCategoryTotal[categoryType][category] += amount;
+      }
     });
-
+  
     page.totalCredit = String(totalCredit?.toFixed(2));
     page.totalDebit = String(totalDebit?.toFixed(2));
     page.finalBalance = String(finalBalance?.toFixed(2));
+    page.pageCategoryTotal = pageCategoryTotal; // Set the pageCategoryTotal
+  };
+  // const calculatePageTotals = (page: IBalanceSheetPage) => {
+  //   let totalCredit = 0;
+  //   let totalDebit = 0;
+  //   let finalBalance = 0;
+
+  //   page.rows.forEach(row => {
+  //     totalCredit += !isNaN(parseFloat(row.credit as unknown as string)) ? parseFloat(row.credit?.replace(/,/ig,"") as unknown as string) : 0;
+  //     totalDebit += !isNaN(parseFloat(row.debit as unknown as string)) ? parseFloat(row.debit?.replace(/,/ig,"") as unknown as string) : 0;
+  //     finalBalance = !isNaN(parseFloat(row.balance as unknown as string)) ? parseFloat(row.balance?.replace(/,/ig,"") as unknown as string) : 0;
+  //   });
+
+  //   page.totalCredit = String(totalCredit?.toFixed(2));
+  //   page.totalDebit = String(totalDebit?.toFixed(2));
+  //   page.finalBalance = String(finalBalance?.toFixed(2));
+  // };
+
+
+  const calculateCategoryTotals = () => {
+    const totals: { debit: Record<string, number>, credit: Record<string, number> } = { debit: {}, credit: {} };
+
+    pages.forEach(page => {
+      page.rows.forEach(row => {
+        const categoryType = ((!!row.credit && row.credit !== "0") ? "credit" : "debit") as keyof typeof documentFile.categories;
+
+        const category = row.category as string;
+        const amount = parseFloat(row[categoryType]);
+
+        if (category) {
+          if (!totals[categoryType][category]) {
+            // @ts-ignore
+            totals[categoryType][category] = 0;
+          }
+          // @ts-ignore
+          totals[categoryType][category] += amount;
+        }
+      });
+    });
+
+    setCategoryTotals(totals);
   };
 
   const updatePages = (updatedPages: IBalanceSheetPage[]) => {
+    // updatedPages.forEach(page => calculatePageTotals(page)); // Update totals for each page
     setPages(updatedPages);
     setHistory([...history, pages]); // Save the current state to history
     setFuture([]); // Clear future stack on new action
   };
+
+  useEffect(() => {
+    calculateCategoryTotals();
+  }, [pages]);
 
   const undo = () => {
     if (!canUndo) return;
@@ -243,10 +317,11 @@ export const useFinanceTracker = (fileName?: string) => {
       const totalLine = lines[lines.length - 1].split(',');
 
       const rows: IRow[] = rowLines.map(line => {
-        const [date, narration, credit, debit, balance] = line.split(',');
+        const [date, narration, category, credit, debit, balance] = line.split(',');
         return {
           date,
           narration,
+          category,
           credit,
           debit,
           balance: balance || "0",
@@ -315,11 +390,12 @@ export const useFinanceTracker = (fileName?: string) => {
         currentPage.rowsToAdd = 1
       } else if (row[0] !== 'Date') { // Skip header row
         // Parse row data
-        const [date, narration, credit, debit, balance] = row;
+        const [date, narration, category, credit, debit, balance] = row;
 
         currentPage.rows.push({
           date: date || '',
           narration: narration || '',
+          category: category || '',
           credit: String( credit || "0"),
           debit: String(debit || "0"),
           balance: String(balance || "0")
@@ -503,6 +579,7 @@ export const useFinanceTracker = (fileName?: string) => {
     updatePageTitle,
     updatePageSubtitle,
     pages,
+    categoryTotals,
     addPage,
     removePage,
     addRow,

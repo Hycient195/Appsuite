@@ -31,9 +31,10 @@ interface IProps {
   ref?: MutableRefObject<TElementTypes>|LegacyRef<TElementTypes>|RefObject<TElementTypes>|undefined|any
   icon?: JSX.Element|React.ReactNode;
   iconPosition?: ("left"|"right")
+  children?: any
 }
 
-export const FormSelect = ({ labelText, ref, value, defaultValue, options, onChange, footerText, name, id, wrapperClassName, labelClassName, inputClassName, isLoading = false, disabled = false, icon, required }: IProps) => {
+export const FormSelect = ({ labelText, ref, value, defaultValue, options, onChange, footerText, name, id, wrapperClassName, labelClassName, inputClassName, isLoading = false, disabled = false, icon, required, children }: IProps) => {
   return (
     <label htmlFor={id} className={`${wrapperClassName}`}>
       { labelText && <p className={`${isLoading ? "text-zinc-400" : "text-zinc-700"} duration-700 text-sm  mb-1.5 ${labelClassName}`}>{labelText}</p> }
@@ -45,6 +46,7 @@ export const FormSelect = ({ labelText, ref, value, defaultValue, options, onCha
               <MenuItem key={`${labelText}-${index}`} value={option.value} className="!font-lexend !font-zinc-600 !font-light">{option.text}</MenuItem>
             ))
           }
+          {children}
         </Select>
         { icon && <span className="absolute top-0 bottom-0 h-max my-auto left-3">{icon}</span> }
       </div>

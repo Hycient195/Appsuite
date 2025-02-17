@@ -142,6 +142,49 @@ export function handleUpdateStateProperty<T>(
   }
 }
 
+export function handleRemoveStateProperty<T>(
+  formData: T,
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  propertyKey: string
+): void {
+  const removeNestedProperty = (obj: any, path: string[]): any => {
+    if (!obj || path.length === 0) return obj;
+    
+    const [first, ...rest] = path;
+    
+    if (rest.length === 0) {
+      // Remove the property if it's the last key in the path
+      if (Array.isArray(obj)) {
+        const index = Number(first);
+        if (!isNaN(index)) obj.splice(index, 1);
+      } else {
+        delete obj[first];
+      }
+    } else {
+      const arrayMatch = first.match(/(\w+)\[(\d+)\]/);
+      if (arrayMatch) {
+        const [, key, index] = arrayMatch;
+        if (obj[key] && Array.isArray(obj[key])) {
+          obj[key][Number(index)] = removeNestedProperty(obj[key][Number(index)], rest);
+        }
+      } else if (obj[first]) {
+        obj[first] = removeNestedProperty(obj[first], rest);
+      }
+    }
+    return obj;
+  };
+
+  if (propertyKey === "") {
+    // If propertyKey is empty, reset the entire form data
+    setFormData({} as T);
+  } else {
+    const path = propertyKey.split(".");
+    const newFormData = { ...formData };
+    removeNestedProperty(newFormData, path);
+    setFormData(newFormData);
+  }
+}
+
 export const splitInThousand = (num: string | number) => {
   const numStr = typeof num === "number" ? num?.toString() : num;
   const integerPart = numStr?.includes(".") ? numStr?.split(".")?.[0] : numStr;
@@ -367,3 +410,26 @@ export const replaceJSXRecursive = (subject: any, replacements: any) => {
   
   return subject;
 };
+
+export function getColorByIndex(index: number): { color: string, backgroundColor: string } {
+  const hue = (index * 137.508) % 360; // Use the golden angle approximation to get distinct hues
+  const color = `hsl(${hue}, 70%, 50%)`; // Text color with 70% saturation and 50% lightness
+  const backgroundColor = `hsl(${hue}, 100%, 95%)`; // Very light background color with 100% saturation and 95% lightness
+
+  return { color, backgroundColor };
+}
+
+export function getColorByWord(word?: string): { color: string, backgroundColor: string } {
+  if (!word) {
+    return { color: "transparent", backgroundColor: "transparent" };
+  }
+
+  // Simple hash function to generate a unique number based on the word
+  const hash = word.split('').reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0);
+
+  const hue = Math.abs(hash) % 360; // Use the hash to get a hue value between 0 and 360
+  const color = `hsl(${hue}, 70%, 50%) !important`; // Text color with 70% saturation and 50% lightness
+  const backgroundColor = `hsl(${hue}, 100%, 95%)`; // Very light background color with 100% saturation and 95% lightness
+
+  return { color, backgroundColor };
+}

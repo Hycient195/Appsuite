@@ -23,6 +23,7 @@ export default async function FinanceTrackerServerPage({ params }: IProps) {
     content:  {
       templateLayout: "CLASSIC",
       filename: "",
+      categories: { debit: [], credit: [] },
       pages: []
     }
   };

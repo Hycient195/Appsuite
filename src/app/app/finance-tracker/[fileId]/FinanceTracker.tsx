@@ -7,7 +7,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useParams } from 'next/navigation';
 import Teleport from '@/utils/Teleport';
-import StatusIcon from '@/sharedComponents/CustomIcons';
+import StatusIcon, { HamburgerIcon } from '@/sharedComponents/CustomIcons';
 import BalanceSheetPage from '../_components/SheetTablePage';
 import { BalanceSheetContextProvider } from '../_contexts/financeTrackerContext';
 import ModuleFileHeader from '@/sharedComponents/ModuleFileHeader';
@@ -21,6 +21,8 @@ import SheetImportModal from './_components/ImportModal';
 import useSaveDocument from '@/sharedHooks/useSaveDocument';
 import sharedSlice from '@/redux/slices/shared.slice';
 import { useAppDispatch } from '@/redux/hooks/hooks';
+import FinanceTrackerCategoresModal from '../_components/CategoriesModal';
+import CummulativeCategoryPlot from '../_components/CummulativeCategoryPlot';
 
 const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: string, folderId: string, loadedSucessfully: boolean }> = ({ csvString, fileName, folderId, loadedSucessfully }) => {
   const params = useParams<any>();
@@ -45,12 +47,13 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
     })
   }
 
-  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", fileName: `Account Report.pdf`})
-  const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "A3", getFileName: (fileName) => `${fileName}.pdf` });
+  const { createPdf, elementRef } = useGeneratePDF({ orientation: "portrait", paperSize: "B3", fileName: `Account Report.pdf`})
+  const { createPdf: createDocumentPDF, elementRef: singleDocumentRef } = useGeneratePDF({ orientation: "portrait", paperSize: "B3", getFileName: (fileName) => `${fileName}.pdf` });
 
   const [ isExportModalOpen, setIsExportModalOpen ] = useState<boolean>(false);
   const [ isCreateModalOpen, setIsCreateModalOpen ] = useState<boolean>(false);
   const [ isImportModalOpen, setIsImportModalOpen ] = useState<boolean>(false);
+  const [ isCategoriesModalOpen, setIsCategoriesModalOpen ] = useState<boolean>(false);
 
   const financeTrackerInstance = useFinanceTracker();
 
@@ -66,7 +69,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
   useLayoutEffect(() => {
     if (csvString) {
       setPages(csvString?.pages as IBalanceSheetPage[])
-      setDocumentFile({ filename: fileName?.split(".")?.[0], templateLayout: csvString?.templateLayout });
+      setDocumentFile({ filename: fileName?.split(".")?.[0], templateLayout: csvString?.templateLayout, description: csvString?.description, categories: csvString?.categories });
     } else {
       setPages([{ ...defaultPage }]);
     }
@@ -106,6 +109,9 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
             handleExport={() => setIsExportModalOpen(true)} initiateImport={() => setIsImportModalOpen(true)}
             undo={undo} redo={redo} canRedo={canRedo} canUndo={canUndo}
             modifiedTime={saveResponse?.modifiedTime as string}
+            extraControls={
+              <button onClick={() => setIsCategoriesModalOpen(true)} className="line-in !gap-1"><HamburgerIcon className='!size-4' />Categories</button>
+            }
           />
           <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
             {(pages).map((page, pageIndex) => (
@@ -127,10 +133,11 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
                   tableWidth={tableWidth}
                   tbodyRef={tbodyRef}
                   params={params}
+                  setCategoriesModalOpen={setIsCategoriesModalOpen}
                 />
               </div>
             ))}
-
+            {/* <CummulativeCategoryPlot categoryTotals={documentFile?.categories as any} /> */}
           </div>
         </main>
       </DndProvider>
@@ -138,6 +145,7 @@ const BalanceSheet: React.FC<{csvString: IFinanceTrackerDocument, fileName: stri
         { isExportModalOpen && <CustomModal setIsModalOpen={setIsExportModalOpen} modalData={{ createDocumentPDF, createPdf, currentPage, elementRef, singleDocumentRef, }}><SheetExportModal /></CustomModal> }
         { isImportModalOpen && <CustomModal setIsModalOpen={setIsImportModalOpen} modalData={{ currentPage }}><SheetImportModal /></CustomModal> }
         { isCreateModalOpen && <CustomModal handleModalClose={() => setIsCreateModalOpen(false)}><CreateFinanceTrackerSheet /></CustomModal> }
+        { isCategoriesModalOpen && <CustomModal handleModalClose={() => setIsCategoriesModalOpen(false)}><FinanceTrackerCategoresModal /></CustomModal> }
       </AnimatePresence>
     </BalanceSheetContextProvider>
   );

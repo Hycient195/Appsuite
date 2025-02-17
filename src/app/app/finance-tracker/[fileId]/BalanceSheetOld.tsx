@@ -184,18 +184,19 @@ const BalanceSheet: React.FC<{csvString: string, isLoggedIn: boolean, loadedSuce
         
             <div ref={elementRef as LegacyRef<HTMLDivElement>} className="max-w-[1080px] mx-auto">
               {(pages).map((page, pageIndex) => (
-                <BalanceSheetPage
-                  key={`page-${pageIndex}`}
-                  cursorPositionRef={cursorPositionRef}
-                  page={page}
-                  pageIndex={pageIndex}
-                  resetCursorPosition={resetCursorPosition}
-                  singleDocumentRef={singleDocumentRef as any}
-                  tableContainerRef={tableContainerRef}
-                  tableWidth={tableWidth}
-                  tbodyRef={tbodyRef}
-                  params={params}
-                />
+                // <BalanceSheetPage
+                //   key={`page-${pageIndex}`}
+                //   cursorPositionRef={cursorPositionRef}
+                //   page={page}
+                //   pageIndex={pageIndex}
+                //   resetCursorPosition={resetCursorPosition}
+                //   singleDocumentRef={singleDocumentRef as any}
+                //   tableContainerRef={tableContainerRef}
+                //   tableWidth={tableWidth}
+                //   tbodyRef={tbodyRef}
+                //   params={params}
+                // />
+                <></>
               ))}
 
               {/* Global Actions */}

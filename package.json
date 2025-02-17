@@ -36,7 +36,8 @@
     "react-dom": "19.0.0-rc-02c0e824-20241028",
     "react-redux": "^9.1.2",
     "react-toastify": "^11.0.2",
-    "react-window": "^1.8.11"
+    "react-window": "^1.8.11",
+    "recharts": "^2.15.1"
   },
   "devDependencies": {
     "@types/mongoose": "^5.11.97",
